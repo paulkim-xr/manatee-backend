@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rathon.manatee.database.mapper.CompanyMapper">
+
+    <select id="findById" resultType="com.rathon.manatee.database.model.Company">
+        SELECT * FROM companies WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultType="com.rathon.manatee.database.model.Company">
+        SELECT * FROM companies
+    </select>
+
+    <select id="getUnits" resultType="com.rathon.manatee.database.model.Unit">
+        SELECT * FROM units WHERE company_id = #{id}
+    </select>
+
+    <select id="getEmployees" resultType="com.rathon.manatee.database.model.Employee">
+        SELECT * FROM employees e JOIN units u ON e.unit_id = u.id WHERE u.company_id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.rathon.manatee.database.model.Company" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO companies (name, address, industry_id, registration_number) VALUES (#{name}, #{address}, #{industryId}, #{registrationNumber})
+    </insert>
+
+    <update id="update" parameterType="com.rathon.manatee.database.model.Company">
+        UPDATE companies SET name = #{name}, address = #{address}, industry_id = #{industryId}, registration_number = #{registrationNumber} WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM companies WHERE id = #{id}
+    </delete>
+
+</mapper>
