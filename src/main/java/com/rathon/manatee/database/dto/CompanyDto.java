@@ -11,4 +11,6 @@ public class CompanyDto {
     private String address;
     private int industryId;
     private String registrationNumber;
+    private int unitCount;
+    private int employeeCount;
 }

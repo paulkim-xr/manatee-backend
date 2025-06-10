@@ -12,4 +12,5 @@ public class UnitDto {
     private Long typeId;
     private String code;
     private Long parentId;
+    private Integer employeeCount;
 }

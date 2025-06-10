@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rathon.manatee.database.mapper.UnitMapper">
+
+    <select id="findById" resultType="com.rathon.manatee.database.model.Unit">
+        SELECT * FROM units WHERE id = #{id}
+    </select>
+
+    <select id="findWithCounts" resultType="com.rathon.manatee.database.dto.UnitDto">
+        SELECT
+            u.id AS id,
+            u.company_id AS companyId,
+            u.name AS name,
+            u.type_id AS typeId,
+            u.code AS code,
+            u.parent_id AS parentId,
+            COUNT(e.id) AS employeeCount
+        FROM units u
+        LEFT JOIN employees e ON e.unit_id = u.id
+        WHERE u.id = #{id}
+        GROUP BY u.id, u.name
+    </select>
+
+    <select id="findAll" resultType="com.rathon.manatee.database.model.Unit">
+        SELECT * FROM units
+    </select>
+
+    <select id="findAllWithCounts" resultType="com.rathon.manatee.database.dto.UnitDto">
+        SELECT
+            u.id AS id,
+            u.company_id AS companyId,
+            u.name AS name,
+            u.type_id AS typeId,
+            u.code AS code,
+            u.parent_id AS parentId,
+            COUNT(e.id) AS employeeCount
+        FROM units u
+        LEFT JOIN employees e ON e.unit_id = u.id
+        GROUP BY u.id, u.name
+        ORDER BY u.id
+    </select>
+
+    <select id="getParent" resultType="com.rathon.manatee.database.model.Unit">
+        SELECT parent.* FROM units child LEFT JOIN units parent ON parent.id = child.parent_id WHERE child.id = #{id}
+    </select>
+
+    <select id="getChildren" resultType="com.rathon.manatee.database.model.Unit">
+        SELECT * FROM units WHERE parent_id = #{id}
+    </select>
+
+    <select id="getEmployees" resultType="com.rathon.manatee.database.model.Employee">
+        SELECT * FROM employees e WHERE e.unit_id = #{id}
+    </select>
+
+    <insert id="insert" parameterType="com.rathon.manatee.database.model.Unit" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO units (company_id, name, type_id, code, parent_id) VALUES (#{companyId}, #{name}, #{typeId}, #{code}, #{parentId})
+    </insert>
+
+    <update id="update" parameterType="com.rathon.manatee.database.model.Unit">
+        UPDATE units SET company_id = #{companyId}, name = #{name}, type_id = #{typeId}, code = #{code}, parent_id = #{parentId} WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM units WHERE id = #{id}
+    </delete>
+
+</mapper>
