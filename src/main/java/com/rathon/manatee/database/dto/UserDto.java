@@ -10,6 +10,6 @@ import java.util.Date;
 public class UserDto {
     private Long id;
     private String username;
-    private boolean active;
+    private Boolean active;
     private Date lastActive;
 }

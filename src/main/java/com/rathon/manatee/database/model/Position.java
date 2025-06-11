@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Position {
+public class  Position {
     private Long id;
     private String name;
 }

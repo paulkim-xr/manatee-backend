@@ -20,7 +20,7 @@ public class EmployeeController {
         this.eMapper = eMapper;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<EmployeeDto> getAll() {
         return eService.getAllEmployees().stream()
                 .map(eMapper::toDto)

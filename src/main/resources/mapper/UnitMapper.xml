@@ -12,16 +12,19 @@
     <select id="findWithCounts" resultType="com.rathon.manatee.database.dto.UnitDto">
         SELECT
             u.id AS id,
-            u.company_id AS companyId,
+            c.name AS companyName,
             u.name AS name,
-            u.type_id AS typeId,
+            t.name AS type,
             u.code AS code,
-            u.parent_id AS parentId,
+            p.name AS parentName,
             COUNT(e.id) AS employeeCount
         FROM units u
+        LEFT JOIN companies c ON u.company_id = c.id
+        LEFT JOIN unit_types t ON u.type_id = t.id
+        LEFT JOIN units p ON u.parent_id = p.id
         LEFT JOIN employees e ON e.unit_id = u.id
         WHERE u.id = #{id}
-        GROUP BY u.id, u.name
+        GROUP BY u.id, u.name, c.name, t.name, p.name
     </select>
 
     <select id="findAll" resultType="com.rathon.manatee.database.model.Unit">
@@ -31,15 +34,18 @@
     <select id="findAllWithCounts" resultType="com.rathon.manatee.database.dto.UnitDto">
         SELECT
             u.id AS id,
-            u.company_id AS companyId,
+            c.name AS companyName,
             u.name AS name,
-            u.type_id AS typeId,
+            t.name AS type,
             u.code AS code,
-            u.parent_id AS parentId,
+            p.name AS parentName,
             COUNT(e.id) AS employeeCount
         FROM units u
+        LEFT JOIN companies c ON u.company_id = c.id
+        LEFT JOIN unit_types t ON u.type_id = t.id
+        LEFT JOIN units p ON u.parent_id = p.id
         LEFT JOIN employees e ON e.unit_id = u.id
-        GROUP BY u.id, u.name
+        GROUP BY u.id, u.name, c.name, t.name, p.name
         ORDER BY u.id
     </select>
 

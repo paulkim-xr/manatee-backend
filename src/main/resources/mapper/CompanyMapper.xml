@@ -14,15 +14,16 @@
             c.id AS id,
             c.name AS name,
             c.address AS address,
-            c.industry_id AS industryId,
+            i.name AS industry,
             c.registration_number AS registrationNumber,
             COUNT(DISTINCT u.id) AS unitCount,
             COUNT(e.id) AS employeeCount
         FROM companies c
+        LEFT JOIN industries i ON i.id = c.industry_id
         LEFT JOIN units u ON u.company_id = c.id
         LEFT JOIN employees e ON e.unit_id = u.id
         WHERE c.id = #{id}
-        GROUP BY c.id, c.name
+        GROUP BY c.id, c.name, i.name
     </select>
 
     <select id="findAllWithCounts" resultType="com.rathon.manatee.database.dto.CompanyDto">
@@ -30,14 +31,15 @@
             c.id AS id,
             c.name AS name,
             c.address AS address,
-            c.industry_id AS industryId,
+            i.name AS industry,
             c.registration_number AS registrationNumber,
             COUNT(DISTINCT u.id) AS unitCount,
             COUNT(e.id) AS employeeCount
         FROM companies c
+        LEFT JOIN industries i ON i.id = c.industry_id
         LEFT JOIN units u ON u.company_id = c.id
         LEFT JOIN employees e ON e.unit_id = u.id
-        GROUP BY c.id, c.name
+        GROUP BY c.id, c.name, i.name
         ORDER BY c.id
     </select>
 

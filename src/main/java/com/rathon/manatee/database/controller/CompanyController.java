@@ -14,7 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/companies")
@@ -33,17 +32,17 @@ public class CompanyController {
         this.eMapper = eMapper;
     }
 
+    @GetMapping
+    public List<CompanyDto> getAll() {
+        return cService.getCompanyDtoList();
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDto> getById(@PathVariable Long id) {
         if (cService.getCompanyById(id) == null) return ResponseEntity.notFound().build();
-        CompanyDto c = cService.getCompanyByIdWithCounts(id);
+        CompanyDto c = cService.getCompanyDtoById(id);
         return (c == null) ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok(c);
-    }
-
-    @GetMapping("/")
-    public List<CompanyDto> getAll() {
-        return cService.getCompaniesWithCounts();
     }
 
     @GetMapping("/{id}/units")
@@ -62,7 +61,7 @@ public class CompanyController {
     public List<EmployeeDto> getEmployees(@PathVariable Long id) {
         return cService.getEmployees(id).stream()
                 .map(eMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @PostMapping

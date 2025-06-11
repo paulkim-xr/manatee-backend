@@ -7,10 +7,10 @@ import lombok.Setter;
 @Setter
 public class UnitDto {
     private Long id;
-    private Long companyId;
+    private String companyName;
     private String name;
-    private Long typeId;
+    private String type;
     private String code;
-    private Long parentId;
+    private String parentName;
     private Integer employeeCount;
 }

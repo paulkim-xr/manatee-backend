@@ -4,16 +4,13 @@ import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.model.Unit;
-import com.rathon.manatee.database.service.CompanyService;
 import com.rathon.manatee.database.service.UnitService;
-import com.rathon.manatee.database.service.mapper.CompanyMapperService;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
 import com.rathon.manatee.database.service.mapper.UnitMapperService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/units")
@@ -28,15 +25,15 @@ public class UnitController {
         this.eMapper = eMapper;
     }
 
-    @GetMapping("/")
+    @GetMapping
     public List<UnitDto> getAll() {
-        return uService.getUnitsWithCounts();
+        return uService.getUnitDtoList();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UnitDto> getById(@PathVariable Long id) {
         if (uService.getUnitById(id) == null) return ResponseEntity.notFound().build();
-        UnitDto u = uService.getUnitByIdWithCounts(id);
+        UnitDto u = uService.getUnitDtoById(id);
         return (u == null) ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok(u);
     }

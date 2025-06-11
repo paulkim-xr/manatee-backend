@@ -20,7 +20,7 @@ public class UnitService {
         return mapper.findById(id);
     }
 
-    public UnitDto getUnitByIdWithCounts(Long id) {
+    public UnitDto getUnitDtoById(Long id) {
         return mapper.findWithCounts(id);
     }
 
@@ -28,7 +28,7 @@ public class UnitService {
         return mapper.findAll();
     }
 
-    public List<UnitDto> getUnitsWithCounts() {
+    public List<UnitDto> getUnitDtoList() {
         return mapper.findAllWithCounts();
     }
 

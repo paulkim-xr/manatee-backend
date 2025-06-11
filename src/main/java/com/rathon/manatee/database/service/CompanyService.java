@@ -21,11 +21,11 @@ public class CompanyService {
         return mapper.findById(id);
     }
 
-    public CompanyDto getCompanyByIdWithCounts(Long id) {
+    public CompanyDto getCompanyDtoById(Long id) {
         return mapper.findWithCounts(id);
     }
 
-    public List<CompanyDto> getCompaniesWithCounts() {
+    public List<CompanyDto> getCompanyDtoList() {
         return mapper.findAllWithCounts();
     }
 

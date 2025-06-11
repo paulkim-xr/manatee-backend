@@ -11,7 +11,7 @@ public class CompanyMapperService {
         d.setId(c.getId());
         d.setName(c.getName());
         d.setAddress(c.getAddress());
-        d.setIndustryId(c.getIndustryId());
+        d.setIndustry(""); // TODO
         d.setRegistrationNumber(c.getRegistrationNumber());
 
         return d;
@@ -22,7 +22,7 @@ public class CompanyMapperService {
         c.setId(d.getId());
         c.setName(d.getName());
         c.setAddress(d.getAddress());
-        c.setIndustryId(d.getIndustryId());
+        c.setIndustryId(0); // TODO
         c.setRegistrationNumber(d.getRegistrationNumber());
 
         return c;

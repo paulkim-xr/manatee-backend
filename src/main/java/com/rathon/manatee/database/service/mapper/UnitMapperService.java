@@ -11,9 +11,9 @@ public class UnitMapperService {
         d.setId(u.getId());
         d.setName(u.getName());
         d.setCode(u.getCode());
-        d.setCompanyId(u.getCompanyId());
-        d.setTypeId(u.getTypeId());
-        d.setParentId(u.getParentId());
+//        d.setCompanyId(u.getCompanyId()); // TODO
+//        d.setTypeId(u.getTypeId());
+//        d.setParentId(u.getParentId());
 
         return d;
     }
@@ -23,9 +23,9 @@ public class UnitMapperService {
         u.setId(d.getId());
         u.setName(d.getName());
         u.setCode(d.getCode());
-        u.setCompanyId(d.getCompanyId());
-        u.setTypeId(d.getTypeId());
-        u.setParentId(d.getParentId());
+//        u.setCompanyId(d.getCompanyId()); // TODO
+//        u.setTypeId(d.getTypeId());
+//        u.setParentId(d.getParentId());
 
         return u;
     }

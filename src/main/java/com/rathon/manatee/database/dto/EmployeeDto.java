@@ -9,9 +9,9 @@ import java.util.Date;
 @Setter
 public class EmployeeDto {
     private Long id;
+    private Long unitId ;
     private String firstName;
     private String lastName;
-    private Long unitId ;
     private Long positionId;
     private String email;
     private String phone;

@@ -9,8 +9,8 @@ public class CompanyDto {
     private Long id;
     private String name;
     private String address;
-    private int industryId;
+    private String industry;
     private String registrationNumber;
-    private int unitCount;
-    private int employeeCount;
+    private Integer unitCount;
+    private Integer employeeCount;
 }
