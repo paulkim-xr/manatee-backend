@@ -12,48 +12,46 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController {
-    private final EmployeeService eService;
-    private final EmployeeMapperService eMapper;
+    private final EmployeeService service;
+    private final EmployeeMapperService mapper;
 
-    public EmployeeController(EmployeeService eService, EmployeeMapperService eMapper) {
-        this.eService = eService;
-        this.eMapper = eMapper;
+    public EmployeeController(EmployeeService service, EmployeeMapperService mapper) {
+        this.service = service;
+        this.mapper = mapper;
     }
 
     @GetMapping
     public List<EmployeeDto> getAll() {
-        return eService.getAllEmployees().stream()
-                .map(eMapper::toDto)
-                .toList();
+        return service.getAllEmployees();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDto> getById(@PathVariable Long id) {
-        Employee e = eService.getEmployeeById(id);
+        EmployeeDto e = service.getEmployeeById(id);
         return (e == null) ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(eMapper.toDto(e));
+                : ResponseEntity.ok(e);
     }
 
     @PostMapping
     public ResponseEntity<Void> createEmployee(@RequestBody EmployeeDto d) {
-        Employee e = eMapper.toEntity(d);
+        Employee e = mapper.toEntity(d);
         // TODO - add logic to check required fields
-        eService.createEmployee(e);
+        service.createEmployee(e);
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDto d) {
-        Employee c = eMapper.toEntity(d);
+        Employee c = mapper.toEntity(d);
         c.setId(id);
-        eService.updateEmployee(c); // TODO
+        service.updateEmployee(c); // TODO
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
-        eService.deleteEmployee(id);
+        service.deleteEmployee(id);
         return ResponseEntity.ok().build();
     }
 }

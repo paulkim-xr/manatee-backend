@@ -1,5 +1,6 @@
 package com.rathon.manatee.database.service;
 
+import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
 import com.rathon.manatee.database.model.Employee;
 import org.springframework.stereotype.Service;
@@ -14,19 +15,19 @@ public class EmployeeService {
         this.mapper = mapper;
     }
 
-    public Employee getEmployeeById(Long id) {
+    public EmployeeDto getEmployeeById(Long id) {
         return mapper.findById(id);
     }
 
-    public List<Employee> getAllEmployees() {
+    public List<EmployeeDto> getAllEmployees() {
         return mapper.findAll();
     }
 
-    public List<Employee> findByFirstName(String firstName) {
+    public List<EmployeeDto> findByFirstName(String firstName) {
         return mapper.findByFirstname(firstName);
     }
 
-    public List<Employee> findByLastName(String lastName) {
+    public List<EmployeeDto> findByLastName(String lastName) {
         return mapper.findByLastname(lastName);
     }
 

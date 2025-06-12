@@ -14,8 +14,8 @@ public class EmployeeMapperService {
         d.setPhone(e.getPhone());
         d.setLastName(e.getLastName());
         d.setFirstName(e.getFirstName());
-        d.setUnitId(e.getUnitId());
-        d.setPositionId(e.getPositionId());
+//        d.setUnitId(e.getUnitId());
+//        d.setPositionId(e.getPositionId());
 
         return d;
     }
@@ -28,8 +28,8 @@ public class EmployeeMapperService {
         e.setPhone(d.getPhone());
         e.setLastName(d.getLastName());
         e.setFirstName(d.getFirstName());
-        e.setUnitId(d.getUnitId());
-        e.setPositionId(d.getPositionId());
+//        e.setUnitId(d.getUnitId());
+//        e.setPositionId(d.getPositionId());
 
         return e;
     }

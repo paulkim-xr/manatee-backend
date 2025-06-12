@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rathon.manatee.database.mapper.UnitTypeMapper">
+    <select id="findById" resultType="com.rathon.manatee.database.model.UnitType">
+        SELECT * FROM unit_types WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultType="com.rathon.manatee.database.model.UnitType">
+        SELECT * FROM unit_types
+    </select>
+
+    <insert id="insert" parameterType="com.rathon.manatee.database.model.UnitType" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO unit_types (name) VALUES (#{name})
+    </insert>
+
+    <update id="update" parameterType="com.rathon.manatee.database.model.UnitType">
+        UPDATE unit_types SET name = #{name} WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM unit_types WHERE id = #{id}
+    </delete>
+</mapper>

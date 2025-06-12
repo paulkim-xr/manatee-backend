@@ -1,5 +1,6 @@
 package com.rathon.manatee.database.service;
 
+import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.UnitMapper;
 import com.rathon.manatee.database.model.Employee;
@@ -36,11 +37,11 @@ public class UnitService {
         return mapper.getParent(id);
     }
 
-    public List<Unit> getChildren(Long id) {
+    public List<UnitDto> getChildren(Long id) {
         return mapper.getChildren(id);
     }
 
-    public List<Employee> getEmployees(Long id) {
+    public List<EmployeeDto> getEmployees(Long id) {
         return mapper.getEmployees(id);
     }
 

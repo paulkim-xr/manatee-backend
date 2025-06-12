@@ -1,6 +1,8 @@
 package com.rathon.manatee.database.service;
 
 import com.rathon.manatee.database.dto.CompanyDto;
+import com.rathon.manatee.database.dto.EmployeeDto;
+import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.CompanyMapper;
 import com.rathon.manatee.database.model.Company;
 import com.rathon.manatee.database.model.Employee;
@@ -33,11 +35,11 @@ public class CompanyService {
         return mapper.findAll();
     }
 
-    public List<Unit> getUnits(Long id) {
+    public List<UnitDto> getUnits(Long id) {
         return mapper.getUnits(id);
     }
 
-    public List<Employee> getEmployees(Long id) {
+    public List<EmployeeDto> getEmployees(Long id) {
         return mapper.getEmployees(id);
     }
 

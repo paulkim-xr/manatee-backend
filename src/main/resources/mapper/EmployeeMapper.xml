@@ -5,20 +5,83 @@
 
 <mapper namespace="com.rathon.manatee.database.mapper.EmployeeMapper">
 
-    <select id="findById" resultType="com.rathon.manatee.database.model.Employee">
-        SELECT * FROM employees WHERE id = #{id}
+    <select id="findById" resultType="com.rathon.manatee.database.dto.EmployeeDto">
+        SELECT
+            e.id AS id,
+            c.name AS companyName,
+            u.name AS unitName,
+            e.first_name AS firstName,
+            e.last_name AS lastName,
+            p.name AS position,
+            e.email AS email,
+            e.phone AS phone,
+            e.dob AS dob
+        FROM employees e
+        LEFT JOIN units u ON u.id = e.unit_id
+        LEFT JOIN positions p ON p.id = e.position_id
+        LEFT JOIN companies c ON c.id = u.company_id
+        WHERE e.id = #{id}
+        GROUP BY e.id, c.name, u.name, p.name
+        ORDER BY e.id
     </select>
 
-    <select id="findAll" resultType="com.rathon.manatee.database.model.Employee">
-        SELECT * FROM employees
+    <select id="findAll" resultType="com.rathon.manatee.database.dto.EmployeeDto">
+        SELECT
+            e.id AS id,
+            c.name AS companyName,
+            u.name AS unitName,
+            e.first_name AS firstName,
+            e.last_name AS lastName,
+            p.name AS position,
+            e.email AS email,
+            e.phone AS phone,
+            e.dob AS dob
+        FROM employees e
+        LEFT JOIN positions p ON p.id = e.position_id
+        LEFT JOIN units u ON u.id = e.unit_id
+        LEFT JOIN companies c ON c.id = u.company_id
+        GROUP BY e.id, c.name, u.name, p.name
+        ORDER BY e.id
     </select>
 
-    <select id="findByFirstname" resultType="com.rathon.manatee.database.model.Employee">
-        SELECT * FROM employees WHERE first_name = #{firstName}
+    <select id="findByFirstname" resultType="com.rathon.manatee.database.dto.EmployeeDto">
+        SELECT
+            e.id AS id,
+            c.name AS companyName,
+            u.name AS unitName,
+            e.first_name AS firstName,
+            e.last_name AS lastName,
+            p.name AS position,
+            e.email AS email,
+            e.phone AS phone,
+            e.dob AS dob
+        FROM employees e
+        LEFT JOIN units u ON u.id = e.unit_id
+        LEFT JOIN positions p ON p.id = e.position_id
+        LEFT JOIN companies c ON c.id = u.company_id
+        WHERE e.first_name = #{firstName}
+        GROUP BY e.id, c.name, u.name, p.name
+        ORDER BY e.id
     </select>
 
-    <select id="findByLastname" resultType="com.rathon.manatee.database.model.Employee">
-        SELECT * FROM employees WHERE last_name = #{lastName}
+    <select id="findByLastname" resultType="com.rathon.manatee.database.dto.EmployeeDto">
+        SELECT
+            e.id AS id,
+            c.name AS companyName,
+            u.name AS unitName,
+            e.first_name AS firstName,
+            e.last_name AS lastName,
+            p.name AS position,
+            e.email AS email,
+            e.phone AS phone,
+            e.dob AS dob
+        FROM employees e
+        LEFT JOIN units u ON u.id = e.unit_id
+        LEFT JOIN positions p ON p.id = e.position_id
+        LEFT JOIN companies c ON c.id = u.company_id
+        WHERE e.last_name = #{lastName}
+        GROUP BY e.id, c.name, u.name, p.name
+        ORDER BY e.id
     </select>
 
     <insert id="insert" parameterType="com.rathon.manatee.database.model.Employee" useGeneratedKeys="true" keyProperty="id">

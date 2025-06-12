@@ -23,12 +23,12 @@
         LEFT JOIN unit_types t ON u.type_id = t.id
         LEFT JOIN units p ON u.parent_id = p.id
         LEFT JOIN employees e ON e.unit_id = u.id
-        WHERE u.id = #{id}
+        WHERE u.id = #{id} AND NOT u.type_id = 1
         GROUP BY u.id, u.name, c.name, t.name, p.name
     </select>
 
     <select id="findAll" resultType="com.rathon.manatee.database.model.Unit">
-        SELECT * FROM units
+        SELECT * FROM units WHERE NOT type_id = 1
     </select>
 
     <select id="findAllWithCounts" resultType="com.rathon.manatee.database.dto.UnitDto">
@@ -45,6 +45,7 @@
         LEFT JOIN unit_types t ON u.type_id = t.id
         LEFT JOIN units p ON u.parent_id = p.id
         LEFT JOIN employees e ON e.unit_id = u.id
+        WHERE NOT u.type_id = 1
         GROUP BY u.id, u.name, c.name, t.name, p.name
         ORDER BY u.id
     </select>
@@ -53,12 +54,43 @@
         SELECT parent.* FROM units child LEFT JOIN units parent ON parent.id = child.parent_id WHERE child.id = #{id}
     </select>
 
-    <select id="getChildren" resultType="com.rathon.manatee.database.model.Unit">
-        SELECT * FROM units WHERE parent_id = #{id}
+    <select id="getChildren" resultType="com.rathon.manatee.database.dto.UnitDto">
+        SELECT
+            u.id AS id,
+            c.name AS companyName,
+            u.name AS name,
+            t.name AS type,
+            u.code AS code,
+            p.name AS parentName,
+            COUNT(e.id) AS employeeCount
+        FROM units u
+        LEFT JOIN companies c ON u.company_id = c.id
+        LEFT JOIN unit_types t ON u.type_id = t.id
+        LEFT JOIN units p ON u.parent_id = p.id
+        LEFT JOIN employees e ON e.unit_id = u.id
+        WHERE parent_id = #{id}
+        GROUP BY u.id, u.name, c.name, t.name, p.name
+        ORDER BY u.id
     </select>
 
     <select id="getEmployees" resultType="com.rathon.manatee.database.model.Employee">
-        SELECT * FROM employees e WHERE e.unit_id = #{id}
+        SELECT
+            e.id AS id,
+            c.name AS companyName,
+            u.name AS unitName,
+            e.first_name AS firstName,
+            e.last_name AS lastName,
+            p.name AS position,
+            e.email AS email,
+            e.phone AS phone,
+            e.dob AS dob
+        FROM employees e
+        LEFT JOIN units u ON u.id = e.unit_id
+        LEFT JOIN positions p ON p.id = e.position_id
+        LEFT JOIN companies c ON c.id = u.company_id
+        WHERE e.unit_id = #{id}
+        GROUP BY e.id, c.name, u.name, p.name
+        ORDER BY e.id
     </select>
 
     <insert id="insert" parameterType="com.rathon.manatee.database.model.Unit" useGeneratedKeys="true" keyProperty="id">

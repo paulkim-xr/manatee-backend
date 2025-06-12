@@ -1,6 +1,4 @@
 package com.rathon.manatee.database.model;
 
-public record UnitType() {
-    private static Long id;
-    private static Long name;
+public record UnitType(Long id, String name) {
 }

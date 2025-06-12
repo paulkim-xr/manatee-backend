@@ -49,9 +49,7 @@ public class CompanyController {
     public ResponseEntity<List<UnitDto>> getUnits(@PathVariable Long id) {
         if (cService.getCompanyById(id) == null) return ResponseEntity.badRequest().build();
 
-        List<UnitDto> list =  cService.getUnits(id).stream()
-                .map(uMapper::toDto)
-                .toList();
+        List<UnitDto> list =  cService.getUnits(id);
 
         if (list.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(list);
@@ -59,9 +57,7 @@ public class CompanyController {
 
     @GetMapping("/{id}/employees")
     public List<EmployeeDto> getEmployees(@PathVariable Long id) {
-        return cService.getEmployees(id).stream()
-                .map(eMapper::toDto)
-                .toList();
+        return cService.getEmployees(id);
     }
 
     @PostMapping
@@ -87,7 +83,7 @@ public class CompanyController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCompany(@PathVariable Long id) {
-        List<Unit> units = cService.getUnits(id);
+        List<UnitDto> units = cService.getUnits(id);
         if (units.size() > 1) {
             return ResponseEntity.badRequest().body("Remove all units to delete");
         }

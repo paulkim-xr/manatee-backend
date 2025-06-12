@@ -41,7 +41,7 @@ public class UnitController {
     @GetMapping("/{id}/employees")
     public ResponseEntity<List<EmployeeDto>> getEmployees(@PathVariable Long id) {
         if (uService.getEmployees(id).isEmpty()) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(uService.getEmployees(id).stream().map(eMapper::toDto).toList());
+        return ResponseEntity.ok(uService.getEmployees(id));
     }
 
     @PostMapping
@@ -59,10 +59,10 @@ public class UnitController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUnit(@PathVariable Long id) {
-        List<Employee> list = uService.getEmployees(id);
+        List<EmployeeDto> list = uService.getEmployees(id);
         if (list.size() > 1) return ResponseEntity.badRequest().body("Remove all employees to delete");
 
-        List<Unit> children = uService.getChildren(id);
+        List<UnitDto> children = uService.getChildren(id);
         if (!children.isEmpty()) return ResponseEntity.badRequest().body("Remove all child units to delete");
 
         uService.deleteUnit(id);
