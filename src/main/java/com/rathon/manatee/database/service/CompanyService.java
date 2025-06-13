@@ -5,8 +5,6 @@ import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.CompanyMapper;
 import com.rathon.manatee.database.model.Company;
-import com.rathon.manatee.database.model.Employee;
-import com.rathon.manatee.database.model.Unit;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,19 +17,11 @@ public class CompanyService {
         this.mapper = mapper;
     }
 
-    public Company getCompanyById(Long id) {
+    public CompanyDto getCompanyById(Long id) {
         return mapper.findById(id);
     }
 
-    public CompanyDto getCompanyDtoById(Long id) {
-        return mapper.findWithCounts(id);
-    }
-
-    public List<CompanyDto> getCompanyDtoList() {
-        return mapper.findAllWithCounts();
-    }
-
-    public List<Company> getAllCompanies() {
+    public List<CompanyDto> getCompanyList() {
         return mapper.findAll();
     }
 

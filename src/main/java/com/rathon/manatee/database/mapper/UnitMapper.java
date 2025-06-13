@@ -2,7 +2,6 @@ package com.rathon.manatee.database.mapper;
 
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
-import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.model.Unit;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -10,11 +9,9 @@ import java.util.List;
 
 @Mapper
 public interface UnitMapper {
-    Unit findById(Long id);
-    UnitDto findWithCounts(Long id);
-    List<Unit> findAll();
-    List<UnitDto> findAllWithCounts();
-    Unit getParent(Long id);
+    UnitDto findById(Long id);
+    List<UnitDto> findAll();
+    UnitDto getParent(Long id);
     List<UnitDto> getChildren(Long id);
     List<EmployeeDto> getEmployees(Long id);
     void insert(Unit unit);

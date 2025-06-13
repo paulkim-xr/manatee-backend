@@ -2,7 +2,6 @@ package com.rathon.manatee.database.controller;
 
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
-import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.UnitService;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
@@ -10,6 +9,7 @@ import com.rathon.manatee.database.service.mapper.UnitMapperService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,13 +27,13 @@ public class UnitController {
 
     @GetMapping
     public List<UnitDto> getAll() {
-        return uService.getUnitDtoList();
+        return uService.getUnitList();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UnitDto> getById(@PathVariable Long id) {
         if (uService.getUnitById(id) == null) return ResponseEntity.notFound().build();
-        UnitDto u = uService.getUnitDtoById(id);
+        UnitDto u = uService.getUnitById(id);
         return (u == null) ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok(u);
     }
@@ -42,6 +42,23 @@ public class UnitController {
     public ResponseEntity<List<EmployeeDto>> getEmployees(@PathVariable Long id) {
         if (uService.getEmployees(id).isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(uService.getEmployees(id));
+    }
+
+    @GetMapping("/{id}/children")
+    public ResponseEntity<List<UnitDto>> getChildren(@PathVariable Long id) {
+        return ResponseEntity.ok(uService.getChildren(id));
+    }
+
+    @GetMapping("/{id}/tree")
+    public ResponseEntity<List<UnitDto>> getFullPath(@PathVariable Long id) {
+        List<UnitDto> parents = new ArrayList<>();
+        parents.add(uService.getUnitById(id));
+        UnitDto unit = uService.getParent(id);
+        while (unit != null) {
+            parents.add(unit);
+            unit = uService.getParent(unit.getId());
+        }
+        return ResponseEntity.ok(parents);
     }
 
     @PostMapping
@@ -54,6 +71,7 @@ public class UnitController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateUnit(@PathVariable Long id, @RequestBody UnitDto d) {
+        uService.updateUnit(uMapper.toEntity(d));
         return ResponseEntity.ok().build();
     }
 

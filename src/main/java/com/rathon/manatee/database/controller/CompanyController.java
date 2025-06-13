@@ -21,26 +21,22 @@ public class CompanyController {
     private final CompanyService cService;
     private final UnitService uService;
     private final CompanyMapperService cMapper;
-    private final UnitMapperService uMapper;
-    private final EmployeeMapperService eMapper;
 
-    public CompanyController(CompanyService cService, UnitService uService, CompanyMapperService cMapper, UnitMapperService uMapper, EmployeeMapperService eMapper) {
+    public CompanyController(CompanyService cService, UnitService uService, CompanyMapperService cMapper) {
         this.cService = cService;
         this.uService = uService;
         this.cMapper = cMapper;
-        this.uMapper = uMapper;
-        this.eMapper = eMapper;
     }
 
     @GetMapping
     public List<CompanyDto> getAll() {
-        return cService.getCompanyDtoList();
+        return cService.getCompanyList();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDto> getById(@PathVariable Long id) {
         if (cService.getCompanyById(id) == null) return ResponseEntity.notFound().build();
-        CompanyDto c = cService.getCompanyDtoById(id);
+        CompanyDto c = cService.getCompanyById(id);
         return (c == null) ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok(c);
     }

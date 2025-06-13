@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ObjectResultMap">
+    <resultMap id="IndustryResultMap" type="com.rathon.manatee.database.model.Industry">
+        <constructor>
+            <idArg name="id" column="industry_id" javaType="java.lang.Long"/>
+            <arg name="name" column="industry_name" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="PositionResultMap" type="com.rathon.manatee.database.model.Position">
+        <constructor>
+            <idArg name="id" column="position_id" javaType="java.lang.Long"/>
+            <arg name="name" column="position_name" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="UnitTypeResultMap" type="com.rathon.manatee.database.model.UnitType">
+        <constructor>
+            <idArg name="id" column="type_id" javaType="java.lang.Long"/>
+            <arg name="name" column="type_name" javaType="java.lang.String"/>
+        </constructor>
+    </resultMap>
+
+    <resultMap id="CompanyDtoMap" type="com.rathon.manatee.database.dto.CompanyDto">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="address" column="address"/>
+        <result property="registrationNumber" column="registration_number"/>
+        <result property="unitCount" column="unit_count"/>
+        <result property="employeeCount" column="employee_count"/>
+        <association property="industry" resultMap="IndustryResultMap"/>
+    </resultMap>
+
+    <resultMap id="EmployeeDtoMap" type="com.rathon.manatee.database.dto.EmployeeDto">
+        <id property="id" column="id"/>
+
+        <result property="firstName" column="first_name"/>
+        <result property="lastName" column="last_name"/>
+        <result property="email" column="email"/>
+        <result property="phone" column="phone"/>
+        <result property="dob" column="dob" javaType="java.util.Date"/>
+
+        <association property="company" javaType="com.rathon.manatee.database.dto.IdNameDto">
+            <constructor>
+                <idArg name="id" column="company_id" javaType="java.lang.Long"/>
+                <arg name="name" column="company_name" javaType="java.lang.String"/>
+            </constructor>
+        </association>
+
+        <association property="unit" javaType="com.rathon.manatee.database.dto.IdNameDto">
+            <constructor>
+                <idArg name="id" column="unit_id" javaType="java.lang.Long"/>
+                <arg name="name" column="unit_name" javaType="java.lang.String"/>
+            </constructor>
+        </association>
+
+        <association property="position" resultMap="PositionResultMap"/>
+    </resultMap>
+
+    <resultMap id="UnitDtoMap" type="com.rathon.manatee.database.dto.UnitDto">
+        <id property="id" column="id"/>
+
+        <result property="name" column="name"/>
+        <result property="code" column="code"/>
+        <result property="employeeCount" column="employee_count"/>
+
+        <association property="company" javaType="com.rathon.manatee.database.dto.IdNameDto">
+            <constructor>
+                <idArg name="id" column="company_id" javaType="java.lang.Long"/>
+                <arg name="name" column="company_name" javaType="java.lang.String"/>
+            </constructor>
+        </association>
+
+        <association property="type" resultMap="UnitTypeResultMap"/>
+
+        <association property="parent" javaType="com.rathon.manatee.database.dto.IdNameDto">
+            <constructor>
+                <idArg name="id" column="parent_id" javaType="java.lang.Long"/>
+                <arg name="name" column="parent_name" javaType="java.lang.String"/>
+            </constructor>
+        </association>
+    </resultMap>
+</mapper>

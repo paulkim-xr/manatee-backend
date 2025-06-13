@@ -5,84 +5,116 @@
 
 <mapper namespace="com.rathon.manatee.database.mapper.CompanyMapper">
 
-    <select id="findById" resultType="com.rathon.manatee.database.model.Company">
-        SELECT * FROM companies WHERE id = #{id}
-    </select>
+<!--    <select id="findById" resultType="com.rathon.manatee.database.model.Company">-->
+<!--        SELECT * FROM companies WHERE id = #{id}-->
+<!--    </select>-->
 
-    <select id="findWithCounts" resultType="com.rathon.manatee.database.dto.CompanyDto">
+<!--    <select id="findAll" resultType="com.rathon.manatee.database.model.Company">-->
+<!--        SELECT * FROM companies-->
+<!--    </select>-->
+
+    <select id="findById" resultMap="ObjectResultMap.CompanyDtoMap">
         SELECT
-            c.id AS id,
-            c.name AS name,
-            c.address AS address,
-            i.name AS industry,
-            c.registration_number AS registrationNumber,
-            COUNT(DISTINCT u.id) AS unitCount,
-            COUNT(e.id) AS employeeCount
+            c.id,
+            c.name,
+            c.address,
+            i.id AS industry_id,
+            i.name AS industry_name,
+            c.registration_number,
+            COALESCE(uc.unit_count, 0) AS unit_count,
+            COALESCE(ec.employee_count, 0) AS employee_count,
+            NULL AS null_col
         FROM companies c
         LEFT JOIN industries i ON i.id = c.industry_id
-        LEFT JOIN units u ON u.company_id = c.id
-        LEFT JOIN employees e ON e.unit_id = u.id
+        LEFT JOIN (
+            SELECT u.company_id, COUNT(*) AS unit_count
+            FROM units u
+            WHERE NOT u.type_id = 1
+            GROUP BY u.company_id
+        ) uc ON uc.company_id = c.id
+        LEFT JOIN (
+            SELECT u.company_id, COUNT(e.id) AS employee_count
+            FROM units u
+            LEFT JOIN employees e ON e.unit_id = u.id
+            GROUP BY u.company_id
+        ) ec ON ec.company_id = c.id
         WHERE c.id = #{id}
-        GROUP BY c.id, c.name, i.name
     </select>
 
-    <select id="findAllWithCounts" resultType="com.rathon.manatee.database.dto.CompanyDto">
+    <select id="findAll" resultMap="ObjectResultMap.CompanyDtoMap">
         SELECT
-            c.id AS id,
-            c.name AS name,
-            c.address AS address,
-            i.name AS industry,
-            c.registration_number AS registrationNumber,
-            COUNT(DISTINCT u.id) AS unitCount,
-            COUNT(e.id) AS employeeCount
+            c.id,
+            c.name,
+            c.address,
+            i.id AS industry_id,
+            i.name AS industry_name,
+            c.registration_number,
+            COALESCE(uc.unit_count, 0) AS unit_count,
+            COALESCE(ec.employee_count, 0) AS employee_count,
+            NULL AS null_col
         FROM companies c
         LEFT JOIN industries i ON i.id = c.industry_id
-        LEFT JOIN units u ON u.company_id = c.id
-        LEFT JOIN employees e ON e.unit_id = u.id
-        GROUP BY c.id, c.name, i.name
+        LEFT JOIN (
+            SELECT u.company_id, COUNT(*) AS unit_count
+            FROM units u
+            WHERE NOT u.type_id = 1
+            GROUP BY u.company_id
+        ) uc ON uc.company_id = c.id
+        LEFT JOIN (
+            SELECT u.company_id, COUNT(e.id) AS employee_count
+            FROM units u
+            LEFT JOIN employees e ON e.unit_id = u.id
+            GROUP BY u.company_id
+        ) ec ON ec.company_id = c.id
         ORDER BY c.id
     </select>
 
-    <select id="findAll" resultType="com.rathon.manatee.database.model.Company">
-        SELECT * FROM companies
-    </select>
-
-    <select id="getUnits" resultType="com.rathon.manatee.database.dto.UnitDto">
+    <select id="getUnits" resultMap="ObjectResultMap.UnitDtoMap">
         SELECT
-            u.id AS id,
-            c.name AS companyName,
-            u.name AS name,
-            t.name AS type,
-            u.code AS code,
-            p.name AS parentName,
-            COUNT(e.id) AS employeeCount
+            u.id,
+            c.id AS company_id,
+            c.name AS company_name,
+            u.name,
+            t.id AS type_id,
+            t.name AS type_name,
+            u.code,
+            p.id AS parent_id,
+            p.name AS parent_name,
+            COALESCE(ec.employee_count, 0) AS employee_count,
+            NULL AS null_col
         FROM units u
         LEFT JOIN companies c ON u.company_id = c.id
         LEFT JOIN unit_types t ON u.type_id = t.id
         LEFT JOIN units p ON u.parent_id = p.id
-        LEFT JOIN employees e ON e.unit_id = u.id
+        LEFT JOIN (
+            SELECT e.unit_id, COUNT(*) AS employee_count
+            FROM employees e
+            GROUP BY e.unit_id
+        ) ec ON ec.unit_id = u.id
         WHERE u.company_id = #{id} AND NOT u.type_id = 1
-        GROUP BY u.id, u.name, c.name, t.name, p.name
         ORDER BY u.id
     </select>
 
-    <select id="getEmployees" resultType="com.rathon.manatee.database.dto.EmployeeDto">
+    <select id="getEmployees" resultMap="ObjectResultMap.EmployeeDtoMap">
         SELECT
-            e.id AS id,
-            c.name AS companyName,
-            u.name AS unitName,
-            e.first_name AS firstName,
-            e.last_name AS lastName,
-            p.name AS position,
-            e.email AS email,
-            e.phone AS phone,
-            e.dob AS dob
+            e.id,
+            c.id AS company_id,
+            c.name AS company_name,
+            u.id AS unit_id,
+            u.name AS unit_name,
+            p.id AS position_id,
+            p.name AS position_name,
+            e.first_name,
+            e.last_name,
+            e.email,
+            e.phone,
+            e.dob,
+            NULL AS null_col
         FROM employees e
         LEFT JOIN units u ON u.id = e.unit_id
         LEFT JOIN positions p ON p.id = e.position_id
         LEFT JOIN companies c ON c.id = u.company_id
         WHERE u.company_id = #{id}
-        GROUP BY e.id, c.name, u.name, p.name
         ORDER BY e.id
     </select>
 

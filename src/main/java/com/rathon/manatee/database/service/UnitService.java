@@ -3,7 +3,6 @@ package com.rathon.manatee.database.service;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.UnitMapper;
-import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.model.Unit;
 import org.springframework.stereotype.Service;
 
@@ -17,23 +16,15 @@ public class UnitService {
         this.mapper = mapper;
     }
 
-    public Unit getUnitById(Long id) {
+    public UnitDto getUnitById(Long id) {
         return mapper.findById(id);
     }
 
-    public UnitDto getUnitDtoById(Long id) {
-        return mapper.findWithCounts(id);
-    }
-
-    public List<Unit> getAllUnits() {
+    public List<UnitDto> getUnitList() {
         return mapper.findAll();
     }
 
-    public List<UnitDto> getUnitDtoList() {
-        return mapper.findAllWithCounts();
-    }
-
-    public Unit getParent(Long id) {
+    public UnitDto getParent(Long id) {
         return mapper.getParent(id);
     }
 

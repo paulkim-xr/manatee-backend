@@ -1,5 +1,6 @@
 package com.rathon.manatee.database.dto;
 
+import com.rathon.manatee.database.model.UnitType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,10 +8,10 @@ import lombok.Setter;
 @Setter
 public class UnitDto {
     private Long id;
-    private String companyName;
+    private IdNameDto company;
     private String name;
-    private String type;
+    private UnitType type;
     private String code;
-    private String parentName;
+    private IdNameDto parent;
     private Integer employeeCount;
 }

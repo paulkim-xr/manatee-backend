@@ -1,9 +1,7 @@
 package com.rathon.manatee.database.controller;
 
-import com.rathon.manatee.database.dto.UnitTypeDto;
 import com.rathon.manatee.database.model.UnitType;
 import com.rathon.manatee.database.service.UnitTypeService;
-import com.rathon.manatee.database.service.mapper.UnitTypeMapperService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,39 +11,33 @@ import java.util.List;
 @RequestMapping("/api/unit-types")
 public class UnitTypeController {
     private final UnitTypeService service;
-    private final UnitTypeMapperService mapper;
 
-    public UnitTypeController(UnitTypeService service, UnitTypeMapperService mapper) {
+    public UnitTypeController(UnitTypeService service) {
         this.service = service;
-        this.mapper = mapper;
     }
 
     @GetMapping
-    public List<UnitTypeDto> getAll() {
-        return service.getAll().stream()
-                .map(mapper::toDto)
-                .toList();
+    public List<UnitType> getAll() {
+        return service.getAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UnitTypeDto> getById(@PathVariable Long id) {
-        UnitType e = service.getUnitTypeById(id);
-        return (e == null) ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(mapper.toDto(e));
+    public ResponseEntity<UnitType> getById(@PathVariable Long id) {
+        UnitType t = service.getUnitTypeById(id);
+        return (t == null) ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(t);
     }
 
     @PostMapping
-    public ResponseEntity<Void> createUnitType(@RequestBody UnitTypeDto d) {
-        UnitType e = mapper.toEntity(d);
-        service.createUnitType(e);
+    public ResponseEntity<Void> createUnitType(@RequestBody UnitType t) {
+        service.createUnitType(t);
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUnitType(@PathVariable Long id, @RequestBody UnitTypeDto d) {
-        UnitType c = mapper.toEntity(d);
-        service.updateUnitType(c);
+    public ResponseEntity<Void> updateUnitType(@PathVariable Long id, @RequestBody UnitType t) {
+        service.updateUnitType(t);
         return ResponseEntity.ok().build();
     }
 
