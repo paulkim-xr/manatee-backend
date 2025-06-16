@@ -1,5 +1,6 @@
 package com.rathon.manatee.database.controller;
 
+import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Unit;
@@ -85,5 +86,10 @@ public class UnitController {
 
         uService.deleteUnit(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UnitDto>> search(@RequestParam String query) {
+        return ResponseEntity.ok(uService.searchAll(query));
     }
 }

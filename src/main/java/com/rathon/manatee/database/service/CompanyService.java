@@ -44,4 +44,8 @@ public class CompanyService {
     public void deleteCompany(Long id) {
         mapper.delete(id);
     }
+
+    public List<CompanyDto> searchAll(String query) {
+        return mapper.searchAll(query);
+    }
 }

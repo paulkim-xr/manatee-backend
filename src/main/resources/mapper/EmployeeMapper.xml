@@ -46,6 +46,7 @@
         LEFT JOIN units u ON u.id = e.unit_id
         LEFT JOIN positions p ON p.id = e.position_id
         LEFT JOIN companies c ON c.id = u.company_id
+        ORDER BY e.id
     </select>
 
     <select id="findByFirstname" resultMap="ObjectResultMap.EmployeeDtoMap">
@@ -117,5 +118,35 @@
     <delete id="delete" parameterType="long">
         DELETE FROM employees WHERE id = #{id}
     </delete>
+
+    <select id="searchAll" resultMap="ObjectResultMap.EmployeeDtoMap">
+        SELECT
+        e.id,
+        c.id AS company_id,
+        c.name AS company_name,
+        u.id AS unit_id,
+        u.name AS unit_name,
+        p.id AS position_id,
+        p.name AS position_name,
+        e.first_name,
+        e.last_name,
+        e.email,
+        e.phone,
+        e.dob,
+        NULL AS null_col
+        FROM employees e
+        LEFT JOIN units u ON u.id = e.unit_id
+        LEFT JOIN companies c ON c.id = u.company_id
+        LEFT JOIN positions p ON p.id = e.position_id
+        WHERE
+        LOWER(e.first_name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(e.last_name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(e.email) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(e.phone) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(u.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(c.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(p.name) LIKE LOWER(CONCAT('%', #{query}, '%'))
+        ORDER BY e.id
+    </select>
 
 </mapper>

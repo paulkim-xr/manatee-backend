@@ -130,4 +130,37 @@
         DELETE FROM companies WHERE id = #{id}
     </delete>
 
+    <select id="searchAll" resultMap="ObjectResultMap.CompanyDtoMap">
+        SELECT
+        c.id,
+        c.name,
+        c.address,
+        i.id AS industry_id,
+        i.name AS industry_name,
+        c.registration_number,
+        COALESCE(uc.unit_count, 0) AS unit_count,
+        COALESCE(ec.employee_count, 0) AS employee_count,
+        NULL AS null_col
+        FROM companies c
+        LEFT JOIN industries i ON i.id = c.industry_id
+        LEFT JOIN (
+        SELECT u.company_id, COUNT(*) AS unit_count
+        FROM units u
+        WHERE NOT u.type_id = 1
+        GROUP BY u.company_id
+        ) uc ON uc.company_id = c.id
+        LEFT JOIN (
+        SELECT u.company_id, COUNT(e.id) AS employee_count
+        FROM units u
+        LEFT JOIN employees e ON e.unit_id = u.id
+        GROUP BY u.company_id
+        ) ec ON ec.company_id = c.id
+        WHERE
+        LOWER(c.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(c.address) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(c.registration_number) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(i.name) LIKE LOWER(CONCAT('%', #{query}, '%'))
+        ORDER BY c.id
+    </select>
+
 </mapper>

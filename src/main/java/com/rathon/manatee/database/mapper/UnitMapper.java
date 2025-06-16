@@ -17,4 +17,5 @@ public interface UnitMapper {
     void insert(Unit unit);
     void update(Unit unit);
     void delete(Long id);
+    List<UnitDto> searchAll(String query);
 }

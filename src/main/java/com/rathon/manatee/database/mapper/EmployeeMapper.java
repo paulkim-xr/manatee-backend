@@ -15,4 +15,5 @@ public interface EmployeeMapper {
     void insert(Employee e);
     void update(Employee e);
     void delete(Long id);
+    List<EmployeeDto> searchAll(String query);
 }

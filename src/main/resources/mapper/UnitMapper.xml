@@ -151,4 +151,34 @@
         DELETE FROM units WHERE id = #{id}
     </delete>
 
+    <select id="searchAll" resultMap="ObjectResultMap.UnitDtoMap">
+        SELECT
+        u.id,
+        c.id AS company_id,
+        c.name AS company_name,
+        u.name,
+        t.id AS type_id,
+        t.name AS type_name,
+        u.code,
+        p.id AS parent_id,
+        p.name AS parent_name,
+        COALESCE(ec.employee_count, 0) AS employee_count,
+        NULL AS null_col
+        FROM units u
+        LEFT JOIN companies c ON u.company_id = c.id
+        LEFT JOIN unit_types t ON u.type_id = t.id
+        LEFT JOIN units p ON u.parent_id = p.id
+        LEFT JOIN (
+        SELECT e.unit_id, COUNT(*) AS employee_count
+        FROM employees e
+        GROUP BY e.unit_id
+        ) ec ON ec.unit_id = u.id
+        WHERE
+        LOWER(u.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(c.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(t.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(u.code) LIKE LOWER(CONCAT('%', #{query}, '%'))
+        ORDER BY u.id
+    </select>
+
 </mapper>

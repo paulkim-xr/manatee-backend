@@ -18,5 +18,5 @@ public interface CompanyMapper {
     void insert(Company company);
     void update(Company company);
     void delete(Long id);
-
+    List<CompanyDto> searchAll(String query);
 }

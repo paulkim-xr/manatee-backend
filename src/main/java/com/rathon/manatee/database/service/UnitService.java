@@ -47,4 +47,8 @@ public class UnitService {
     public void deleteUnit(Long id) {
         mapper.delete(id);
     }
+
+    public List<UnitDto> searchAll(String query) {
+        return mapper.searchAll(query);
+    }
 }

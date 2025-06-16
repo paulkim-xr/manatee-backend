@@ -88,4 +88,9 @@ public class CompanyController {
         cService.deleteCompany(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<CompanyDto>> search(@RequestParam String query) {
+        return ResponseEntity.ok(cService.searchAll(query));
+    }
 }

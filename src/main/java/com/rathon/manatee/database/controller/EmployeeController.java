@@ -1,5 +1,6 @@
 package com.rathon.manatee.database.controller;
 
+import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.service.EmployeeService;
@@ -53,5 +54,10 @@ public class EmployeeController {
     public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
         service.deleteEmployee(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<EmployeeDto>> search(@RequestParam String query) {
+        return ResponseEntity.ok(service.searchAll(query));
     }
 }
