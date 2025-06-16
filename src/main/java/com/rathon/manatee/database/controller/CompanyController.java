@@ -56,6 +56,11 @@ public class CompanyController {
         return cService.getEmployees(id);
     }
 
+    @GetMapping("/{id}/root")
+    public ResponseEntity<UnitDto> getRoot(@PathVariable Long id) {
+        return ResponseEntity.ok(cService.getRoot(id));
+    }
+
     @PostMapping
     public ResponseEntity<Void> createCompany(@RequestBody CompanyDto d) {
         Company c = cMapper.toEntity(d);
@@ -77,6 +82,11 @@ public class CompanyController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/{id}/full-units")
+    public ResponseEntity<List<UnitDto>> fullUnits(@PathVariable Long id) {
+        return ResponseEntity.ok(cService.getUnitsFull(id));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCompany(@PathVariable Long id) {
         List<UnitDto> units = cService.getUnits(id);
@@ -84,7 +94,10 @@ public class CompanyController {
             return ResponseEntity.badRequest().body("Remove all units to delete");
         }
 
-        uService.deleteUnit(units.getFirst().getId());
+        if (units.size() == 1) {
+            uService.deleteUnit(units.getFirst().getId());
+        }
+
         cService.deleteCompany(id);
         return ResponseEntity.ok().build();
     }

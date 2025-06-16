@@ -91,7 +91,33 @@
             FROM employees e
             GROUP BY e.unit_id
         ) ec ON ec.unit_id = u.id
-        WHERE u.company_id = #{id} AND NOT u.type_id = 1
+        WHERE u.company_id = #{id}
+        ORDER BY u.id
+    </select>
+
+    <select id="getRoot" resultMap="ObjectResultMap.UnitDtoMap">
+        SELECT
+        u.id,
+        c.id AS company_id,
+        c.name AS company_name,
+        u.name,
+        t.id AS type_id,
+        t.name AS type_name,
+        u.code,
+        p.id AS parent_id,
+        p.name AS parent_name,
+        COALESCE(ec.employee_count, 0) AS employee_count,
+        NULL AS null_col
+        FROM units u
+        LEFT JOIN companies c ON u.company_id = c.id
+        LEFT JOIN unit_types t ON u.type_id = t.id
+        LEFT JOIN units p ON u.parent_id = p.id
+        LEFT JOIN (
+        SELECT e.unit_id, COUNT(*) AS employee_count
+        FROM employees e
+        GROUP BY e.unit_id
+        ) ec ON ec.unit_id = u.id
+        WHERE u.company_id = #{id} AND u.type_id = 1
         ORDER BY u.id
     </select>
 
@@ -132,22 +158,22 @@
 
     <select id="searchAll" resultMap="ObjectResultMap.CompanyDtoMap">
         SELECT
-        c.id,
-        c.name,
-        c.address,
-        i.id AS industry_id,
-        i.name AS industry_name,
-        c.registration_number,
-        COALESCE(uc.unit_count, 0) AS unit_count,
-        COALESCE(ec.employee_count, 0) AS employee_count,
-        NULL AS null_col
+            c.id,
+            c.name,
+            c.address,
+            i.id AS industry_id,
+            i.name AS industry_name,
+            c.registration_number,
+            COALESCE(uc.unit_count, 0) AS unit_count,
+            COALESCE(ec.employee_count, 0) AS employee_count,
+            NULL AS null_col
         FROM companies c
         LEFT JOIN industries i ON i.id = c.industry_id
         LEFT JOIN (
-        SELECT u.company_id, COUNT(*) AS unit_count
-        FROM units u
-        WHERE NOT u.type_id = 1
-        GROUP BY u.company_id
+            SELECT u.company_id, COUNT(*) AS unit_count
+            FROM units u
+            WHERE NOT u.type_id = 1
+            GROUP BY u.company_id
         ) uc ON uc.company_id = c.id
         LEFT JOIN (
         SELECT u.company_id, COUNT(e.id) AS employee_count
@@ -161,6 +187,32 @@
         LOWER(c.registration_number) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
         LOWER(i.name) LIKE LOWER(CONCAT('%', #{query}, '%'))
         ORDER BY c.id
+    </select>
+
+    <select id="getUnitsFull" resultMap="ObjectResultMap.UnitDtoMap">
+        SELECT
+            u.id,
+            c.id AS company_id,
+            c.name AS company_name,
+            u.name,
+            t.id AS type_id,
+            t.name AS type_name,
+            u.code,
+            p.id AS parent_id,
+            p.name AS parent_name,
+            COALESCE(ec.employee_count, 0) AS employee_count,
+            NULL AS null_col
+        FROM units u
+        LEFT JOIN companies c ON u.company_id = c.id
+        LEFT JOIN unit_types t ON u.type_id = t.id
+        LEFT JOIN units p ON u.parent_id = p.id
+        LEFT JOIN (
+            SELECT e.unit_id, COUNT(*) AS employee_count
+            FROM employees e
+            GROUP BY e.unit_id
+        ) ec ON ec.unit_id = u.id
+        WHERE u.company_id = #{id}
+        ORDER BY u.id
     </select>
 
 </mapper>

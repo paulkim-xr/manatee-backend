@@ -19,4 +19,8 @@ public interface CompanyMapper {
     void update(Company company);
     void delete(Long id);
     List<CompanyDto> searchAll(String query);
+
+    List<UnitDto> getUnitsFull();
+
+    UnitDto getRoot(Long id);
 }

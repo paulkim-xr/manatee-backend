@@ -9,7 +9,7 @@
     </select>
 
     <select id="findAll" resultType="com.rathon.manatee.database.model.UnitType">
-        SELECT * FROM unit_types
+        SELECT * FROM unit_types WHERE NOT id = 1
     </select>
 
     <insert id="insert" parameterType="com.rathon.manatee.database.model.UnitType" useGeneratedKeys="true" keyProperty="id">

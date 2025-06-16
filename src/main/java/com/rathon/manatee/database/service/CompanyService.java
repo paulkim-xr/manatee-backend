@@ -5,6 +5,7 @@ import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.CompanyMapper;
 import com.rathon.manatee.database.model.Company;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,5 +48,13 @@ public class CompanyService {
 
     public List<CompanyDto> searchAll(String query) {
         return mapper.searchAll(query);
+    }
+
+    public List<UnitDto> getUnitsFull(Long id) {
+        return mapper.getUnitsFull();
+    }
+
+    public UnitDto getRoot(Long id) {
+        return mapper.getRoot(id);
     }
 }

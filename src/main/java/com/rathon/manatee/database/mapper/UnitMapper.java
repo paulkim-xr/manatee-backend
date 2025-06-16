@@ -18,4 +18,6 @@ public interface UnitMapper {
     void update(Unit unit);
     void delete(Long id);
     List<UnitDto> searchAll(String query);
+
+    List<UnitDto> findAllFull();
 }

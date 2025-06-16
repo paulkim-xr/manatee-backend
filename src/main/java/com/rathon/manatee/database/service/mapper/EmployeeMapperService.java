@@ -41,7 +41,6 @@ public class EmployeeMapperService {
 
     public Employee toEntity(EmployeeDto d) {
         Employee e = new Employee();
-        e.setId(d.getId());
         e.setFirstName(d.getFirstName());
         e.setLastName(d.getLastName());
 //        e.setUnitId(d.getUnit().getId());

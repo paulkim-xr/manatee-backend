@@ -51,4 +51,8 @@ public class UnitService {
     public List<UnitDto> searchAll(String query) {
         return mapper.searchAll(query);
     }
+
+    public List<UnitDto> getFullUnitList() {
+        return mapper.findAllFull();
+    }
 }

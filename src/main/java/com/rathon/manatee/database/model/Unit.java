@@ -12,4 +12,5 @@ public class Unit {
     private Long typeId;
     private String code;
     private Long parentId;
+    private Long leaderId;
 }

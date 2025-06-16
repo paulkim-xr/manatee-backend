@@ -42,7 +42,6 @@ public class UnitMapperService {
 
     public Unit toEntity(UnitDto d) {
         Unit u = new Unit();
-        u.setId(d.getId());
         u.setCompanyId(d.getCompany().id());
         u.setName(d.getName());
         u.setTypeId(d.getType().id());
