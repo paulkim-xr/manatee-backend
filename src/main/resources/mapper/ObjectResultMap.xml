@@ -66,6 +66,7 @@
 
         <result property="name" column="name"/>
         <result property="code" column="code"/>
+        <result property="childrenCount" column="children_count"/>
         <result property="employeeCount" column="employee_count"/>
 
         <association property="company" javaType="com.rathon.manatee.database.dto.IdNameDto">

@@ -13,5 +13,6 @@ public class UnitDto {
     private UnitType type;
     private String code;
     private IdNameDto parent;
+    private Integer childrenCount;
     private Integer employeeCount;
 }

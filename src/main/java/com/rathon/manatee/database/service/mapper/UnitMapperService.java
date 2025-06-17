@@ -27,6 +27,7 @@ public class UnitMapperService {
         d.setName(u.getName());
         d.setType(unitTypeService.getUnitTypeById(u.getTypeId()));
         d.setCode(u.getCode());
+        d.setChildrenCount(unitService.getChildren(u.getId()).size());
         d.setParent(getAncestor(u.getParentId()));
 
         return d;
