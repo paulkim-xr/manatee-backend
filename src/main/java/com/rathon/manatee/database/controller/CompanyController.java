@@ -61,6 +61,11 @@ public class CompanyController {
         return ResponseEntity.ok(cService.getRoot(id));
     }
 
+    @GetMapping("/{id}/full-units")
+    public ResponseEntity<List<UnitDto>> fullUnits(@PathVariable Long id) {
+        return ResponseEntity.ok(cService.getUnitsFull(id));
+    }
+
     @PostMapping
     public ResponseEntity<Void> createCompany(@RequestBody CompanyDto d) {
         Company c = cMapper.toEntity(d);
@@ -80,11 +85,6 @@ public class CompanyController {
         c.setId(id);
         cService.updateCompany(c); // TODO
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/{id}/full-units")
-    public ResponseEntity<List<UnitDto>> fullUnits(@PathVariable Long id) {
-        return ResponseEntity.ok(cService.getUnitsFull(id));
     }
 
     @DeleteMapping("/{id}")
