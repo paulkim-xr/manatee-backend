@@ -27,15 +27,14 @@ public class UnitController {
     }
 
     @GetMapping
-    public List<UnitDto> getAll(@RequestParam(required = false, defaultValue = "true") Boolean all) {
-//        System.out.println(all);
-//        return (all != null && all) ? uService.getFullUnitList() : uService.getUnitList();
-        return uService.getFullUnitList();
+    public List<UnitDto> getAll(@RequestParam(required = false, defaultValue = "false") Boolean all) {
+        return (all != null && all) ? uService.getFullUnitList() : uService.getUnitList();
+//        return uService.getFullUnitList();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<UnitDto> getById(@PathVariable Long id) {
-//        if (uService.getUnitById(id) == null) return ResponseEntity.notFound().build();
+        if (uService.getUnitById(id) == null) return ResponseEntity.notFound().build();
         UnitDto u = uService.getUnitById(id);
         return (u == null) ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok(u);

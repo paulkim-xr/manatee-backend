@@ -10,6 +10,8 @@ import com.rathon.manatee.database.service.UnitService;
 import com.rathon.manatee.database.service.mapper.CompanyMapperService;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
 import com.rathon.manatee.database.service.mapper.UnitMapperService;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,8 +31,9 @@ public class CompanyController {
     }
 
     @GetMapping
-    public List<CompanyDto> getAll() {
-        return cService.getCompanyList();
+    public List<CompanyDto> getAll(@RequestParam Integer page, @RequestParam Integer size) {
+
+        return cService.getPagedCompanies(page * size, size);
     }
 
     @GetMapping("/{id}")

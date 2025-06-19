@@ -1,5 +1,6 @@
 package com.rathon.manatee.database.mapper;
 
+import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Unit;
@@ -20,4 +21,5 @@ public interface UnitMapper {
     List<UnitDto> searchAll(String query);
 
     List<UnitDto> findAllFull();
+    List<UnitDto> getPagedUnits(int offset, int size);
 }

@@ -8,6 +8,7 @@ import com.rathon.manatee.database.model.Company;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.security.MessageDigest;
 import java.util.List;
 
 @Service
@@ -55,6 +56,11 @@ public class CompanyService {
     }
 
     public UnitDto getRoot(Long id) {
+
         return mapper.getRoot(id);
+    }
+
+    public List<CompanyDto> getPagedCompanies(int offset, int size) {
+        return mapper.getPagedCompanies(offset, size);
     }
 }

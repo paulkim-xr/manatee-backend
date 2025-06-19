@@ -69,6 +69,35 @@
         ORDER BY c.id
     </select>
 
+    <select id="getPagedCompanies" resultMap="ObjectResultMap.CompanyDtoMap">
+        SELECT
+            c.id,
+            c.name,
+            c.address,
+            i.id AS industry_id,
+            i.name AS industry_name,
+            c.registration_number,
+            COALESCE(uc.unit_count, 0) AS unit_count,
+            COALESCE(ec.employee_count, 0) AS employee_count
+        FROM companies c
+        LEFT JOIN industries i ON i.id = c.industry_id
+        LEFT JOIN (
+            SELECT u.company_id, COUNT(*) AS unit_count
+            FROM units u
+            WHERE NOT u.type_id = 1
+            GROUP BY u.company_id
+        ) uc ON uc.company_id = c.id
+        LEFT JOIN (
+            SELECT u.company_id, COUNT(e.id) AS employee_count
+            FROM units u
+            LEFT JOIN employees e ON e.unit_id = u.id
+            GROUP BY u.company_id
+        ) ec ON ec.company_id = c.id
+        ORDER BY c.id
+        LIMIT #{size}
+        OFFSET #{offset}
+    </select>
+
     <select id="getUnits" resultMap="ObjectResultMap.UnitDtoMap">
         SELECT
             u.id,
@@ -80,8 +109,7 @@
             u.code,
             p.id AS parent_id,
             p.name AS parent_name,
-            COALESCE(ec.employee_count, 0) AS employee_count,
-            NULL AS null_col
+            COALESCE(ec.employee_count, 0) AS employee_count
         FROM units u
         LEFT JOIN companies c ON u.company_id = c.id
         LEFT JOIN unit_types t ON u.type_id = t.id
@@ -97,17 +125,16 @@
 
     <select id="getRoot" resultMap="ObjectResultMap.UnitDtoMap">
         SELECT
-        u.id,
-        c.id AS company_id,
-        c.name AS company_name,
-        u.name,
-        t.id AS type_id,
-        t.name AS type_name,
-        u.code,
-        p.id AS parent_id,
-        p.name AS parent_name,
-        COALESCE(ec.employee_count, 0) AS employee_count,
-        NULL AS null_col
+            u.id,
+            c.id AS company_id,
+            c.name AS company_name,
+            u.name,
+            t.id AS type_id,
+            t.name AS type_name,
+            u.code,
+            p.id AS parent_id,
+            p.name AS parent_name,
+            COALESCE(ec.employee_count, 0) AS employee_count
         FROM units u
         LEFT JOIN companies c ON u.company_id = c.id
         LEFT JOIN unit_types t ON u.type_id = t.id
