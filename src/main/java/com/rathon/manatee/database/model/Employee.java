@@ -16,4 +16,7 @@ public class Employee {
     private String email;
     private String phone;
     private Date dob;
+
+    private String username;
+    private String passwordHash;
 }

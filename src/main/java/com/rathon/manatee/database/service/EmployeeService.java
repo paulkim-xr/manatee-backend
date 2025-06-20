@@ -1,7 +1,6 @@
 package com.rathon.manatee.database.service;
 
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
 import com.rathon.manatee.database.model.Employee;
 import org.springframework.stereotype.Service;
@@ -46,5 +45,13 @@ public class EmployeeService {
 
     public List<EmployeeDto> searchAll(String query) {
         return mapper.searchAll(query);
+    }
+
+    public Employee getEmployeeByUsername(String username) {
+        return mapper.findByUsername(username);
+    }
+
+    public List<EmployeeDto> getPagedEmployees(int offset, int size) {
+        return mapper.getPagedEmployees(offset, size);
     }
 }

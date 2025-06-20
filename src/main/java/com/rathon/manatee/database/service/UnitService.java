@@ -55,4 +55,8 @@ public class UnitService {
     public List<UnitDto> getFullUnitList() {
         return mapper.findAllFull();
     }
+
+    public List<UnitDto> getPagedUnits(int offset, int size) {
+        return mapper.getPagedUnits(offset, size);
+    }
 }

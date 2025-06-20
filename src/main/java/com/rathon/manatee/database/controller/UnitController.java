@@ -26,10 +26,15 @@ public class UnitController {
         this.eMapper = eMapper;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<UnitDto> getAll(@RequestParam(required = false, defaultValue = "false") Boolean all) {
         return (all != null && all) ? uService.getFullUnitList() : uService.getUnitList();
 //        return uService.getFullUnitList();
+    }
+
+    @GetMapping
+    public List<UnitDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return uService.getPagedUnits(page * size, size);
     }
 
     @GetMapping("/{id}")

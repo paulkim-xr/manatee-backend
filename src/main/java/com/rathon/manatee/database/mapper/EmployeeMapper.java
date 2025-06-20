@@ -18,4 +18,6 @@ public interface EmployeeMapper {
     void delete(Long id);
     List<EmployeeDto> searchAll(String query);
     List<EmployeeDto> getPagedEmployees(int offset, int size);
+
+    Employee findByUsername(String username);
 }

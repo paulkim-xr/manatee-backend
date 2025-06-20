@@ -95,6 +95,10 @@
         ORDER BY e.id
     </select>
 
+    <select id="findByUsername" resultType="com.rathon.manatee.database.model.Employee">
+        SELECT * FROM employees e WHERE e.username = #{username}
+    </select>
+
     <select id="findByLastname" resultMap="ObjectResultMap.EmployeeDtoMap">
         SELECT
             e.id,

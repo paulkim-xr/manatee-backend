@@ -21,9 +21,14 @@ public class EmployeeController {
         this.mapper = mapper;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<EmployeeDto> getAll() {
         return service.getAllEmployees();
+    }
+
+    @GetMapping
+    public List<EmployeeDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return service.getPagedEmployees(page * size, size);
     }
 
     @GetMapping("/{id}")
