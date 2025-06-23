@@ -20,4 +20,6 @@ public interface EmployeeMapper {
     List<EmployeeDto> getPagedEmployees(int offset, int size);
 
     Employee findByUsername(String username);
+
+    Integer getCount();
 }

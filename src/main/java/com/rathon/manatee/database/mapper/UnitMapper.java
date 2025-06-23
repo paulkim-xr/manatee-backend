@@ -22,4 +22,6 @@ public interface UnitMapper {
 
     List<UnitDto> findAllFull();
     List<UnitDto> getPagedUnits(int offset, int size);
+
+    Integer getCount();
 }

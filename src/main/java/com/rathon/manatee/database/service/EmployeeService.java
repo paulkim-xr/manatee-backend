@@ -54,4 +54,8 @@ public class EmployeeService {
     public List<EmployeeDto> getPagedEmployees(int offset, int size) {
         return mapper.getPagedEmployees(offset, size);
     }
+
+    public Integer getCount() {
+        return mapper.getCount();
+    }
 }

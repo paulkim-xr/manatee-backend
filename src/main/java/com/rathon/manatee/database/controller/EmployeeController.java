@@ -2,6 +2,7 @@ package com.rathon.manatee.database.controller;
 
 import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
+import com.rathon.manatee.database.dto.PagedDtoList;
 import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.service.EmployeeService;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
@@ -27,8 +28,19 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public List<EmployeeDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return service.getPagedEmployees(page * size, size);
+    public PagedDtoList<EmployeeDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
+        List<EmployeeDto> list = service.getPagedEmployees(page * size, size);
+        PagedDtoList<EmployeeDto> pagedList = new PagedDtoList<>();
+        Integer totalCount = service.getCount();
+        pagedList.setContent(list);
+        pagedList.setPage(page);
+        pagedList.setSize(size);
+        pagedList.setTotalCount(totalCount);
+        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
+        pagedList.setFirst(page == 0);
+        pagedList.setLast(page.equals(totalCount - 1));
+
+        return pagedList;
     }
 
     @GetMapping("/{id}")

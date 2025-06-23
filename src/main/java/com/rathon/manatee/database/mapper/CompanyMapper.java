@@ -25,4 +25,6 @@ public interface CompanyMapper {
     UnitDto getRoot(Long id);
 
     List<CompanyDto> getPagedCompanies(int offset, int size);
+
+    Integer getCount();
 }

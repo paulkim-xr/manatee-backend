@@ -63,4 +63,8 @@ public class CompanyService {
     public List<CompanyDto> getPagedCompanies(int offset, int size) {
         return mapper.getPagedCompanies(offset, size);
     }
+
+    public Integer getCount() {
+        return mapper.getCount();
+    }
 }

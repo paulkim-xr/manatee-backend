@@ -269,4 +269,8 @@
         ORDER BY u.id
     </select>
 
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM units
+    </select>
+
 </mapper>

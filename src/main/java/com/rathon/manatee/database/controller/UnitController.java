@@ -2,6 +2,7 @@ package com.rathon.manatee.database.controller;
 
 import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
+import com.rathon.manatee.database.dto.PagedDtoList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.UnitService;
@@ -33,9 +34,19 @@ public class UnitController {
     }
 
     @GetMapping
-    public List<UnitDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return uService.getPagedUnits(page * size, size);
-    }
+    public PagedDtoList<UnitDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
+        List<UnitDto> list = uService.getPagedUnits(page * size, size);
+        PagedDtoList<UnitDto> pagedList = new PagedDtoList<>();
+        Integer totalCount = uService.getCount();
+        pagedList.setContent(list);
+        pagedList.setPage(page);
+        pagedList.setSize(size);
+        pagedList.setTotalCount(totalCount);
+        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
+        pagedList.setFirst(page == 0);
+        pagedList.setLast(page.equals(totalCount - 1));
+
+        return pagedList;
 
     @GetMapping("/{id}")
     public ResponseEntity<UnitDto> getById(@PathVariable Long id) {

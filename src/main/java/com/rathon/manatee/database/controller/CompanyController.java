@@ -2,6 +2,7 @@ package com.rathon.manatee.database.controller;
 
 import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
+import com.rathon.manatee.database.dto.PagedDtoList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Company;
 import com.rathon.manatee.database.model.Unit;
@@ -31,8 +32,19 @@ public class CompanyController {
     }
 
     @GetMapping
-    public List<CompanyDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return cService.getPagedCompanies(page * size, size);
+    public PagedDtoList<CompanyDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
+        List<CompanyDto> list = cService.getPagedCompanies(page * size, size);
+        PagedDtoList<CompanyDto> pagedList = new PagedDtoList<>();
+        Integer totalCount = cService.getCount();
+        pagedList.setContent(list);
+        pagedList.setPage(page);
+        pagedList.setSize(size);
+        pagedList.setTotalCount(totalCount);
+        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
+        pagedList.setFirst(page == 0);
+        pagedList.setLast(page.equals(totalCount - 1));
+
+        return pagedList;
     }
 
     @GetMapping("/all")
@@ -110,7 +122,8 @@ public class CompanyController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<CompanyDto>> search(@RequestParam String query) {
+    public ResponseEntity<List<CompanyDto>> search(@RequestParam String field, @RequestParam String query) {
+
         return ResponseEntity.ok(cService.searchAll(query));
     }
 }

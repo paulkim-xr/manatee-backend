@@ -59,4 +59,8 @@ public class UnitService {
     public List<UnitDto> getPagedUnits(int offset, int size) {
         return mapper.getPagedUnits(offset, size);
     }
+
+    public Integer getCount() {
+        return mapper.getCount();
+    }
 }

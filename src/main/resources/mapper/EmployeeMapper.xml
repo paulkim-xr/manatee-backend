@@ -176,4 +176,8 @@
         ORDER BY e.id
     </select>
 
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM employees
+    </select>
+
 </mapper>
