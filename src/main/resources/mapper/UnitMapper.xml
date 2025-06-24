@@ -270,7 +270,7 @@
     </select>
 
     <select id="getCount" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM units
+        SELECT COUNT(*) FROM units WHERE NOT type_id = 1
     </select>
 
 </mapper>

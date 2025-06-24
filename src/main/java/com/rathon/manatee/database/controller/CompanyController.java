@@ -16,6 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,23 +34,17 @@ public class CompanyController {
 
     @GetMapping
     public PagedDtoList<CompanyDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
-        List<CompanyDto> list = cService.getPagedCompanies(page * size, size);
-        PagedDtoList<CompanyDto> pagedList = new PagedDtoList<>();
-        Integer totalCount = cService.getCount();
-        pagedList.setContent(list);
-        pagedList.setPage(page);
-        pagedList.setSize(size);
-        pagedList.setTotalCount(totalCount);
-        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
-        pagedList.setFirst(page == 0);
-        pagedList.setLast(page.equals(totalCount - 1));
-
-        return pagedList;
+        return cService.getPagedCompanies(page * size, size);
     }
 
     @GetMapping("/all")
     public List<CompanyDto> getAll() {
         return cService.getCompanyList();
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCount() {
+        return ResponseEntity.ok(cService.getCount());
     }
 
     @GetMapping("/{id}")
@@ -122,8 +117,23 @@ public class CompanyController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<CompanyDto>> search(@RequestParam String field, @RequestParam String query) {
+    public ResponseEntity<PagedDtoList<CompanyDto>> search(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String industry,
+            @RequestParam(required = false) String registrationNumber,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(required = false) String sort
+    ) {
+        PagedDtoList<CompanyDto> pagedList = null;
+        if (query != null) {
+            pagedList = cService.searchAll(query, page, size);
+        } else {
+            pagedList = cService.search(name, address, industry, registrationNumber, page, size, sort);
+        }
 
-        return ResponseEntity.ok(cService.searchAll(query));
+        return ResponseEntity.ok(pagedList);
     }
 }

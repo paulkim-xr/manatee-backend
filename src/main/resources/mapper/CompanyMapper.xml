@@ -246,4 +246,57 @@
         SELECT COUNT(*) FROM companies
     </select>
 
+    <select id="search" resultMap="ObjectResultMap.CompanyDtoMap">
+        SELECT
+            c.id,
+            c.name,
+            c.address,
+            i.id AS industry_id,
+            i.name AS industry_name,
+            c.registration_number,
+            COALESCE(uc.unit_count, 0) AS unit_count,
+            COALESCE(ec.employee_count, 0) AS employee_count
+        FROM companies c
+        LEFT JOIN (
+            SELECT u.company_id, COUNT(*) AS unit_count
+            FROM units u
+            WHERE NOT u.type_id = 1
+            GROUP BY u.company_id
+        ) uc ON uc.company_id = c.id
+        LEFT JOIN (
+            SELECT u.company_id, COUNT(e.id) AS employee_count
+            FROM units u
+            LEFT JOIN employees e ON e.unit_id = u.id
+            GROUP BY u.company_id
+        ) ec ON ec.company_id = c.id
+        LEFT JOIN industries i ON i.id = c.industry_id
+        <where>
+            <if test="name != null">
+                AND c.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="address != null">
+                AND c.address ILIKE CONCAT('%', #{address}, '%')
+            </if>
+            <if test="industry != null">
+                AND i.name ILIKE CONCAT('%', #{industry}, '%')
+            </if>
+            <if test="registrationNumber != null">
+                AND c.registration_number ILIKE CONCAT('%', #{registrationNumber}, '%')
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">c.id</when>
+            <when test="sortColumn == 'name'">c.name</when>
+            <when test="sortColumn == 'address'">c.address</when>
+            <when test="sortColumn == 'industry'">i.name</when>
+            <when test="sortColumn == 'registrationNumber'">c.registrationNumber</when>
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
 </mapper>

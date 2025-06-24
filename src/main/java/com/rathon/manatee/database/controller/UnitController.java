@@ -27,14 +27,8 @@ public class UnitController {
         this.eMapper = eMapper;
     }
 
-    @GetMapping("/all")
-    public List<UnitDto> getAll(@RequestParam(required = false, defaultValue = "false") Boolean all) {
-        return (all != null && all) ? uService.getFullUnitList() : uService.getUnitList();
-//        return uService.getFullUnitList();
-    }
-
     @GetMapping
-    public PagedDtoList<UnitDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
+    public PagedDtoList<UnitDto> getPaged(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
         List<UnitDto> list = uService.getPagedUnits(page * size, size);
         PagedDtoList<UnitDto> pagedList = new PagedDtoList<>();
         Integer totalCount = uService.getCount();
@@ -44,9 +38,20 @@ public class UnitController {
         pagedList.setTotalCount(totalCount);
         pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
         pagedList.setFirst(page == 0);
-        pagedList.setLast(page.equals(totalCount - 1));
+        pagedList.setLast(page.equals(pagedList.getTotalPages() - 1));
 
         return pagedList;
+    }
+
+    @GetMapping("/all")
+    public List<UnitDto> getAll(@RequestParam(required = false, defaultValue = "false") Boolean all) {
+        return (all != null && all) ? uService.getFullUnitList() : uService.getUnitList();
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCount() {
+        return ResponseEntity.ok(uService.getCount());
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UnitDto> getById(@PathVariable Long id) {
@@ -106,7 +111,34 @@ public class UnitController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<UnitDto>> search(@RequestParam String query) {
-        return ResponseEntity.ok(uService.searchAll(query));
+    public ResponseEntity<PagedDtoList<UnitDto>> search(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String industry,
+            @RequestParam(required = false) String registrationNumber,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(required = false) String sort
+    ) {
+        List<UnitDto> list;
+
+        if (query != null) {
+            list = uService.searchAll(query);
+        } else {
+            list = new ArrayList<>();
+        }
+
+        PagedDtoList<UnitDto> pagedList = new PagedDtoList<>();
+        Integer totalCount = uService.getCount();
+        pagedList.setContent(list);
+        pagedList.setPage(page);
+        pagedList.setSize(size);
+        pagedList.setTotalCount(totalCount);
+        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
+        pagedList.setFirst(page == 0);
+        pagedList.setLast(page.equals(pagedList.getTotalPages() - 1));
+
+        return ResponseEntity.ok(pagedList);
     }
 }

@@ -11,6 +11,10 @@
     <select id="findAll" resultType="com.rathon.manatee.database.model.Industry">
         SELECT * FROM industries
     </select>
+
+    <select id="search" resultType="com.rathon.manatee.database.model.Industry">
+        SELECT * FROM industries WHERE name ILIKE CONCAT('%', #{query}, '%')
+    </select>
     
     <insert id="insert" parameterType="com.rathon.manatee.database.model.Industry" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO industries (name) VALUES (#{name})

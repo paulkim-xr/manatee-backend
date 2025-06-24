@@ -12,4 +12,6 @@ public interface IndustryMapper {
     void insert(Industry industry);
     void update(Industry industry);
     void delete(Long id);
+
+    List<Industry> search(String query);
 }

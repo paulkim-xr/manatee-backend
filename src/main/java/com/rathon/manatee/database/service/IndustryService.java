@@ -33,4 +33,8 @@ public class IndustryService {
     public void deleteIndustry(Long id) {
         mapper.delete(id);
     }
+
+    public List<Industry> search(String query) {
+        return mapper.search(query);
+    }
 }

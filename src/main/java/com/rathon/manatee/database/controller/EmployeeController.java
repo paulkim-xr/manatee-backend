@@ -22,11 +22,6 @@ public class EmployeeController {
         this.mapper = mapper;
     }
 
-    @GetMapping("/all")
-    public List<EmployeeDto> getAll() {
-        return service.getAllEmployees();
-    }
-
     @GetMapping
     public PagedDtoList<EmployeeDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
         List<EmployeeDto> list = service.getPagedEmployees(page * size, size);
@@ -38,9 +33,19 @@ public class EmployeeController {
         pagedList.setTotalCount(totalCount);
         pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
         pagedList.setFirst(page == 0);
-        pagedList.setLast(page.equals(totalCount - 1));
+        pagedList.setLast(page.equals(pagedList.getTotalPages() - 1));
 
         return pagedList;
+    }
+
+    @GetMapping("/all")
+    public List<EmployeeDto> getAll() {
+        return service.getAllEmployees();
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCount() {
+        return ResponseEntity.ok(service.getCount());
     }
 
     @GetMapping("/{id}")
