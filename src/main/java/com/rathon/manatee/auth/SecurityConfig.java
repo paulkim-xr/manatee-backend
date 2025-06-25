@@ -1,4 +1,4 @@
-package com.rathon.manatee.database.config;
+package com.rathon.manatee.auth;
 
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;

@@ -1,17 +1,7 @@
 package com.rathon.manatee.database.controller;
 
-import com.rathon.manatee.database.dto.LoginDto;
-import com.rathon.manatee.database.model.Employee;
-import com.rathon.manatee.database.service.EmployeeService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 @RestController
 @RequestMapping("/test")

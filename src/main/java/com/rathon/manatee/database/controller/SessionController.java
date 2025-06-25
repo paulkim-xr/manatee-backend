@@ -1,6 +1,6 @@
 package com.rathon.manatee.database.controller;
 
-import com.rathon.manatee.database.dto.LoginDto;
+import com.rathon.manatee.auth.LoginDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -22,10 +22,11 @@ public class SessionController {
         return ResponseEntity.ok(Map.of("user", auth.getName(), "roles", auth.getAuthorities()));
     }
 
-    @GetMapping("/check")
+    @GetMapping("/me")
     public ResponseEntity<?> check(Authentication authentication) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(Map.of("user", auth.getName(), "roles", auth.getAuthorities()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
     }

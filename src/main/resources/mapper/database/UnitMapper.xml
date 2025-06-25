@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rathon.manatee.database.mapper.UnitMapper">
+
+    <select id="findById" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSql" />
+        WHERE u.id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSql" />
+        WHERE NOT u.type_id = 1
+        ORDER BY u.id
+    </select>
+
+    <select id="getPagedUnits" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSql" />
+        WHERE NOT u.type_id = 1
+        ORDER BY u.id
+        LIMIT #{size}
+        OFFSET #{offset}
+    </select>
+
+    <select id="findAllFull" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSql" />
+        ORDER BY u.id
+    </select>
+
+    <select id="getParent" resultMap="ObjectResultMap.UnitDtoMap">
+        SELECT
+            u.id,
+            c.id AS company_id,
+            c.name AS company_name,
+            u.name,
+            t.id AS type_id,
+            t.name AS type_name,
+            u.code,
+            p.id AS parent_id,
+            p.name AS parent_name,
+            COALESCE(ch.children_count, 0) AS children_count,
+            COALESCE(ec.employee_count, 0) AS employee_count
+        FROM units child
+        LEFT JOIN units u ON u.id = child.parent_id
+        LEFT JOIN companies c ON u.company_id = c.id
+        LEFT JOIN unit_types t ON u.type_id = t.id
+        LEFT JOIN units p ON u.parent_id = p.id
+        LEFT JOIN (
+            SELECT ch.parent_id, COUNT(*) AS children_count
+            FROM units ch
+            GROUP BY ch.parent_id
+        ) ch ON ch.parent_id = u.id
+        LEFT JOIN (
+            SELECT e.unit_id, COUNT(*) AS employee_count
+            FROM employees e
+            GROUP BY e.unit_id
+        ) ec ON ec.unit_id = u.id
+        WHERE child.id = #{id} AND child.parent_id IS NOT NULL
+    </select>
+
+    <select id="getChildren" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSql" />
+        WHERE u.parent_id = #{id}
+        ORDER BY u.id
+    </select>
+
+    <select id="getEmployees" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSql" />
+        WHERE e.unit_id = #{id}
+        ORDER BY e.id
+    </select>
+
+    <insert id="insert" parameterType="Unit" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO units (company_id, name, type_id, code, parent_id, leader_id) VALUES (#{companyId}, #{name}, #{typeId}, #{code}, #{parentId}, #{leaderId})
+    </insert>
+
+    <update id="update" parameterType="Unit">
+        UPDATE units SET company_id = #{companyId}, name = #{name}, type_id = #{typeId}, code = #{code}, parent_id = #{parentId}, leader_id = #{leaderId} WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM units WHERE id = #{id}
+    </delete>
+
+    <select id="searchAll" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSql" />
+        WHERE
+        LOWER(u.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(c.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(t.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(u.code) LIKE LOWER(CONCAT('%', #{query}, '%'))
+        ORDER BY u.id
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM units WHERE NOT type_id = 1
+    </select>
+
+</mapper>

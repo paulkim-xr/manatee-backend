@@ -4,23 +4,23 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.rathon.manatee.database.mapper.IndustryMapper">
-    <select id="findById" resultType="com.rathon.manatee.database.model.Industry">
+    <select id="findById" resultType="Industry">
         SELECT * FROM industries WHERE id = #{id}
     </select>
 
-    <select id="findAll" resultType="com.rathon.manatee.database.model.Industry">
+    <select id="findAll" resultType="Industry">
         SELECT * FROM industries
     </select>
 
-    <select id="search" resultType="com.rathon.manatee.database.model.Industry">
+    <select id="search" resultType="Industry">
         SELECT * FROM industries WHERE name ILIKE CONCAT('%', #{query}, '%')
     </select>
     
-    <insert id="insert" parameterType="com.rathon.manatee.database.model.Industry" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="Industry" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO industries (name) VALUES (#{name})
     </insert>
 
-    <update id="update" parameterType="com.rathon.manatee.database.model.Industry">
+    <update id="update" parameterType="Industry">
         UPDATE industries SET name = #{name} WHERE id = #{id}
     </update>
 

@@ -4,28 +4,97 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="ObjectResultMap">
-    <resultMap id="IndustryResultMap" type="com.rathon.manatee.database.model.Industry">
+    <sql id="CompanyDtoSql">
+        SELECT
+            c.id,
+            c.name,
+            c.address,
+            i.id AS industry_id,
+            i.name AS industry_name,
+            c.registration_number,
+            COALESCE(uc.unit_count, 0) AS unit_count,
+            COALESCE(ec.employee_count, 0) AS employee_count
+        FROM companies c
+        LEFT JOIN industries i ON i.id = c.industry_id
+        LEFT JOIN (
+            SELECT u.company_id, COUNT(*) AS unit_count
+            FROM units u
+            WHERE NOT u.type_id = 1
+            GROUP BY u.company_id
+        ) uc ON uc.company_id = c.id
+        LEFT JOIN (
+            SELECT u.company_id, COUNT(e.id) AS employee_count
+            FROM units u
+            LEFT JOIN employees e ON e.unit_id = u.id
+            GROUP BY u.company_id
+        ) ec ON ec.company_id = c.id
+    </sql>
+
+    <sql id="EmployeeDtoSql">
+        SELECT
+            e.id,
+            c.id AS company_id,
+            c.name AS company_name,
+            u.id AS unit_id,
+            u.name AS unit_name,
+            p.id AS position_id,
+            p.name AS position_name,
+            e.first_name,
+            e.last_name,
+            e.email,
+            e.phone,
+            e.dob
+        FROM employees e
+        LEFT JOIN units u ON u.id = e.unit_id
+        LEFT JOIN positions p ON p.id = e.position_id
+        LEFT JOIN companies c ON c.id = u.company_id
+    </sql>
+
+    <sql id="UnitDtoSql">
+        SELECT
+            u.id,
+            c.id AS company_id,
+            c.name AS company_name,
+            u.name,
+            t.id AS type_id,
+            t.name AS type_name,
+            u.code,
+            p.id AS parent_id,
+            p.name AS parent_name,
+            COALESCE(ec.employee_count, 0) AS employee_count
+        FROM units u
+        LEFT JOIN companies c ON u.company_id = c.id
+        LEFT JOIN unit_types t ON u.type_id = t.id
+        LEFT JOIN units p ON u.parent_id = p.id
+        LEFT JOIN (
+            SELECT e.unit_id, COUNT(*) AS employee_count
+            FROM employees e
+            GROUP BY e.unit_id
+        ) ec ON ec.unit_id = u.id
+    </sql>
+
+    <resultMap id="IndustryResultMap" type="Industry">
         <constructor>
             <idArg name="id" column="industry_id" javaType="java.lang.Long"/>
             <arg name="name" column="industry_name" javaType="java.lang.String"/>
         </constructor>
     </resultMap>
 
-    <resultMap id="PositionResultMap" type="com.rathon.manatee.database.model.Position">
+    <resultMap id="PositionResultMap" type="Position">
         <constructor>
             <idArg name="id" column="position_id" javaType="java.lang.Long"/>
             <arg name="name" column="position_name" javaType="java.lang.String"/>
         </constructor>
     </resultMap>
 
-    <resultMap id="UnitTypeResultMap" type="com.rathon.manatee.database.model.UnitType">
+    <resultMap id="UnitTypeResultMap" type="UnitType">
         <constructor>
             <idArg name="id" column="type_id" javaType="java.lang.Long"/>
             <arg name="name" column="type_name" javaType="java.lang.String"/>
         </constructor>
     </resultMap>
 
-    <resultMap id="CompanyDtoMap" type="com.rathon.manatee.database.dto.CompanyDto">
+    <resultMap id="CompanyDtoMap" type="CompanyDto">
         <id property="id" column="id"/>
         <result property="name" column="name"/>
         <result property="address" column="address"/>
@@ -35,7 +104,7 @@
         <association property="industry" resultMap="IndustryResultMap"/>
     </resultMap>
 
-    <resultMap id="EmployeeDtoMap" type="com.rathon.manatee.database.dto.EmployeeDto">
+    <resultMap id="EmployeeDtoMap" type="EmployeeDto">
         <id property="id" column="id"/>
 
         <result property="firstName" column="first_name"/>
@@ -44,14 +113,14 @@
         <result property="phone" column="phone"/>
         <result property="dob" column="dob" javaType="java.util.Date"/>
 
-        <association property="company" javaType="com.rathon.manatee.database.dto.IdNameDto">
+        <association property="company" javaType="IdNameDto">
             <constructor>
                 <idArg name="id" column="company_id" javaType="java.lang.Long"/>
                 <arg name="name" column="company_name" javaType="java.lang.String"/>
             </constructor>
         </association>
 
-        <association property="unit" javaType="com.rathon.manatee.database.dto.IdNameDto">
+        <association property="unit" javaType="IdNameDto">
             <constructor>
                 <idArg name="id" column="unit_id" javaType="java.lang.Long"/>
                 <arg name="name" column="unit_name" javaType="java.lang.String"/>
@@ -61,7 +130,7 @@
         <association property="position" resultMap="PositionResultMap"/>
     </resultMap>
 
-    <resultMap id="UnitDtoMap" type="com.rathon.manatee.database.dto.UnitDto">
+    <resultMap id="UnitDtoMap" type="UnitDto">
         <id property="id" column="id"/>
 
         <result property="name" column="name"/>
@@ -69,7 +138,7 @@
         <result property="childrenCount" column="children_count"/>
         <result property="employeeCount" column="employee_count"/>
 
-        <association property="company" javaType="com.rathon.manatee.database.dto.IdNameDto">
+        <association property="company" javaType="IdNameDto">
             <constructor>
                 <idArg name="id" column="company_id" javaType="java.lang.Long"/>
                 <arg name="name" column="company_name" javaType="java.lang.String"/>
@@ -78,7 +147,7 @@
 
         <association property="type" resultMap="UnitTypeResultMap"/>
 
-        <association property="parent" javaType="com.rathon.manatee.database.dto.IdNameDto">
+        <association property="parent" javaType="IdNameDto">
             <constructor>
                 <idArg name="id" column="parent_id" javaType="java.lang.Long"/>
                 <arg name="name" column="parent_name" javaType="java.lang.String"/>

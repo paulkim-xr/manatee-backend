@@ -4,19 +4,19 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.rathon.manatee.database.mapper.PositionMapper">
-    <select id="findById" resultType="com.rathon.manatee.database.model.Position">
+    <select id="findById" resultType="Position">
         SELECT * FROM positions WHERE id = #{id}
     </select>
 
-    <select id="findAll" resultType="com.rathon.manatee.database.model.Position">
+    <select id="findAll" resultType="Position">
         SELECT * FROM positions
     </select>
 
-    <insert id="insert" parameterType="com.rathon.manatee.database.model.Position" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="Position" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO positions (name) VALUES (#{name})
     </insert>
 
-    <update id="update" parameterType="com.rathon.manatee.database.model.Position">
+    <update id="update" parameterType="Position">
         UPDATE positions SET name = #{name} WHERE id = #{id}
     </update>
 

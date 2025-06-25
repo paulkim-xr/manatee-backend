@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rathon.manatee.database.mapper.EmployeeMapper">
+
+    <select id="findById" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSql" />
+        WHERE e.id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSql" />
+        ORDER BY e.id
+    </select>
+
+    <select id="getPagedEmployees" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSql" />
+        ORDER BY e.id
+        LIMIT #{size}
+        OFFSET #{offset}
+    </select>
+
+    <select id="findByFirstname" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSql" />
+        WHERE e.first_name = #{firstName}
+        ORDER BY e.id
+    </select>
+
+    <select id="findByUsername" resultType="Employee">
+        SELECT * FROM employees e WHERE e.username = #{username}
+    </select>
+
+    <select id="findByLastname" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSql" />
+        WHERE e.last_name = #{lastName}
+        ORDER BY e.id
+    </select>
+
+    <insert id="insert" parameterType="Employee" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO employees (
+            first_name, last_name, unit_id, position_id, email, phone, dob
+        ) VALUES (
+            #{firstName}, #{lastName}, #{unitId}, #{positionId}, #{email}, #{phone}, #{dob}
+        )
+    </insert>
+
+    <update id="update" parameterType="Employee">
+        UPDATE employees SET
+            first_name = #{firstName},
+            last_name = #{lastName},
+            unit_id = #{unitId},
+            position_id = #{positionId},
+            email = #{email},
+            phone = #{phone},
+            dob = #{dob}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM employees WHERE id = #{id}
+    </delete>
+
+    <select id="searchAll" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSql" />
+        WHERE
+        LOWER(e.first_name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(e.last_name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(e.email) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(e.phone) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(u.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(c.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(p.name) LIKE LOWER(CONCAT('%', #{query}, '%'))
+        ORDER BY e.id
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM employees
+    </select>
+
+</mapper>

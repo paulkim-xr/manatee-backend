@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rathon.manatee.database.mapper.CompanyMapper">
+
+    <select id="findById" resultMap="ObjectResultMap.CompanyDtoMap">
+        <include refid="ObjectResultMap.CompanyDtoSql" />
+        WHERE c.id = #{id}
+    </select>
+
+    <select id="findAll" resultMap="ObjectResultMap.CompanyDtoMap">
+        <include refid="ObjectResultMap.CompanyDtoSql" />
+        ORDER BY c.id
+        <if test="size != null and offset != null">
+            LIMIT #{size}
+            OFFSET #{offset}
+        </if>
+    </select>
+
+    <select id="getPagedCompanies" resultMap="ObjectResultMap.CompanyDtoMap">
+        <include refid="ObjectResultMap.CompanyDtoSql" />
+        ORDER BY c.id
+        LIMIT #{size}
+        OFFSET #{offset}
+    </select>
+
+    <select id="getUnits" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSql" />
+        WHERE u.company_id = #{id}
+        ORDER BY u.id
+    </select>
+
+    <select id="getRoot" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSql" />
+        WHERE u.company_id = #{id} AND u.type_id = 1
+        ORDER BY u.id
+    </select>
+
+    <select id="getEmployees" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSql" />
+        WHERE u.company_id = #{id}
+        ORDER BY e.id
+    </select>
+
+    <insert id="insert" parameterType="Company" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO companies (name, address, industry_id, registration_number) VALUES (#{name}, #{address}, #{industryId}, #{registrationNumber})
+    </insert>
+
+    <update id="update" parameterType="Company">
+        UPDATE companies SET name = #{name}, address = #{address}, industry_id = #{industryId}, registration_number = #{registrationNumber} WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM companies WHERE id = #{id}
+    </delete>
+
+    <select id="searchAll" resultMap="ObjectResultMap.CompanyDtoMap">
+        <include refid="ObjectResultMap.CompanyDtoSql" />
+        WHERE
+        LOWER(c.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(c.address) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(c.registration_number) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
+        LOWER(i.name) LIKE LOWER(CONCAT('%', #{query}, '%'))
+        ORDER BY c.id
+    </select>
+
+    <select id="getUnitsFull" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSql" />
+        WHERE u.company_id = #{id}
+        ORDER BY u.id
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM companies
+    </select>
+
+    <select id="search" resultMap="ObjectResultMap.CompanyDtoMap">
+        <include refid="ObjectResultMap.CompanyDtoSql" />
+        <where>
+            <if test="name != null">
+                AND c.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="address != null">
+                AND c.address ILIKE CONCAT('%', #{address}, '%')
+            </if>
+            <if test="industry != null">
+                AND i.name ILIKE CONCAT('%', #{industry}, '%')
+            </if>
+            <if test="registrationNumber != null">
+                AND c.registration_number ILIKE CONCAT('%', #{registrationNumber}, '%')
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">c.id</when>
+            <when test="sortColumn == 'name'">c.name</when>
+            <when test="sortColumn == 'address'">c.address</when>
+            <when test="sortColumn == 'industry'">i.name</when>
+            <when test="sortColumn == 'registrationNumber'">c.registrationNumber</when>
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+</mapper>
