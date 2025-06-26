@@ -22,4 +22,19 @@ public interface EmployeeMapper {
     Employee findByUsername(String username);
 
     Integer getCount();
+
+    List<EmployeeDto> search(
+            String company,
+            String unit,
+            String lastName,
+            String firstName,
+            String name,
+            String position,
+            String email,
+            String phone,
+            String dob,
+            String sortColumn,
+            String sortDirection,
+            Integer offset,
+            Integer size);
 }

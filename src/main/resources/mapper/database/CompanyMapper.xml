@@ -4,6 +4,22 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.rathon.manatee.database.mapper.CompanyMapper">
+    <sql id="sort">
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">c.id</when>
+            <when test="sortColumn == 'name'">c.name</when>
+            <when test="sortColumn == 'address'">c.address</when>
+            <when test="sortColumn == 'industry'">i.name</when>
+            <when test="sortColumn == 'registrationNumber'">c.registration_number</when>
+            <when test="sortColumn == 'unitCount'">unit_count</when>
+            <when test="sortColumn == 'employeeCount'">employee_count</when>
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+    </sql>
 
     <select id="findById" resultMap="ObjectResultMap.CompanyDtoMap">
         <include refid="ObjectResultMap.CompanyDtoSql" />
@@ -21,7 +37,7 @@
 
     <select id="getPagedCompanies" resultMap="ObjectResultMap.CompanyDtoMap">
         <include refid="ObjectResultMap.CompanyDtoSql" />
-        ORDER BY c.id
+        <include refid="sort" />
         LIMIT #{size}
         OFFSET #{offset}
     </select>
@@ -79,31 +95,21 @@
     <select id="search" resultMap="ObjectResultMap.CompanyDtoMap">
         <include refid="ObjectResultMap.CompanyDtoSql" />
         <where>
+            FALSE
             <if test="name != null">
-                AND c.name ILIKE CONCAT('%', #{name}, '%')
+                OR c.name ILIKE CONCAT('%', #{name}, '%')
             </if>
             <if test="address != null">
-                AND c.address ILIKE CONCAT('%', #{address}, '%')
+                OR c.address ILIKE CONCAT('%', #{address}, '%')
             </if>
             <if test="industry != null">
-                AND i.name ILIKE CONCAT('%', #{industry}, '%')
+                OR i.name ILIKE CONCAT('%', #{industry}, '%')
             </if>
             <if test="registrationNumber != null">
-                AND c.registration_number ILIKE CONCAT('%', #{registrationNumber}, '%')
+                OR c.registration_number ILIKE CONCAT('%', #{registrationNumber}, '%')
             </if>
         </where>
-        ORDER BY
-        <choose>
-            <when test="sortColumn == 'id'">c.id</when>
-            <when test="sortColumn == 'name'">c.name</when>
-            <when test="sortColumn == 'address'">c.address</when>
-            <when test="sortColumn == 'industry'">i.name</when>
-            <when test="sortColumn == 'registrationNumber'">c.registrationNumber</when>
-        </choose>
-        <choose>
-            <when test="sortDirection == 'desc'">DESC</when>
-            <otherwise>ASC</otherwise>
-        </choose>
+        <include refid="sort" />
         LIMIT #{size} OFFSET #{offset}
     </select>
 

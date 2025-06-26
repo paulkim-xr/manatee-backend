@@ -33,8 +33,8 @@ public class CompanyController {
     }
 
     @GetMapping
-    public PagedDtoList<CompanyDto> getPaged(@RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
-        return cService.getPagedCompanies(page * size, size);
+    public PagedDtoList<CompanyDto> getPaged(@RequestParam(required = false) String sort, @RequestParam(required = false, defaultValue = "0") Integer page, @RequestParam(required = false, defaultValue = "10") Integer size) {
+        return cService.getPagedCompanies(page * size, size, sort);
     }
 
     @GetMapping("/all")
@@ -129,7 +129,7 @@ public class CompanyController {
     ) {
         PagedDtoList<CompanyDto> pagedList = null;
         if (query != null) {
-            pagedList = cService.searchAll(query, page, size);
+            pagedList = cService.search(query, page, size, sort);
         } else {
             pagedList = cService.search(name, address, industry, registrationNumber, page, size, sort);
         }

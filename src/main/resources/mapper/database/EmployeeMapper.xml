@@ -62,6 +62,54 @@
         DELETE FROM employees WHERE id = #{id}
     </delete>
 
+    <select id="search" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSql" />
+        <where>
+            FALSE
+            <if test="company != null">
+                OR c.name ILIKE CONCAT('%', #{company}, '%')
+            </if>
+            <if test="unit != null">
+                OR u.name ILIKE CONCAT('%', #{unit}, '%')
+            </if>
+            <if test="lastName != null">
+                OR e.last_name ILIKE CONCAT('%', #{lastName}, '%')
+            </if>
+            <if test="firstName != null">
+                OR e.first_name ILIKE CONCAT('%', #{firstName}, '%')
+            </if>
+            <if test="position != null">
+                OR p.name ILIKE CONCAT('%', #{position}, '%')
+            </if>
+            <if test="email != null">
+                OR e.email ILIKE CONCAT('%', #{email}, '%')
+            </if>
+            <if test="phone != null">
+                OR e.phone ILIKE CONCAT('%', #{phone}, '%')
+            </if>
+            <if test="dob != null">
+                OR e.dob = #{dob}
+            </if>
+        </where>
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">e.id</when>
+            <when test="sortColumn == 'company'">c.name</when>
+            <when test="sortColumn == 'unit'">u.name</when>
+            <when test="sortColumn == 'firstName'">e.firstName</when>
+            <when test="sortColumn == 'lastName'">e.lastName</when>
+            <when test="sortColumn == 'position'">p.name</when>
+            <when test="sortColumn == 'email'">e.email</when>
+            <when test="sortColumn == 'phone'">e.phone</when>
+            <when test="sortColumn == 'dob'">e.dob</when>
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
     <select id="searchAll" resultMap="ObjectResultMap.EmployeeDtoMap">
         <include refid="ObjectResultMap.EmployeeDtoSql" />
         WHERE

@@ -114,30 +114,20 @@ public class UnitController {
     public ResponseEntity<PagedDtoList<UnitDto>> search(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String name,
-            @RequestParam(required = false) String address,
-            @RequestParam(required = false) String industry,
-            @RequestParam(required = false) String registrationNumber,
+            @RequestParam(required = false) String company,
+            @RequestParam(required = false) String type,
+            @RequestParam(required = false) String code,
+            @RequestParam(required = false) String parent,
             @RequestParam(defaultValue = "0") Integer page,
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String sort
     ) {
-        List<UnitDto> list;
-
+        PagedDtoList<UnitDto> pagedList = null;
         if (query != null) {
-            list = uService.searchAll(query);
+            pagedList = uService.search(query, page, size, sort);
         } else {
-            list = new ArrayList<>();
+            pagedList = uService.search(name, company, type, code, parent, page, size, sort);
         }
-
-        PagedDtoList<UnitDto> pagedList = new PagedDtoList<>();
-        Integer totalCount = uService.getCount();
-        pagedList.setContent(list);
-        pagedList.setPage(page);
-        pagedList.setSize(size);
-        pagedList.setTotalCount(totalCount);
-        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
-        pagedList.setFirst(page == 0);
-        pagedList.setLast(page.equals(pagedList.getTotalPages() - 1));
 
         return ResponseEntity.ok(pagedList);
     }

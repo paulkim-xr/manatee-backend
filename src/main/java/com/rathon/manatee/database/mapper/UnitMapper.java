@@ -24,4 +24,16 @@ public interface UnitMapper {
     List<UnitDto> getPagedUnits(int offset, int size);
 
     Integer getCount();
+
+    List<UnitDto> search(
+            String name,
+            String company,
+            String type,
+            String code,
+            String parent,
+            String sortColumn,
+            String sortDirection,
+            Integer offset,
+            Integer size
+    );
 }

@@ -79,7 +79,28 @@ public class EmployeeController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<EmployeeDto>> search(@RequestParam String query) {
-        return ResponseEntity.ok(service.searchAll(query));
+    public ResponseEntity<PagedDtoList<EmployeeDto>> search(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String company,
+            @RequestParam(required = false) String unit,
+            @RequestParam(required = false) String lastName,
+            @RequestParam(required = false) String firstName,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String position,
+            @RequestParam(required = false) String email,
+            @RequestParam(required = false) String phone,
+            @RequestParam(required = false) String dob,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(required = false) String sort
+    ) {
+        PagedDtoList<EmployeeDto> pagedList = null;
+        if (query != null) {
+            pagedList = service.search(query, page, size, sort);
+        } else {
+            pagedList = service.search(company, unit, lastName, firstName, name, position, email, phone, dob, page, size, sort);
+        }
+
+        return ResponseEntity.ok(pagedList);
     }
 }

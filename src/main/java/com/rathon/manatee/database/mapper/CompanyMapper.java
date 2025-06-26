@@ -18,13 +18,12 @@ public interface CompanyMapper {
     void insert(Company company);
     void update(Company company);
     void delete(Long id);
-    List<CompanyDto> searchAll(String query, int offset, int size);
 
     List<UnitDto> getUnitsFull();
 
     UnitDto getRoot(Long id);
 
-    List<CompanyDto> getPagedCompanies(int offset, int size);
+    List<CompanyDto> getPagedCompanies(int offset, int size, String sortColumn, String sortDirection);
 
     Integer getCount();
 

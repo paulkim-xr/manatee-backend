@@ -57,7 +57,7 @@
             FROM employees e
             GROUP BY e.unit_id
         ) ec ON ec.unit_id = u.id
-        WHERE child.id = #{id} AND child.parent_id IS NOT NULL
+        WHERE child.id = #{id} OR child.parent_id IS NOT NULL
     </select>
 
     <select id="getChildren" resultMap="ObjectResultMap.UnitDtoMap">
@@ -83,6 +83,43 @@
     <delete id="delete" parameterType="long">
         DELETE FROM units WHERE id = #{id}
     </delete>
+
+    <select id="search" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSql" />
+        <where>
+            NOT u.type_id = 1 AND (FALSE
+            <if test="name != null">
+                OR u.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="company != null">
+                OR c.name ILIKE CONCAT('%', #{company}, '%')
+            </if>
+            <if test="type != null">
+                OR t.name ILIKE CONCAT('%', #{type}, '%')
+            </if>
+            <if test="code != null">
+                OR u.code ILIKE CONCAT('%', #{code}, '%')
+            </if>
+            <if test="parent != null">
+                OR p.name ILIKE CONCAT('%', #{parent}, '%')
+            </if>
+            )
+        </where>
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">u.id</when>
+            <when test="sortColumn == 'name'">u.name</when>
+            <when test="sortColumn == 'company'">c.name</when>
+            <when test="sortColumn == 'type'">t.name</when>
+            <when test="sortColumn == 'code'">u.code</when>
+            <when test="sortColumn == 'parent'">p.name</when>
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+        LIMIT #{size} OFFSET #{offset}
+    </select>
 
     <select id="searchAll" resultMap="ObjectResultMap.UnitDtoMap">
         <include refid="ObjectResultMap.UnitDtoSql" />

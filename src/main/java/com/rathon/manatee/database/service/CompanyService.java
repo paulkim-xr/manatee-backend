@@ -50,10 +50,6 @@ public class CompanyService {
         mapper.delete(id);
     }
 
-    public PagedDtoList<CompanyDto> searchAll(String query, int page, int size) {
-        return toPagedDto(mapper.searchAll(query, page * size, size), page, size);
-    }
-
     public List<UnitDto> getUnitsFull(Long id) {
         return mapper.getUnitsFull();
     }
@@ -61,6 +57,15 @@ public class CompanyService {
     public UnitDto getRoot(Long id) {
 
         return mapper.getRoot(id);
+    }
+
+    public PagedDtoList<CompanyDto> search(
+            String query,
+            int page,
+            int size,
+            String sort
+    ) {
+        return search(query, query, query, query, page, size, sort);
     }
 
     public PagedDtoList<CompanyDto> search(
@@ -79,15 +84,21 @@ public class CompanyService {
             sortDirection = sort.split(",")[1];
         }
 
-        System.out.println(sortColumn);
-//        Long[] industryIds = iService.search(industry).stream().mapToLong(Industry::id).boxed().toArray(Long[]::new);
+        System.out.println();
         List<CompanyDto> list = mapper.search(name, address, industry, registrationNumber, sortColumn, sortDirection, page * size, size);
 
         return toPagedDto(list, page, size);
     }
 
-    public PagedDtoList<CompanyDto> getPagedCompanies(int page, int size) {
-        List<CompanyDto> list = mapper.getPagedCompanies(page * size, size);
+    public PagedDtoList<CompanyDto> getPagedCompanies(int page, int size, String sort) {
+        String sortColumn = "id";
+        String sortDirection = "asc";
+        if (sort != null && sort.contains(",")) {
+            sortColumn = sort.split(",")[0];
+            sortDirection = sort.split(",")[1];
+        }
+
+        List<CompanyDto> list = mapper.getPagedCompanies(page * size, size, sortColumn, sortDirection);
         return toPagedDto(list, page, size);
     }
 
@@ -97,7 +108,7 @@ public class CompanyService {
 
     private PagedDtoList<CompanyDto> toPagedDto(List<CompanyDto> list, int page, int size) {
         PagedDtoList<CompanyDto> pagedList = new PagedDtoList<>();
-        Integer totalCount = getCount();
+        int totalCount = list.size();
         pagedList.setContent(list);
         pagedList.setPage(page);
         pagedList.setSize(size);
