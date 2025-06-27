@@ -57,8 +57,16 @@ public class UnitService {
         return mapper.findAllFull();
     }
 
-    public List<UnitDto> getPagedUnits(int offset, int size) {
-        return mapper.getPagedUnits(offset, size);
+    public PagedDtoList<UnitDto> getPagedUnits(Integer page, Integer size, String sort) {
+        String sortColumn = "id";
+        String sortDirection = "asc";
+        if (sort != null && sort.contains(",")) {
+            sortColumn = sort.split(",")[0];
+            sortDirection = sort.split(",")[1];
+        }
+
+        List<UnitDto> list = mapper.getPagedUnits(page * size, size, sortColumn, sortDirection);
+        return toPagedDto(list, page, size);
     }
 
     public Integer getCount() {

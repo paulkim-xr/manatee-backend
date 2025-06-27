@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rathon.manatee.core.mapper.ObjectMapper">
+    <sql id="table"><!-- TABLE NAME --></sql>
+    <sql id="sorting">
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">id</when>
+            <!-- TABLE COLUMNS -->
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+    </sql>
+    <sql id="paging">
+        <if test="size != null and offset != null">
+            LIMIT #{size}
+            OFFSET #{offset}
+        </if>
+    </sql>
+
+    <select id="findById" resultType="T">
+        SELECT *
+        FROM <include refid="table" />
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultType="T">
+        SELECT *
+        FROM <include refid="table" />
+    </select>
+
+    <select id="getPagedObjects" resultType="T">
+        SELECT *
+        FROM <include refid="table" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM <include refid="table" />
+    </select>
+
+    <select id="search" resultType="T">
+        SELECT *
+        FROM <include refid="table" />
+        <where>
+            FALSE
+            <if test="name != null">
+                OR c.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <!-- TABLE COLUMNS -->
+        </where>
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <insert id="insert" parameterType="T" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="table" />
+        (<!-- TABLE COLUMNS -->)
+        VALUES (<!-- #{OBJECT FIELDS} -->)
+    </insert>
+
+    <update id="update" parameterType="T">
+        UPDATE <include refid="table" /> SET
+        <!-- TABLE COLUMNs = #{OBJECT FIELDS} -->
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM <include refid="table" /> WHERE id = #{id}
+    </delete>
+
+    <!-- DIRECT DTO QUERIES -->
+</mapper>

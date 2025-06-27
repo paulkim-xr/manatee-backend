@@ -4,7 +4,7 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.rathon.manatee.database.mapper.CompanyMapper">
-    <sql id="sort">
+    <sql id="sorting">
         ORDER BY
         <choose>
             <when test="sortColumn == 'id'">c.id</when>
@@ -20,6 +20,12 @@
             <otherwise>ASC</otherwise>
         </choose>
     </sql>
+    <sql id="paging">
+        <if test="size != null and offset != null">
+            LIMIT #{size}
+            OFFSET #{offset}
+        </if>
+    </sql>
 
     <select id="findById" resultMap="ObjectResultMap.CompanyDtoMap">
         <include refid="ObjectResultMap.CompanyDtoSql" />
@@ -29,17 +35,13 @@
     <select id="findAll" resultMap="ObjectResultMap.CompanyDtoMap">
         <include refid="ObjectResultMap.CompanyDtoSql" />
         ORDER BY c.id
-        <if test="size != null and offset != null">
-            LIMIT #{size}
-            OFFSET #{offset}
-        </if>
+        <include refid="paging" />
     </select>
 
     <select id="getPagedCompanies" resultMap="ObjectResultMap.CompanyDtoMap">
         <include refid="ObjectResultMap.CompanyDtoSql" />
-        <include refid="sort" />
-        LIMIT #{size}
-        OFFSET #{offset}
+        <include refid="sorting" />
+        <include refid="paging" />
     </select>
 
     <select id="getUnits" resultMap="ObjectResultMap.UnitDtoMap">
@@ -109,8 +111,8 @@
                 OR c.registration_number ILIKE CONCAT('%', #{registrationNumber}, '%')
             </if>
         </where>
-        <include refid="sort" />
-        LIMIT #{size} OFFSET #{offset}
+        <include refid="sorting" />
+        <include refid="paging" />
     </select>
 
 </mapper>

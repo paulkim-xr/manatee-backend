@@ -28,19 +28,12 @@ public class UnitController {
     }
 
     @GetMapping
-    public PagedDtoList<UnitDto> getPaged(@RequestParam(defaultValue = "0") Integer page, @RequestParam(defaultValue = "10") Integer size) {
-        List<UnitDto> list = uService.getPagedUnits(page * size, size);
-        PagedDtoList<UnitDto> pagedList = new PagedDtoList<>();
-        Integer totalCount = uService.getCount();
-        pagedList.setContent(list);
-        pagedList.setPage(page);
-        pagedList.setSize(size);
-        pagedList.setTotalCount(totalCount);
-        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
-        pagedList.setFirst(page == 0);
-        pagedList.setLast(page.equals(pagedList.getTotalPages() - 1));
-
-        return pagedList;
+    public PagedDtoList<UnitDto> getPaged(
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        return uService.getPagedUnits(page, size, sort);
     }
 
     @GetMapping("/all")

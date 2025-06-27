@@ -8,15 +8,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class PostDto {
-    private Long id;
-    private EmployeeDto author;
-    private Date posted;
+public class PostDto extends PostSummaryDto{
     private Date edited;
-    private String title;
     private String content;
-    private Boolean isAnnouncement;
-    private Integer commentCount;
-    private Integer viewCount;
-    private Integer likeCount;
 }

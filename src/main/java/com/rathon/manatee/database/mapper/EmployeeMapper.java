@@ -1,6 +1,5 @@
 package com.rathon.manatee.database.mapper;
 
-import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.model.Employee;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,7 +16,7 @@ public interface EmployeeMapper {
     void update(Employee e);
     void delete(Long id);
     List<EmployeeDto> searchAll(String query);
-    List<EmployeeDto> getPagedEmployees(int offset, int size);
+    List<EmployeeDto> getPagedEmployees(int offset, int size, String sortColumn, String sortDirection);
 
     Employee findByUsername(String username);
 

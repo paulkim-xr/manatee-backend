@@ -9,4 +9,6 @@ import java.util.List;
 @Getter
 @Setter
 public class BoardGroupDto extends BoardEntityDto{
+    List<BoardDto> childBoards;
+    List<BoardGroupDto> childGroups;
 }

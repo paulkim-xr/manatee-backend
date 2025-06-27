@@ -13,5 +13,7 @@ public interface ObjectMapper<T> {
     void update(T object);
     void delete(Long id);
     List<ObjectDto<T>> getPaged(int offset, int size);
-    List<CompanyDto> search(String[] queries, int offset, int size);
+    List<ObjectDto<T>> search(int offset, int size, String... args);
+
+    List<ObjectDto<T>> getPagedObjects(int offset, int size, String sortColumn, String sortDirection);
 }

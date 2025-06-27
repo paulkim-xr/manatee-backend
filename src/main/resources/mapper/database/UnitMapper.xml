@@ -4,6 +4,27 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.rathon.manatee.database.mapper.UnitMapper">
+    <sql id="sorting">
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">u.id</when>
+            <when test="sortColumn == 'name'">u.name</when>
+            <when test="sortColumn == 'company'">c.name</when>
+            <when test="sortColumn == 'type'">t.name</when>
+            <when test="sortColumn == 'code'">u.code</when>
+            <when test="sortColumn == 'parent'">p.name</when>
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+    </sql>
+    <sql id="paging">
+        <if test="size != null and offset != null">
+            LIMIT #{size}
+            OFFSET #{offset}
+        </if>
+    </sql>
 
     <select id="findById" resultMap="ObjectResultMap.UnitDtoMap">
         <include refid="ObjectResultMap.UnitDtoSql" />
@@ -19,9 +40,8 @@
     <select id="getPagedUnits" resultMap="ObjectResultMap.UnitDtoMap">
         <include refid="ObjectResultMap.UnitDtoSql" />
         WHERE NOT u.type_id = 1
-        ORDER BY u.id
-        LIMIT #{size}
-        OFFSET #{offset}
+        <include refid="sorting" />
+        <include refid="paging" />
     </select>
 
     <select id="findAllFull" resultMap="ObjectResultMap.UnitDtoMap">
@@ -105,20 +125,8 @@
             </if>
             )
         </where>
-        ORDER BY
-        <choose>
-            <when test="sortColumn == 'id'">u.id</when>
-            <when test="sortColumn == 'name'">u.name</when>
-            <when test="sortColumn == 'company'">c.name</when>
-            <when test="sortColumn == 'type'">t.name</when>
-            <when test="sortColumn == 'code'">u.code</when>
-            <when test="sortColumn == 'parent'">p.name</when>
-        </choose>
-        <choose>
-            <when test="sortDirection == 'desc'">DESC</when>
-            <otherwise>ASC</otherwise>
-        </choose>
-        LIMIT #{size} OFFSET #{offset}
+        <include refid="sorting" />
+        <include refid="paging" />
     </select>
 
     <select id="searchAll" resultMap="ObjectResultMap.UnitDtoMap">

@@ -4,6 +4,30 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.rathon.manatee.database.mapper.EmployeeMapper">
+    <sql id="sorting">
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">e.id</when>
+            <when test="sortColumn == 'company'">c.name</when>
+            <when test="sortColumn == 'unit'">u.name</when>
+            <when test="sortColumn == 'firstName'">e.first_name</when>
+            <when test="sortColumn == 'lastName'">e.last_name</when>
+            <when test="sortColumn == 'position'">p.name</when>
+            <when test="sortColumn == 'email'">e.email</when>
+            <when test="sortColumn == 'phone'">e.phone</when>
+            <when test="sortColumn == 'dob'">e.dob</when>
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+    </sql>
+    <sql id="paging">
+        <if test="size != null and offset != null">
+            LIMIT #{size}
+            OFFSET #{offset}
+        </if>
+    </sql>
 
     <select id="findById" resultMap="ObjectResultMap.EmployeeDtoMap">
         <include refid="ObjectResultMap.EmployeeDtoSql" />
@@ -17,9 +41,8 @@
 
     <select id="getPagedEmployees" resultMap="ObjectResultMap.EmployeeDtoMap">
         <include refid="ObjectResultMap.EmployeeDtoSql" />
-        ORDER BY e.id
-        LIMIT #{size}
-        OFFSET #{offset}
+        <include refid="sorting" />
+        <include refid="paging" />
     </select>
 
     <select id="findByFirstname" resultMap="ObjectResultMap.EmployeeDtoMap">
@@ -91,23 +114,8 @@
                 OR e.dob = #{dob}
             </if>
         </where>
-        ORDER BY
-        <choose>
-            <when test="sortColumn == 'id'">e.id</when>
-            <when test="sortColumn == 'company'">c.name</when>
-            <when test="sortColumn == 'unit'">u.name</when>
-            <when test="sortColumn == 'firstName'">e.firstName</when>
-            <when test="sortColumn == 'lastName'">e.lastName</when>
-            <when test="sortColumn == 'position'">p.name</when>
-            <when test="sortColumn == 'email'">e.email</when>
-            <when test="sortColumn == 'phone'">e.phone</when>
-            <when test="sortColumn == 'dob'">e.dob</when>
-        </choose>
-        <choose>
-            <when test="sortDirection == 'desc'">DESC</when>
-            <otherwise>ASC</otherwise>
-        </choose>
-        LIMIT #{size} OFFSET #{offset}
+        <include refid="sorting" />
+        <include refid="paging" />
     </select>
 
     <select id="searchAll" resultMap="ObjectResultMap.EmployeeDtoMap">

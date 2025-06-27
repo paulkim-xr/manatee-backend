@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rathon.manatee.community.mapper.PostMapper">
+
+    <sql id="paging">
+        <if test="size != null and offset != null">
+            LIMIT #{size}
+            OFFSET #{offset}
+        </if>
+    </sql>
+
+    <select id="getPagedPosts" resultType="Post">
+        SELECT * FROM posts
+        ORDER BY id
+        <include refid="paging" />
+    </select>
+
+    <select id="findPostsByBoardId" resultType="Post">
+        SELECT * FROM posts
+        WHERE board_id = #{id}
+        ORDER BY id
+        <include refid="paging" />
+    </select>
+
+    <select id="countPostsByBoardId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM posts
+        WHERE board_id = #{id}
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM posts
+    </select>
+</mapper>

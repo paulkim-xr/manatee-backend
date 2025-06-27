@@ -8,6 +8,9 @@ import java.util.List;
 
 @Mapper
 public interface BoardGroupMapper {
-    List<BoardGroup> getChildren(Long id);
+    List<BoardGroup> getChildGroups(Long id);
     List<Board> getBoards(Long id);
+
+    BoardGroup findById(Long id);
+
 }

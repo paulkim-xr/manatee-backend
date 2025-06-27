@@ -84,7 +84,6 @@ public class CompanyService {
             sortDirection = sort.split(",")[1];
         }
 
-        System.out.println();
         List<CompanyDto> list = mapper.search(name, address, industry, registrationNumber, sortColumn, sortDirection, page * size, size);
 
         return toPagedDto(list, page, size);

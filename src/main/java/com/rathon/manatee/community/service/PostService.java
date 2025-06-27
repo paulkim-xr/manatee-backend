@@ -1,10 +1,7 @@
 package com.rathon.manatee.community.service;
 
-import com.rathon.manatee.community.dto.BoardDto;
 import com.rathon.manatee.community.dto.PostSummaryDto;
-import com.rathon.manatee.community.mapper.BoardMapper;
 import com.rathon.manatee.community.mapper.PostMapper;
-import com.rathon.manatee.community.model.Board;
 import com.rathon.manatee.community.model.Post;
 import com.rathon.manatee.database.dto.PagedDtoList;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
@@ -13,22 +10,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class BoardService {
-    private final BoardMapper mapper;
-    private final PostMapper postMapper;
+public class PostService {
+    private final PostMapper mapper;
     private final EmployeeMapper employeeMapper;
 
-    public BoardService(BoardMapper mapper, PostMapper postMapper, EmployeeMapper employeeMapper) {
+    public PostService(PostMapper mapper, EmployeeMapper employeeMapper) {
         this.mapper = mapper;
-        this.postMapper = postMapper;
         this.employeeMapper = employeeMapper;
     }
 
-    public BoardDto findById(Long id) {
-        return toDto(mapper.findById(id));
-    }
-
-    public PagedDtoList<PostSummaryDto> getBoard(Long id, Integer page, Integer size, String sort) {
+    public PagedDtoList<PostSummaryDto> getPagedPosts(Integer page, Integer size, String sort) {
         String sortColumn = "id";
         String sortDirection = "asc";
         if (sort != null && sort.contains(",")) {
@@ -36,19 +27,8 @@ public class BoardService {
             sortDirection = sort.split(",")[1];
         }
 
-        List<PostSummaryDto> posts = postMapper.findPostsByBoardId(id, page * size, size, sortColumn, sortDirection).stream().map(this::summarize).toList();
-
-        return toPagedDto(posts, page, size, postMapper.countPostsByBoardId(id));
-    }
-
-    private BoardDto toDto(Board b) {
-        BoardDto d = new BoardDto();
-        d.setId(b.getId());
-        d.setName(b.getName());
-        d.setDescription(b.getDescription());
-        d.setType(b.getType());
-
-        return d;
+        List<PostSummaryDto> list = mapper.getPagedPosts(page * size, size, sortColumn, sortDirection).stream().map(this::summarize).toList();
+        return toPagedDto(list, page, size, mapper.getCount());
     }
 
     public PostSummaryDto summarize(Post p) {

@@ -4,7 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.rathon.manatee.community.mapper.BoardGroupMapper">
-    <select id="getChildren" resultType="BoardGroup">
+    <select id="findById" resultType="BoardGroup">
+        SELECT * FROM board_groups WHERE id = #{id}
+    </select>
+
+    <select id="getChildGroups" resultType="BoardGroup">
         SELECT * FROM board_groups WHERE parent_id = #{id}
     </select>
 

@@ -1,9 +1,8 @@
-package com.rathon.manatee.database.service;
+package com.rathon.manatee.core.service;
 
-import com.rathon.manatee.database.dto.CompanyDto;
-import com.rathon.manatee.database.dto.ObjectDto;
-import com.rathon.manatee.database.dto.PagedDtoList;
-import com.rathon.manatee.database.mapper.ObjectMapper;
+import com.rathon.manatee.core.dto.ObjectDto;
+import com.rathon.manatee.core.dto.PagedDtoList;
+import com.rathon.manatee.core.mapper.ObjectMapper;
 
 import java.util.List;
 
@@ -15,11 +14,11 @@ public class ObjectService<T> {
     }
 
     public ObjectDto<T> getObjectById(Long id) {
-        return mapper.findById(id);
+        return mapper.findByIdDto(id);
     }
 
     public List<ObjectDto<T>> getObjectList() {
-        return mapper.findAll();
+        return mapper.findAllDto();
     }
 
     public PagedDtoList<ObjectDto<T>> getPagedObjects(int page, int size, String sort) {
@@ -30,7 +29,7 @@ public class ObjectService<T> {
             sortDirection = sort.split(",")[1];
         }
 
-        List<ObjectDto<T>> list = mapper.getPagedObjects(page * size, size, sortColumn, sortDirection);
+        List<ObjectDto<T>> list = mapper.getPagedObjectsDto(page * size, size, sortColumn, sortDirection);
         return toPagedDto(list, page, size);
     }
 
@@ -40,26 +39,19 @@ public class ObjectService<T> {
             int size,
             String sort
     ) {
-        return search(query, query, query, query, page, size, sort);
+
+        return search(page, size, sort, query);
     }
 
     public PagedDtoList<ObjectDto<T>> search(
-            String name,
-            String address,
-            String industry,
-            String registrationNumber,
             int page,
             int size,
-            String sort
+            String sort,
+            String... args
     ) {
-        String sortColumn = "id";
-        String sortDirection = "asc";
-        if (sort != null && sort.contains(",")) {
-            sortColumn = sort.split(",")[0];
-            sortDirection = sort.split(",")[1];
-        }
+        SortInfo sortInfo = new SortInfo(sort);
 
-        List<ObjectDto<T>> list = mapper.search(page * size, size, name, address, industry, registrationNumber, sortColumn, sortDirection);
+        List<ObjectDto<T>> list = mapper.searchDto(page * size, size, sortInfo.column, sortInfo.direction, args);
 
         return toPagedDto(list, page, size);
     }
@@ -76,5 +68,17 @@ public class ObjectService<T> {
         pagedList.setLast(page == (pagedList.getTotalPages() - 1));
 
         return pagedList;
+    }
+
+    private static class SortInfo {
+        public String column = "id";
+        public String direction = "asc";
+
+        public SortInfo(String sort) {
+            if (sort != null && sort.contains(",")) {
+                column = sort.split(",")[0];
+                direction = sort.split(",")[1];
+            }
+        }
     }
 }

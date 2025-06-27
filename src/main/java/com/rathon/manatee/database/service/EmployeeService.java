@@ -1,6 +1,5 @@
 package com.rathon.manatee.database.service;
 
-import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.PagedDtoList;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
@@ -53,8 +52,16 @@ public class EmployeeService {
         return mapper.findByUsername(username);
     }
 
-    public List<EmployeeDto> getPagedEmployees(int offset, int size) {
-        return mapper.getPagedEmployees(offset, size);
+    public PagedDtoList<EmployeeDto> getPagedEmployees(int page, int size, String sort) {
+        String sortColumn = "id";
+        String sortDirection = "asc";
+        if (sort != null && sort.contains(",")) {
+            sortColumn = sort.split(",")[0];
+            sortDirection = sort.split(",")[1];
+        }
+
+        List<EmployeeDto> list = mapper.getPagedEmployees(page * size, size, sortColumn, sortDirection);
+        return toPagedDto(list, page, size);
     }
 
     public Integer getCount() {
