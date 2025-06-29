@@ -23,18 +23,18 @@
         </if>
     </sql>
 
-    <select id="findById" resultType="T">
+    <select id="findById" resultType="java.lang.Object">
         SELECT *
         FROM <include refid="table" />
         WHERE id = #{id}
     </select>
 
-    <select id="findAll" resultType="T">
+    <select id="findAll" resultType="java.lang.Object">
         SELECT *
         FROM <include refid="table" />
     </select>
 
-    <select id="getPagedObjects" resultType="T">
+    <select id="getPagedObjects" resultType="java.lang.Object">
         SELECT *
         FROM <include refid="table" />
         <include refid="sorting" />
@@ -45,7 +45,7 @@
         SELECT COUNT(*) FROM <include refid="table" />
     </select>
 
-    <select id="search" resultType="T">
+    <select id="search" resultType="java.lang.Object">
         SELECT *
         FROM <include refid="table" />
         <where>
@@ -59,13 +59,13 @@
         <include refid="paging" />
     </select>
 
-    <insert id="insert" parameterType="T" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="java.lang.Object" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="table" />
         (<!-- TABLE COLUMNS -->)
         VALUES (<!-- #{OBJECT FIELDS} -->)
     </insert>
 
-    <update id="update" parameterType="T">
+    <update id="update" parameterType="java.lang.Object">
         UPDATE <include refid="table" /> SET
         <!-- TABLE COLUMNs = #{OBJECT FIELDS} -->
         WHERE id = #{id}

@@ -32,11 +32,11 @@ public class SessionController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(HttpServletRequest request,
+    public ResponseEntity<?> login(HttpServletRequest request,
                                         @RequestBody LoginDto authRequest) {
         try {
             request.login(authRequest.username(), authRequest.password());
-            return ResponseEntity.ok("Login successful");
+            return ResponseEntity.ok(Map.of("user", authRequest.username(), "roles", SecurityContextHolder.getContext().getAuthentication().getAuthorities()));
         } catch (ServletException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed");
         }

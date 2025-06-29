@@ -37,8 +37,6 @@ public class BoardGroupService {
         d.setName(b.getName());
         d.setDescription(b.getDescription());
         d.setType(b.getType());
-        d.setPosts(null);
-
         return d;
     }
 
