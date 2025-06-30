@@ -24,6 +24,8 @@ public interface UnitMapper {
 
     Integer getCount();
 
+    Integer getSearchCount(String name, String company, String type, String code, String parent);
+
     List<UnitDto> search(
             String name,
             String company,

@@ -12,6 +12,7 @@ public class PostSummaryDto {
     private Long id;
     private EmployeeDto author;
     private Date posted;
+    private Long boardId;
     private String title;
     private Boolean isAnnouncement;
     private Integer commentCount;

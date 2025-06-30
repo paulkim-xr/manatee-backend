@@ -14,4 +14,6 @@ public interface PostMapper {
     int countPostsByBoardId(Long id);
 
     int getCount();
+
+    Post findById(Long id);
 }

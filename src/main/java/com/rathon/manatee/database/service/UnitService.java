@@ -66,11 +66,24 @@ public class UnitService {
         }
 
         List<UnitDto> list = mapper.getPagedUnits(page * size, size, sortColumn, sortDirection);
-        return toPagedDto(list, page, size);
+        return toPagedDto(list, getCount(), page, size);
     }
 
     public Integer getCount() {
         return mapper.getCount();
+    }
+
+    public Integer getSearchCount(
+            String name,
+            String company,
+            String type,
+            String code,
+            String parent,
+            Integer page,
+            Integer size,
+            String sort
+    ) {
+        return mapper.getSearchCount(name, company, type, code, parent);
     }
 
     public PagedDtoList<UnitDto> search(String query, Integer page, Integer size, String sort) {
@@ -96,17 +109,16 @@ public class UnitService {
 
         List<UnitDto> list = mapper.search(name, company, type, code, parent, sortColumn, sortDirection, page * size, size);
 
-        return toPagedDto(list, page, size);
+        return toPagedDto(list, mapper.getSearchCount(name, company, type, code, parent), page, size);
     }
 
-    private PagedDtoList<UnitDto> toPagedDto(List<UnitDto> list, int page, int size) {
+    private PagedDtoList<UnitDto> toPagedDto(List<UnitDto> list, int count, int page, int size) {
         PagedDtoList<UnitDto> pagedList = new PagedDtoList<>();
-        int totalCount = list.size();
         pagedList.setContent(list);
         pagedList.setPage(page);
         pagedList.setSize(size);
-        pagedList.setTotalCount(totalCount);
-        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
+        pagedList.setTotalCount(count);
+        pagedList.setTotalPages(Math.ceilDiv(count, size));
         pagedList.setFirst(page == 0);
         pagedList.setLast(page == (pagedList.getTotalPages() - 1));
 

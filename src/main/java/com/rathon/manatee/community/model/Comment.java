@@ -9,6 +9,7 @@ import java.util.Date;
 @Setter
 public class Comment {
     private Long id;
+    private Long postId;
     private Long parentId;
     private Long authorId;
     private Date postedTime;

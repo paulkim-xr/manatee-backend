@@ -1,6 +1,5 @@
 package com.rathon.manatee.community.dto;
 
-import com.rathon.manatee.database.dto.EmployeeDto;
 import lombok.Getter;
 import lombok.Setter;
 

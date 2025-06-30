@@ -1,6 +1,7 @@
 package com.rathon.manatee.community.service;
 
 import com.rathon.manatee.community.dto.BoardDto;
+import com.rathon.manatee.community.dto.CommentDto;
 import com.rathon.manatee.community.dto.PostSummaryDto;
 import com.rathon.manatee.community.mapper.BoardMapper;
 import com.rathon.manatee.community.mapper.PostMapper;
@@ -28,9 +29,9 @@ public class BoardService {
         return toDto(mapper.findById(id));
     }
 
-    public PagedDtoList<PostSummaryDto> getBoard(Long id, Integer page, Integer size, String sort) {
-        String sortColumn = "id";
-        String sortDirection = "asc";
+    public PagedDtoList<PostSummaryDto> getBoardPosts(Long id, Integer page, Integer size, String sort) {
+        String sortColumn = "posted_time";
+        String sortDirection = "desc";
         if (sort != null && sort.contains(",")) {
             sortColumn = sort.split(",")[0];
             sortDirection = sort.split(",")[1];
@@ -56,6 +57,7 @@ public class BoardService {
         d.setId(p.getId());
         d.setPosted(p.getPostedTime());
         d.setAuthor(employeeMapper.findById(p.getAuthorId()));
+        d.setBoardId(p.getBoardId());
         d.setTitle(p.getTitle());
         d.setIsAnnouncement(p.getIsAnnouncement());
         d.setCommentCount(0);
@@ -76,5 +78,9 @@ public class BoardService {
         pagedList.setLast(page == (pagedList.getTotalPages() - 1));
 
         return pagedList;
+    }
+
+    public BoardDto getBoard(Long id) {
+        return toDto(mapper.findById(id));
     }
 }

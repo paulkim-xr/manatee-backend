@@ -129,6 +129,35 @@
         <include refid="paging" />
     </select>
 
+    <select id="getSearchCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM units u
+        LEFT JOIN companies c ON u.company_id = c.id
+        LEFT JOIN unit_types t ON u.type_id = t.id
+        LEFT JOIN units p ON u.parent_id = p.id
+        <where>
+            NOT u.type_id = 1 AND (FALSE
+            <if test="name != null">
+                OR u.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="company != null">
+                OR c.name ILIKE CONCAT('%', #{company}, '%')
+            </if>
+            <if test="type != null">
+                OR t.name ILIKE CONCAT('%', #{type}, '%')
+            </if>
+            <if test="code != null">
+                OR u.code ILIKE CONCAT('%', #{code}, '%')
+            </if>
+            <if test="parent != null">
+                OR p.name ILIKE CONCAT('%', #{parent}, '%')
+            </if>
+            )
+        </where>
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
     <select id="searchAll" resultMap="ObjectResultMap.UnitDtoMap">
         <include refid="ObjectResultMap.UnitDtoSql" />
         WHERE

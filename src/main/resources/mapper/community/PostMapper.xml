@@ -12,6 +12,11 @@
         </if>
     </sql>
 
+    <select id="findById" resultType="Post">
+        SELECT * FROM posts
+        WHERE id = #{id}
+    </select>
+
     <select id="getPagedPosts" resultType="Post">
         SELECT * FROM posts
         ORDER BY id

@@ -1,12 +1,14 @@
 package com.rathon.manatee.community.controller;
 
+import com.rathon.manatee.community.dto.CommentDto;
+import com.rathon.manatee.community.dto.PostDto;
 import com.rathon.manatee.community.dto.PostSummaryDto;
 import com.rathon.manatee.community.service.PostService;
 import com.rathon.manatee.database.dto.PagedDtoList;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/posts")
@@ -24,5 +26,15 @@ public class PostController {
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
         return service.getPagedPosts(page, size, sort);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDto> getPost(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getPostById(id));
+    }
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<List<CommentDto>> getComments(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getComments(id));
     }
 }
