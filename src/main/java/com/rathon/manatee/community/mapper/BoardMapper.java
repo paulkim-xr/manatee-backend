@@ -12,4 +12,10 @@ import java.util.List;
 public interface BoardMapper {
     Board findById(Long id);
     List<Board> findAll();
+
+    void insert(Board entity);
+
+    void update(Board entity);
+
+    void delete(Long id);
 }

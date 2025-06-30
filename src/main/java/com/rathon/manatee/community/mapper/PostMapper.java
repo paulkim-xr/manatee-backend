@@ -16,4 +16,10 @@ public interface PostMapper {
     int getCount();
 
     Post findById(Long id);
+
+    void insert(Post entity);
+
+    void update(Post entity);
+
+    void delete(Long id);
 }

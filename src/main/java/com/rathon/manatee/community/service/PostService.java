@@ -5,9 +5,9 @@ import com.rathon.manatee.community.dto.PostDto;
 import com.rathon.manatee.community.dto.PostSummaryDto;
 import com.rathon.manatee.community.mapper.CommentMapper;
 import com.rathon.manatee.community.mapper.PostMapper;
-import com.rathon.manatee.community.model.Post;
+import com.rathon.manatee.community.service.mapper.CommentMapperService;
+import com.rathon.manatee.community.service.mapper.PostMapperService;
 import com.rathon.manatee.database.dto.PagedDtoList;
-import com.rathon.manatee.database.mapper.EmployeeMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,13 +15,15 @@ import java.util.List;
 @Service
 public class PostService {
     private final PostMapper mapper;
-    private final EmployeeMapper employeeMapper;
     private final CommentMapper commentMapper;
+    private final PostMapperService postMapperService;
+    private final CommentMapperService commentMapperService;
 
-    public PostService(PostMapper mapper, EmployeeMapper employeeMapper, CommentMapper commentMapper) {
+    public PostService(PostMapper mapper, CommentMapper commentMapper, PostMapperService postMapperService, CommentMapperService commentMapperService) {
         this.mapper = mapper;
-        this.employeeMapper = employeeMapper;
         this.commentMapper = commentMapper;
+        this.postMapperService = postMapperService;
+        this.commentMapperService = commentMapperService;
     }
 
     public PagedDtoList<PostSummaryDto> getPagedPosts(Integer page, Integer size, String sort) {
@@ -32,27 +34,12 @@ public class PostService {
             sortDirection = sort.split(",")[1];
         }
 
-        List<PostSummaryDto> list = mapper.getPagedPosts(page * size, size, sortColumn, sortDirection).stream().map(this::summarize).toList();
+        List<PostSummaryDto> list = mapper.getPagedPosts(page * size, size, sortColumn, sortDirection).stream().map(postMapperService::summarize).toList();
         return toPagedDto(list, page, size, mapper.getCount());
     }
 
     public List<CommentDto> getComments(Long id) {
-        return commentMapper.findByPostId(id).stream().map(CommentService::toDto).toList();
-    }
-
-    public PostSummaryDto summarize(Post p) {
-        PostSummaryDto d = new PostSummaryDto();
-        d.setId(p.getId());
-        d.setPosted(p.getPostedTime());
-        d.setAuthor(employeeMapper.findById(p.getAuthorId()));
-        d.setBoardId(p.getBoardId());
-        d.setTitle(p.getTitle());
-        d.setIsAnnouncement(p.getIsAnnouncement());
-        d.setCommentCount(0);
-        d.setLikeCount(0);
-        d.setViewCount(0);
-
-        return d;
+        return commentMapper.findByPostId(id).stream().map(commentMapperService::toDto).toList();
     }
 
     private PagedDtoList<PostSummaryDto> toPagedDto(List<PostSummaryDto> list, int page, int size, int totalCount) {
@@ -69,23 +56,18 @@ public class PostService {
     }
 
     public PostDto getPostById(Long id) {
-        return toDto(mapper.findById(id));
+        return postMapperService.toDto(mapper.findById(id));
     }
 
-    public PostDto toDto(Post p) {
-        PostDto d = new PostDto();
-        d.setId(p.getId());
-        d.setPosted(p.getPostedTime());
-        d.setAuthor(employeeMapper.findById(p.getAuthorId()));
-        d.setBoardId(p.getBoardId());
-        d.setTitle(p.getTitle());
-        d.setIsAnnouncement(p.getIsAnnouncement());
-        d.setCommentCount(0);
-        d.setLikeCount(0);
-        d.setViewCount(0);
-        d.setEdited(p.getEditedTime());
-        d.setContent(p.getContent());
+    public void insert(PostDto d) {
+        mapper.insert(postMapperService.toEntity(d));
+    }
 
-        return d;
+    public void update(PostDto d) {
+        mapper.update(postMapperService.toEntity(d));
+    }
+
+    public void delete(Long id) {
+        mapper.delete(id);
     }
 }

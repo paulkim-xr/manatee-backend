@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rathon.manatee.community.mapper.CommentMapper">
+
+    <sql id="paging">
+        <if test="size != null and offset != null">
+            LIMIT #{size}
+            OFFSET #{offset}
+        </if>
+    </sql>
+
+    <select id="findById" resultType="Comment">
+        SELECT * FROM comments
+        WHERE id = #{id}
+    </select>
+
+    <select id="getPagedComments" resultType="Comment">
+        SELECT * FROM comments
+        ORDER BY id
+            <include refid="paging" />
+    </select>
+
+    <select id="findByPostId" resultType="Comment">
+        SELECT * FROM comments
+        WHERE post_id = #{id}
+        ORDER BY id
+<!--        <include refid="paging" />-->
+    </select>
+
+    <select id="countByPostId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM comments
+        WHERE post_id = #{id}
+    </select>
+
+    <select id="countCommentsByPostId" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM comments
+        WHERE post_id = #{id}
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM comments
+    </select>
+
+    <insert id="insert" parameterType="Comment" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO comments
+        (post_id, parent_id, author_id, posted_time, edited_time, content)
+        VALUES (#{postId}, #{parentId}, #{author_id}, #{postedTime}, #{editedTime}, #{content})
+    </insert>
+
+    <update id="update" parameterType="Comment">
+        UPDATE comments SET
+        post_id = #{postId}, parent_id = #{parentId}, author_id = #{author_id}, posted_time = #{postedTime}, edited_time = #{editedTime}, content = #{content}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM comments WHERE id = #{id}
+    </delete>
+</mapper>

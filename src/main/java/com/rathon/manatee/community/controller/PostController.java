@@ -1,5 +1,6 @@
 package com.rathon.manatee.community.controller;
 
+import com.rathon.manatee.community.dto.BoardDto;
 import com.rathon.manatee.community.dto.CommentDto;
 import com.rathon.manatee.community.dto.PostDto;
 import com.rathon.manatee.community.dto.PostSummaryDto;
@@ -36,5 +37,23 @@ public class PostController {
     @GetMapping("/{id}/comments")
     public ResponseEntity<List<CommentDto>> getComments(@PathVariable Long id) {
         return ResponseEntity.ok(service.getComments(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> insert(@RequestBody PostDto d) {
+        service.insert(d);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody PostDto d) {
+        service.update(d);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        service.delete(id);
+        return ResponseEntity.ok().build();
     }
 }

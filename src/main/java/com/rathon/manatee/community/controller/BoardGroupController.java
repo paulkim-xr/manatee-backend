@@ -2,18 +2,16 @@ package com.rathon.manatee.community.controller;
 
 import com.rathon.manatee.community.dto.BoardDto;
 import com.rathon.manatee.community.dto.BoardGroupDto;
+import com.rathon.manatee.community.dto.CommentDto;
 import com.rathon.manatee.community.service.BoardGroupService;
 import com.rathon.manatee.community.service.BoardService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/boardgroup")
+@RequestMapping("/api/boardgroups")
 public class BoardGroupController {
     private final BoardGroupService gService;
     private final BoardService bService;
@@ -41,5 +39,23 @@ public class BoardGroupController {
     @GetMapping("/{id}/boardgroups")
     public ResponseEntity<List<BoardGroupDto>> getChildGroups(@PathVariable Long id) {
         return ResponseEntity.ok(gService.getChildGroups(id));
+    }
+
+    @PostMapping
+    public ResponseEntity<Void> insert(@RequestBody BoardGroupDto d) {
+        gService.insert(d);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody BoardGroupDto d) {
+        gService.update(d);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        gService.delete(id);
+        return ResponseEntity.ok().build();
     }
 }

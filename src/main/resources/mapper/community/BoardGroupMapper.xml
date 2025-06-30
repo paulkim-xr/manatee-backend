@@ -15,4 +15,36 @@
     <select id="getBoards" resultType="Board">
         SELECT * FROM boards WHERE group_id = #{id}
     </select>
+
+    <insert id="insert" parameterType="BoardGroup" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO board_groups
+        (name, parent_id)
+        VALUES (#{name}, #{parentId})
+    </insert>
+
+    <update id="update" parameterType="BoardGroup">
+        UPDATE board_groups SET
+        name = #{name}, parent_id = #{parentId}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM board_groups WHERE id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="java.lang.Object" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="table" />
+        (name, parent_id)
+        VALUES (#{name}, #{parentId})
+    </insert>
+
+    <update id="update" parameterType="java.lang.Object">
+        UPDATE <include refid="table" /> SET
+        name = #{name}, parent_id = #{parentId}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM <include refid="table" /> WHERE id = #{id}
+    </delete>
 </mapper>

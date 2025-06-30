@@ -38,4 +38,20 @@
     <select id="getCount" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM posts
     </select>
+
+    <insert id="insert" parameterType="Post" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO posts
+        (board_id, author_id, posted_time, edited_time, title, content, is_announcement)
+        VALUES (#{boardId}, #{authorId}, #{postedTime}, #{editedTime}, #{title}, #{content}, #{isAnnouncement})
+    </insert>
+
+    <update id="update" parameterType="Post">
+        UPDATE posts SET
+        board_id = #{boardId}, author_id = #{authorId}, posted_time = #{postedTime}, edited_time = #{editedTime}, title = #{title}, content = #{content}, is_announcement = #{isAnnouncement}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM posts WHERE id = #{id}
+    </delete>
 </mapper>

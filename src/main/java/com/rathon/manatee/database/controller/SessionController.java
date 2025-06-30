@@ -1,6 +1,7 @@
 package com.rathon.manatee.database.controller;
 
 import com.rathon.manatee.auth.LoginDto;
+import com.rathon.manatee.database.service.EmployeeService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -15,6 +16,11 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 public class SessionController {
+    private final EmployeeService service;
+
+    public SessionController(EmployeeService service) {
+        this.service = service;
+    }
 
     @GetMapping("/test")
     public ResponseEntity<?> test(HttpServletRequest request) {
@@ -26,7 +32,7 @@ public class SessionController {
     public ResponseEntity<?> check(Authentication authentication) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            return ResponseEntity.ok(Map.of("user", auth.getName(), "roles", auth.getAuthorities()));
+            return ResponseEntity.ok(Map.of("user", auth.getName(), "id", service.findByUsername(auth.getName()).getId(), "roles", auth.getAuthorities()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
     }

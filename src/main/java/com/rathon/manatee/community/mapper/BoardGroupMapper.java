@@ -13,4 +13,9 @@ public interface BoardGroupMapper {
 
     BoardGroup findById(Long id);
 
+    void insert(BoardGroup entity);
+
+    void update(BoardGroup entity);
+
+    void delete(Long id);
 }

@@ -120,4 +120,8 @@ public class EmployeeService {
 
         return pagedList;
     }
+
+    public Employee findByUsername(String name) {
+        return mapper.findByUsername(name);
+    }
 }
