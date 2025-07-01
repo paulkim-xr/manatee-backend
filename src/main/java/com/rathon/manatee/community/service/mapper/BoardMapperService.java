@@ -19,6 +19,7 @@ public class BoardMapperService {
     public Board toEntity(BoardDto d) {
         Board b = new Board();
         b.setId(d.getId());
+        b.setGroupId(d.getParentId());
         b.setName(d.getName());
         b.setDescription(d.getDescription());
         b.setType(d.getType());

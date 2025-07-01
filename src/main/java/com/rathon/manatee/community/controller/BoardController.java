@@ -28,6 +28,11 @@ public class BoardController {
         return ResponseEntity.ok(service.getBoard(id));
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<BoardDto>> getAll() {
+        return ResponseEntity.ok(service.getAll());
+    }
+
     @GetMapping("/{id}/posts")
     public ResponseEntity<PagedDtoList<PostSummaryDto>> getPosts(
             @PathVariable Long id,
@@ -36,6 +41,18 @@ public class BoardController {
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
         return ResponseEntity.ok(service.getBoardPosts(id, page, size, sort));
+    }
+
+    @GetMapping("/{id}/posts/search")
+    public ResponseEntity<PagedDtoList<PostSummaryDto>> searchBoard(
+            @PathVariable Long id,
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false, defaultValue = "0") Integer option,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        return ResponseEntity.ok(service.getBoardPosts(id, page, size, sort, query, option));
     }
 
     @PostMapping

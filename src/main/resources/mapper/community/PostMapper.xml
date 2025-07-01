@@ -54,4 +54,51 @@
     <delete id="delete" parameterType="long">
         DELETE FROM posts WHERE id = #{id}
     </delete>
+
+    <select id="search" resultType="Post">
+        SELECT * FROM posts p
+        LEFT JOIN employees e ON p.author_id = e.id
+        <choose>
+            <when test="option == 0">
+                WHERE
+                (p.title ILIKE CONCAT('%', #{query}, '%') OR
+                p.content ILIKE CONCAT('%', #{query}, '%'))
+            </when>
+            <when test="option == 1">
+                WHERE
+                p.title ILIKE CONCAT('%', #{query}, '%')
+            </when>
+            <when test="option == 2">
+                WHERE
+                CONCAT(e.last_name, e.first_name) ILIKE CONCAT('%', #{query}, '%')
+            </when>
+        </choose>
+        <if test="id != null">
+            AND p.board_id = #{id}
+        </if>
+        <include refid="paging" />
+    </select>
+
+    <select id="countSearchResult" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM posts p
+        LEFT JOIN employees e ON p.author_id = e.id
+        <choose>
+            <when test="option == 0">
+                WHERE
+                (p.title ILIKE CONCAT('%', #{query}, '%') OR
+                p.content ILIKE CONCAT('%', #{query}, '%'))
+            </when>
+            <when test="option == 1">
+                WHERE
+                p.title ILIKE CONCAT('%', #{query}, '%')
+            </when>
+            <when test="option == 2">
+                WHERE
+                CONCAT(e.last_name, e.first_name) ILIKE CONCAT('%', #{query}, '%')
+            </when>
+        </choose>
+        <if test="id != null">
+            AND p.board_id = #{id}
+        </if>
+    </select>
 </mapper>

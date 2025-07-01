@@ -30,6 +30,13 @@
 <!--        <include refid="paging" />-->
     </select>
 
+    <select id="findByParentId" resultType="Comment">
+        SELECT * FROM comments
+        WHERE parent_id = #{id}
+        ORDER BY id
+        <!--        <include refid="paging" />-->
+    </select>
+
     <select id="countByPostId" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM comments
         WHERE post_id = #{id}
@@ -47,12 +54,12 @@
     <insert id="insert" parameterType="Comment" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO comments
         (post_id, parent_id, author_id, posted_time, edited_time, content)
-        VALUES (#{postId}, #{parentId}, #{author_id}, #{postedTime}, #{editedTime}, #{content})
+        VALUES (#{postId}, #{parentId}, #{authorId}, #{postedTime}, #{editedTime}, #{content})
     </insert>
 
     <update id="update" parameterType="Comment">
         UPDATE comments SET
-        post_id = #{postId}, parent_id = #{parentId}, author_id = #{author_id}, posted_time = #{postedTime}, edited_time = #{editedTime}, content = #{content}
+        post_id = #{postId}, parent_id = #{parentId}, author_id = #{authorId}, posted_time = #{postedTime}, edited_time = #{editedTime}, content = #{content}
         WHERE id = #{id}
     </update>
 

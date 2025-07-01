@@ -6,6 +6,7 @@ import com.rathon.manatee.community.model.Comment;
 import com.rathon.manatee.community.service.mapper.CommentMapperService;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -18,8 +19,12 @@ public class CommentService {
         this.mapperService = mapperService;
     }
 
-    public Comment getComment(Long id) {
-        return mapper.findById(id);
+    public CommentDto getComment(Long id) {
+        return mapperService.toDto(mapper.findById(id));
+    }
+
+    public boolean hasChildren(Long id) {
+        return mapper.findByParentId(id).isEmpty();
     }
 
     public void insert(CommentDto comment) {
@@ -31,7 +36,15 @@ public class CommentService {
     }
 
     public void delete(Long id) {
-        mapper.delete(id);
+        if (mapper.findByParentId(id).isEmpty()) {
+            mapper.delete(id);
+        } else {
+            CommentDto dto = getComment(id);
+            dto.setContent("삭제된 댓글입니다");
+            dto.setEditedTime(new Date());
+
+            mapper.update(mapperService.toEntity(dto));
+        }
     }
 
 

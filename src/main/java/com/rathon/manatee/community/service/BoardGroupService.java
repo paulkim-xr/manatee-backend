@@ -56,4 +56,8 @@ public class BoardGroupService {
     public void delete(Long id) {
         mapper.delete(id);
     }
+
+    public List<BoardGroupDto> getAll() {
+        return mapper.findAll().stream().map(boardGroupMapperService::toDto).toList();
+    }
 }

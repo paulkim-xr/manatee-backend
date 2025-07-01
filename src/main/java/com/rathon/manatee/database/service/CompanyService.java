@@ -86,7 +86,7 @@ public class CompanyService {
 
         List<CompanyDto> list = mapper.search(name, address, industry, registrationNumber, sortColumn, sortDirection, page * size, size);
 
-        return toPagedDto(list, page, size);
+        return toPagedDto(list, page, size, mapper.getSearchCount(name, address, industry, registrationNumber));
     }
 
     public PagedDtoList<CompanyDto> getPagedCompanies(int page, int size, String sort) {
@@ -98,16 +98,15 @@ public class CompanyService {
         }
 
         List<CompanyDto> list = mapper.getPagedCompanies(page * size, size, sortColumn, sortDirection);
-        return toPagedDto(list, page, size);
+        return toPagedDto(list, page, size, getCount());
     }
 
     public Integer getCount() {
         return mapper.getCount();
     }
 
-    private PagedDtoList<CompanyDto> toPagedDto(List<CompanyDto> list, int page, int size) {
+    private PagedDtoList<CompanyDto> toPagedDto(List<CompanyDto> list, int page, int size, int totalCount) {
         PagedDtoList<CompanyDto> pagedList = new PagedDtoList<>();
-        int totalCount = list.size();
         pagedList.setContent(list);
         pagedList.setPage(page);
         pagedList.setSize(size);

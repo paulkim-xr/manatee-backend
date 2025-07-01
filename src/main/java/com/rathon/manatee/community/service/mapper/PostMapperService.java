@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 public class PostMapperService {
     @Autowired
     private EmployeeMapper employeeMapper;
+    @Autowired
     private CommentMapper commentMapper;
 
     public PostSummaryDto summarize(Post p) {

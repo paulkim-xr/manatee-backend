@@ -4,6 +4,7 @@ import com.rathon.manatee.community.model.Board;
 import com.rathon.manatee.community.model.BoardGroup;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Mapper
@@ -18,4 +19,6 @@ public interface BoardGroupMapper {
     void update(BoardGroup entity);
 
     void delete(Long id);
+
+    List<BoardGroup> findAll();
 }

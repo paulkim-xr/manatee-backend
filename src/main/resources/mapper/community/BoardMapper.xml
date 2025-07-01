@@ -31,20 +31,4 @@
     <delete id="delete" parameterType="long">
         DELETE FROM boards WHERE id = #{id}
     </delete>
-
-    <insert id="insert" parameterType="java.lang.Object" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO <include refid="table" />
-        (group_id, name, description, type)
-        VALUES (#{groupId}, #{name}, #{description}, #{type})
-    </insert>
-
-    <update id="update" parameterType="java.lang.Object">
-        UPDATE <include refid="table" /> SET
-        group_id = #{groupId}, name = #{name}, description = #{description}, type = #{type}
-        WHERE id = #{id}
-    </update>
-
-    <delete id="delete" parameterType="long">
-        DELETE FROM <include refid="table" /> WHERE id = #{id}
-    </delete>
 </mapper>

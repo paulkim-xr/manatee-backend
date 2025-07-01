@@ -39,6 +39,17 @@ public class PostController {
         return ResponseEntity.ok(service.getComments(id));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<PagedDtoList<PostSummaryDto>> search(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false, defaultValue = "0") Integer option,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        return ResponseEntity.ok(service.search(page, size, sort, query, option));
+    }
+
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody PostDto d) {
         service.insert(d);

@@ -70,4 +70,15 @@ public class PostService {
     public void delete(Long id) {
         mapper.delete(id);
     }
+
+    public PagedDtoList<PostSummaryDto> search(Integer page, Integer size, String sort, String query, Integer option) {
+        String sortColumn = "posted_time";
+        String sortDirection = "desc";
+        if (sort != null && sort.contains(",")) {
+            sortColumn = sort.split(",")[0];
+            sortDirection = sort.split(",")[1];
+        }
+
+        return toPagedDto(mapper.search(null, page * size, size, sortColumn, sortDirection, query, option).stream().map(postMapperService::summarize).toList(), page, size, mapper.countSearchResult(null, query, option));
+    }
 }

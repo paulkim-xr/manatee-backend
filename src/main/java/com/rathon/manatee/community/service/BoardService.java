@@ -70,4 +70,21 @@ public class BoardService {
     public void delete(Long id) {
         mapper.delete(id);
     }
+
+    public List<BoardDto> getAll() {
+        return mapper.findAll().stream().map(boardMapperService::toDto).toList();
+    }
+
+    public PagedDtoList<PostSummaryDto> getBoardPosts(Long id, Integer page, Integer size, String sort, String query, Integer option) {
+        String sortColumn = "posted_time";
+        String sortDirection = "desc";
+        if (sort != null && sort.contains(",")) {
+            sortColumn = sort.split(",")[0];
+            sortDirection = sort.split(",")[1];
+        }
+
+        List<PostSummaryDto> posts = postMapper.search(id, page * size, size, sortColumn, sortDirection, query, option).stream().map(postMapperService::summarize).toList();
+
+        return toPagedDto(posts, page, size, postMapper.countSearchResult(id, query, option));
+    }
 }

@@ -1,6 +1,5 @@
 package com.rathon.manatee.community.mapper;
 
-import com.rathon.manatee.community.dto.PostSummaryDto;
 import com.rathon.manatee.community.model.Post;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -22,4 +21,8 @@ public interface PostMapper {
     void update(Post entity);
 
     void delete(Long id);
+
+    List<Post> search(Long id, Integer offset, Integer size, String sortColumn, String sortDirection, String query, Integer option);
+
+    int countSearchResult(Long id, String query, Integer option);
 }

@@ -36,4 +36,16 @@ public interface EmployeeMapper {
             String sortDirection,
             Integer offset,
             Integer size);
+
+    Integer getSearchCount(
+            String company,
+            String unit,
+            String lastName,
+            String firstName,
+            String name,
+            String position,
+            String email,
+            String phone,
+            String dob
+    );
 }

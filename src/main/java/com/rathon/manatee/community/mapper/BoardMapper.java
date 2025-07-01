@@ -6,6 +6,7 @@ import com.rathon.manatee.community.model.Board;
 import com.rathon.manatee.community.model.Post;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Mapper

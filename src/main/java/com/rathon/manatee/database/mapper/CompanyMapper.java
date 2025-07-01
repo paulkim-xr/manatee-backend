@@ -28,4 +28,6 @@ public interface CompanyMapper {
     Integer getCount();
 
     List<CompanyDto> search(String name, String address, String industry, String registrationNumber, String sortColumn, String sortDirection, int offset, int size);
+
+    Integer getSearchCount(String name, String address, String industry, String registrationNumber);
 }

@@ -21,6 +21,11 @@ public class BoardGroupController {
         this.bService = bService;
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<BoardGroupDto>> getAll() {
+        return ResponseEntity.ok(gService.getAll());
+    }
+
     @GetMapping("/root")
     public ResponseEntity<BoardGroupDto> getRoot() {
         return ResponseEntity.ok(gService.getById(1L));

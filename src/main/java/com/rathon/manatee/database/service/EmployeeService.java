@@ -48,8 +48,8 @@ public class EmployeeService {
         return mapper.searchAll(query);
     }
 
-    public Employee getEmployeeByUsername(String username) {
-        return mapper.findByUsername(username);
+    public Employee findByUsername(String name) {
+        return mapper.findByUsername(name);
     }
 
     public PagedDtoList<EmployeeDto> getPagedEmployees(int page, int size, String sort) {
@@ -61,7 +61,7 @@ public class EmployeeService {
         }
 
         List<EmployeeDto> list = mapper.getPagedEmployees(page * size, size, sortColumn, sortDirection);
-        return toPagedDto(list, page, size);
+        return toPagedDto(list, page, size, getCount());
     }
 
     public Integer getCount() {
@@ -91,7 +91,9 @@ public class EmployeeService {
             sortDirection = sort.split(",")[1];
         }
 
-        List<EmployeeDto> list = mapper.search(company, unit,
+        List<EmployeeDto> list = mapper.search(
+                company,
+                unit,
                 lastName,
                 firstName,
                 name,
@@ -104,12 +106,21 @@ public class EmployeeService {
                 page * size,
                 size);
 
-        return toPagedDto(list, page, size);
+        return toPagedDto(list, page, size, mapper.getSearchCount(
+                company,
+                unit,
+                lastName,
+                firstName,
+                name,
+                position,
+                email,
+                phone,
+                dob
+        ));
     }
 
-    private PagedDtoList<EmployeeDto> toPagedDto(List<EmployeeDto> list, int page, int size) {
+    private PagedDtoList<EmployeeDto> toPagedDto(List<EmployeeDto> list, int page, int size, int totalCount) {
         PagedDtoList<EmployeeDto> pagedList = new PagedDtoList<>();
-        int totalCount = list.size();
         pagedList.setContent(list);
         pagedList.setPage(page);
         pagedList.setSize(size);
@@ -119,9 +130,5 @@ public class EmployeeService {
         pagedList.setLast(page == (pagedList.getTotalPages() - 1));
 
         return pagedList;
-    }
-
-    public Employee findByUsername(String name) {
-        return mapper.findByUsername(name);
     }
 }
