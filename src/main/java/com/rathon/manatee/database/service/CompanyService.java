@@ -2,14 +2,12 @@ package com.rathon.manatee.database.service;
 
 import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedDtoList;
+import com.rathon.manatee.database.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.CompanyMapper;
 import com.rathon.manatee.database.model.Company;
-import com.rathon.manatee.database.model.Industry;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -59,7 +57,7 @@ public class CompanyService {
         return mapper.getRoot(id);
     }
 
-    public PagedDtoList<CompanyDto> search(
+    public PagedList<CompanyDto> search(
             String query,
             int page,
             int size,
@@ -68,7 +66,7 @@ public class CompanyService {
         return search(query, query, query, query, page, size, sort);
     }
 
-    public PagedDtoList<CompanyDto> search(
+    public PagedList<CompanyDto> search(
             String name,
             String address,
             String industry,
@@ -89,7 +87,7 @@ public class CompanyService {
         return toPagedDto(list, page, size, mapper.getSearchCount(name, address, industry, registrationNumber));
     }
 
-    public PagedDtoList<CompanyDto> getPagedCompanies(int page, int size, String sort) {
+    public PagedList<CompanyDto> getPagedCompanies(int page, int size, String sort) {
         String sortColumn = "id";
         String sortDirection = "asc";
         if (sort != null && sort.contains(",")) {
@@ -105,8 +103,8 @@ public class CompanyService {
         return mapper.getCount();
     }
 
-    private PagedDtoList<CompanyDto> toPagedDto(List<CompanyDto> list, int page, int size, int totalCount) {
-        PagedDtoList<CompanyDto> pagedList = new PagedDtoList<>();
+    private PagedList<CompanyDto> toPagedDto(List<CompanyDto> list, int page, int size, int totalCount) {
+        PagedList<CompanyDto> pagedList = new PagedList<>();
         pagedList.setContent(list);
         pagedList.setPage(page);
         pagedList.setSize(size);

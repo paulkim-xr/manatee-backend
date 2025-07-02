@@ -1,42 +1,45 @@
 package com.rathon.manatee.core.controller;
 
 import com.rathon.manatee.core.dto.Dto;
-import com.rathon.manatee.core.dto.PagedDtoList;
+import com.rathon.manatee.core.dto.PagedList;
+import com.rathon.manatee.core.mapper.ObjectMapper;
 import com.rathon.manatee.core.service.ObjectService;
+import com.rathon.manatee.core.service.mapper.ObjectMapperService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-public class ObjectController<T> {
-    private final ObjectService<T> service;
+public class ObjectController<T, D extends Dto<T>, S extends ObjectService<T, D, ? extends ObjectMapper<T>, ? extends ObjectMapperService<T, D>>> {
+    public final S service;
 
-    public ObjectController(ObjectService<T> service) {
+    public ObjectController(S service) {
         this.service = service;
     }
 
-    @GetMapping
-    public ResponseEntity<PagedDtoList<Dto<T>>> getPaged(
-            @RequestParam(required = false) String sort,
+//    @GetMapping
+    public ResponseEntity<PagedList<D>> getPaged(
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "10") Integer size
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false) String sort
     ) {
         return ResponseEntity.ok(service.getPagedObjects(page, size, sort));
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Dto<T>>> getAll() {
+    public ResponseEntity<List<D>> getAll() {
         return ResponseEntity.ok(service.getAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Dto<T>> getObject(@PathVariable Long id) {
+    public ResponseEntity<D> getObject(@PathVariable Long id) {
         return ResponseEntity.ok(service.getObjectById(id));
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<PagedDtoList<Dto<T>>> search(
+//    @GetMapping("/search")
+    public ResponseEntity<PagedList<D>> searchTemplate(
             @RequestParam(required = false) String sort,
+            // Columns...
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
@@ -44,13 +47,13 @@ public class ObjectController<T> {
     }
 
     @PostMapping
-    public ResponseEntity<Void> insert(@RequestBody Dto<T> d) {
+    public ResponseEntity<Void> insert(@RequestBody D d) {
         service.insert(d);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody Dto<T> d) {
+    public ResponseEntity<Void> update(@RequestBody D d) {
         service.update(d);
         return ResponseEntity.ok().build();
     }

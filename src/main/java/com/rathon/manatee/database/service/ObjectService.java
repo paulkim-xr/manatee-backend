@@ -1,8 +1,7 @@
 package com.rathon.manatee.database.service;
 
-import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.ObjectDto;
-import com.rathon.manatee.database.dto.PagedDtoList;
+import com.rathon.manatee.database.dto.PagedList;
 import com.rathon.manatee.database.mapper.ObjectMapper;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class ObjectService<T> {
         return mapper.findAll();
     }
 
-    public PagedDtoList<ObjectDto<T>> getPagedObjects(int page, int size, String sort) {
+    public PagedList<ObjectDto<T>> getPagedObjects(int page, int size, String sort) {
         String sortColumn = "id";
         String sortDirection = "asc";
         if (sort != null && sort.contains(",")) {
@@ -34,7 +33,7 @@ public class ObjectService<T> {
         return toPagedDto(list, page, size);
     }
 
-    public PagedDtoList<ObjectDto<T>> search(
+    public PagedList<ObjectDto<T>> search(
             String query,
             int page,
             int size,
@@ -43,7 +42,7 @@ public class ObjectService<T> {
         return search(query, query, query, query, page, size, sort);
     }
 
-    public PagedDtoList<ObjectDto<T>> search(
+    public PagedList<ObjectDto<T>> search(
             String name,
             String address,
             String industry,
@@ -64,8 +63,8 @@ public class ObjectService<T> {
         return toPagedDto(list, page, size);
     }
 
-    public PagedDtoList<ObjectDto<T>> toPagedDto(List<ObjectDto<T>> list, int page, int size) {
-        PagedDtoList<ObjectDto<T>> pagedList = new PagedDtoList<>();
+    public PagedList<ObjectDto<T>> toPagedDto(List<ObjectDto<T>> list, int page, int size) {
+        PagedList<ObjectDto<T>> pagedList = new PagedList<>();
         int totalCount = list.size();
         pagedList.setContent(list);
         pagedList.setPage(page);

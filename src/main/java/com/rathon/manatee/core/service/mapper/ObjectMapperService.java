@@ -1,8 +1,10 @@
 package com.rathon.manatee.core.service.mapper;
 
+import com.rathon.manatee.community.dto.CommentDto;
+import com.rathon.manatee.community.model.Comment;
 import com.rathon.manatee.core.dto.Dto;
 
-public abstract class ObjectMapperService<T> {
-    public abstract Dto<T> toDto(T object);
-    public abstract T toEntity(Dto<T> dto);
+public interface ObjectMapperService<T, D extends Dto<T>> {
+    D toDto(T object);
+    T toEntity(D dto);
 }

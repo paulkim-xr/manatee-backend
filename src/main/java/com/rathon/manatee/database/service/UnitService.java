@@ -1,15 +1,11 @@
 package com.rathon.manatee.database.service;
 
-import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedDtoList;
+import com.rathon.manatee.database.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.UnitMapper;
 import com.rathon.manatee.database.model.Unit;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -57,7 +53,7 @@ public class UnitService {
         return mapper.findAllFull();
     }
 
-    public PagedDtoList<UnitDto> getPagedUnits(Integer page, Integer size, String sort) {
+    public PagedList<UnitDto> getPagedUnits(Integer page, Integer size, String sort) {
         String sortColumn = "id";
         String sortDirection = "asc";
         if (sort != null && sort.contains(",")) {
@@ -86,11 +82,11 @@ public class UnitService {
         return mapper.getSearchCount(name, company, type, code, parent);
     }
 
-    public PagedDtoList<UnitDto> search(String query, Integer page, Integer size, String sort) {
+    public PagedList<UnitDto> search(String query, Integer page, Integer size, String sort) {
         return search(query, query, query, query, query, page, size, sort);
     }
 
-    public PagedDtoList<UnitDto> search(
+    public PagedList<UnitDto> search(
             String name,
             String company,
             String type,
@@ -112,8 +108,8 @@ public class UnitService {
         return toPagedDto(list, mapper.getSearchCount(name, company, type, code, parent), page, size);
     }
 
-    private PagedDtoList<UnitDto> toPagedDto(List<UnitDto> list, int count, int page, int size) {
-        PagedDtoList<UnitDto> pagedList = new PagedDtoList<>();
+    private PagedList<UnitDto> toPagedDto(List<UnitDto> list, int count, int page, int size) {
+        PagedList<UnitDto> pagedList = new PagedList<>();
         pagedList.setContent(list);
         pagedList.setPage(page);
         pagedList.setSize(size);

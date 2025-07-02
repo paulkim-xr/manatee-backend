@@ -2,21 +2,16 @@ package com.rathon.manatee.database.controller;
 
 import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedDtoList;
+import com.rathon.manatee.database.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Company;
 import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.CompanyService;
 import com.rathon.manatee.database.service.UnitService;
 import com.rathon.manatee.database.service.mapper.CompanyMapperService;
-import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
-import com.rathon.manatee.database.service.mapper.UnitMapperService;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -33,7 +28,7 @@ public class CompanyController {
     }
 
     @GetMapping
-    public PagedDtoList<CompanyDto> getPaged(
+    public PagedList<CompanyDto> getPaged(
             @RequestParam(required = false) String sort,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
@@ -92,10 +87,9 @@ public class CompanyController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateCompany(@PathVariable Long id, @RequestBody CompanyDto d) {
+    @PutMapping
+    public ResponseEntity<Void> updateCompany(@RequestBody CompanyDto d) {
         Company c = cMapper.toEntity(d);
-        c.setId(id);
         cService.updateCompany(c); // TODO
         return ResponseEntity.ok().build();
     }
@@ -121,7 +115,7 @@ public class CompanyController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<PagedDtoList<CompanyDto>> search(
+    public ResponseEntity<PagedList<CompanyDto>> search(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String address,
@@ -131,7 +125,7 @@ public class CompanyController {
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String sort
     ) {
-        PagedDtoList<CompanyDto> pagedList = null;
+        PagedList<CompanyDto> pagedList = null;
         if (query != null) {
             pagedList = cService.search(query, page, size, sort);
         } else {

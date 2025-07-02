@@ -2,7 +2,6 @@ package com.rathon.manatee.community.controller;
 
 import com.rathon.manatee.community.dto.BoardDto;
 import com.rathon.manatee.community.dto.BoardGroupDto;
-import com.rathon.manatee.community.dto.CommentDto;
 import com.rathon.manatee.community.service.BoardGroupService;
 import com.rathon.manatee.community.service.BoardService;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +27,7 @@ public class BoardGroupController {
 
     @GetMapping("/root")
     public ResponseEntity<BoardGroupDto> getRoot() {
-        return ResponseEntity.ok(gService.getById(1L));
-    }
-
-    @GetMapping("/{id}/children")
-    public ResponseEntity<?> getChildren(@PathVariable Long id) {
-        return ResponseEntity.ok(gService.getChildren(id));
+        return ResponseEntity.ok(gService.getObjectById(1L));
     }
 
     @GetMapping("/{id}/boards")
@@ -52,8 +46,8 @@ public class BoardGroupController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody BoardGroupDto d) {
+    @PutMapping
+    public ResponseEntity<Void> update(@RequestBody BoardGroupDto d) {
         gService.update(d);
         return ResponseEntity.ok().build();
     }

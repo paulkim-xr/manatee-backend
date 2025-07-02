@@ -6,28 +6,32 @@ import com.rathon.manatee.community.dto.PostSummaryDto;
 import com.rathon.manatee.community.mapper.CommentMapper;
 import com.rathon.manatee.community.mapper.PostMapper;
 import com.rathon.manatee.community.model.Comment;
+import com.rathon.manatee.community.model.Post;
 import com.rathon.manatee.community.service.mapper.CommentMapperService;
 import com.rathon.manatee.community.service.mapper.PostMapperService;
-import com.rathon.manatee.database.dto.PagedDtoList;
+import com.rathon.manatee.core.service.ObjectService;
+import com.rathon.manatee.core.dto.PagedList;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class PostService {
-    private final PostMapper mapper;
+public class PostService extends ObjectService<Post, PostDto, PostMapper, PostMapperService> {
     private final CommentMapper commentMapper;
-    private final PostMapperService postMapperService;
     private final CommentMapperService commentMapperService;
 
-    public PostService(PostMapper mapper, CommentMapper commentMapper, PostMapperService postMapperService, CommentMapperService commentMapperService) {
-        this.mapper = mapper;
+    public PostService(
+            PostMapper mapper,
+            CommentMapper commentMapper,
+            PostMapperService service,
+            CommentMapperService commentMapperService
+    ) {
+        super(mapper, service);
         this.commentMapper = commentMapper;
-        this.postMapperService = postMapperService;
         this.commentMapperService = commentMapperService;
     }
 
-    public PagedDtoList<PostSummaryDto> getPagedPosts(Integer page, Integer size, String sort) {
+    public PagedList<PostSummaryDto> getPagedObjects(Integer page, Integer size, String sort) {
         String sortColumn = "id";
         String sortDirection = "asc";
         if (sort != null && sort.contains(",")) {
@@ -35,39 +39,15 @@ public class PostService {
             sortDirection = sort.split(",")[1];
         }
 
-        List<PostSummaryDto> list = mapper.getPagedPosts(page * size, size, sortColumn, sortDirection).stream().map(postMapperService::summarize).toList();
-        return toPagedDto(list, page, size, mapper.getCount());
+        List<PostSummaryDto> list = mapper.getPagedObjects(page * size, size, sortColumn, sortDirection).stream().map(service::summarize).toList();
+        return PagedList.build(list, page, size, mapper.getCount());
     }
 
     public List<CommentDto> getComments(Long id) {
         return commentMapper.findByPostId(id).stream().map(commentMapperService::toDto).toList();
     }
 
-    private PagedDtoList<PostSummaryDto> toPagedDto(List<PostSummaryDto> list, int page, int size, int totalCount) {
-        PagedDtoList<PostSummaryDto> pagedList = new PagedDtoList<>();
-        pagedList.setContent(list);
-        pagedList.setPage(page);
-        pagedList.setSize(size);
-        pagedList.setTotalCount(totalCount);
-        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
-        pagedList.setFirst(page == 0);
-        pagedList.setLast(page == (pagedList.getTotalPages() - 1));
-
-        return pagedList;
-    }
-
-    public PostDto getPostById(Long id) {
-        return postMapperService.toDto(mapper.findById(id));
-    }
-
-    public void insert(PostDto d) {
-        mapper.insert(postMapperService.toEntity(d));
-    }
-
-    public void update(PostDto d) {
-        mapper.update(postMapperService.toEntity(d));
-    }
-
+    @Override
     public void delete(Long id) {
         List<Comment> comments = commentMapper.findByParentId(id);
         for (Comment comment : comments) {
@@ -77,7 +57,7 @@ public class PostService {
         mapper.delete(id);
     }
 
-    public PagedDtoList<PostSummaryDto> search(Integer page, Integer size, String sort, String query, Integer option) {
+    public PagedList<PostSummaryDto> search(Integer page, Integer size, String sort, String query, Integer option) {
         String sortColumn = "posted_time";
         String sortDirection = "desc";
         if (sort != null && sort.contains(",")) {
@@ -85,6 +65,17 @@ public class PostService {
             sortDirection = sort.split(",")[1];
         }
 
-        return toPagedDto(mapper.search(null, page * size, size, sortColumn, sortDirection, query, option).stream().map(postMapperService::summarize).toList(), page, size, mapper.countSearchResult(null, query, option));
+        return PagedList.build(mapper.search(
+                null,
+                page * size,
+                size, sortColumn,
+                sortDirection,
+                query,
+                option
+        ).stream().map(service::summarize).toList(),
+                page,
+                size,
+                mapper.searchCount(null, query, option)
+        );
     }
 }

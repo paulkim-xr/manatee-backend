@@ -1,8 +1,7 @@
 package com.rathon.manatee.database.controller;
 
-import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedDtoList;
+import com.rathon.manatee.database.dto.PagedList;
 import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.service.EmployeeService;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
@@ -23,7 +22,7 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public PagedDtoList<EmployeeDto> getPaged(
+    public PagedList<EmployeeDto> getPaged(
             @RequestParam(required = false) String sort,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
@@ -57,10 +56,9 @@ public class EmployeeController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDto d) {
+    @PutMapping
+    public ResponseEntity<Void> updateEmployee(@RequestBody EmployeeDto d) {
         Employee c = mapper.toEntity(d);
-        c.setId(id);
         service.updateEmployee(c); // TODO
         return ResponseEntity.ok().build();
     }
@@ -72,7 +70,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<PagedDtoList<EmployeeDto>> search(
+    public ResponseEntity<PagedList<EmployeeDto>> search(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String company,
             @RequestParam(required = false) String unit,
@@ -87,7 +85,7 @@ public class EmployeeController {
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String sort
     ) {
-        PagedDtoList<EmployeeDto> pagedList = null;
+        PagedList<EmployeeDto> pagedList = null;
         if (query != null) {
             pagedList = service.search(query, page, size, sort);
         } else {

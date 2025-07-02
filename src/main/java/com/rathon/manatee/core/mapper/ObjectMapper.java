@@ -11,7 +11,10 @@ public interface ObjectMapper<T> {
     List<T> findAll();
     List<T> getPagedObjects(int offset, int size, String sortColumn, String sortDirection);
     Integer getCount();
-    List<T> search(int offset, int size, String sortColumn, String sortDirection, String... args);
+
+    List<T> searchTemplate(int offset, int size, String sortColumn, String sortDirection, String... args);
+    int searchCountTemplate(int offset, int size, String column, String direction, String... args);
+
     void insert(T object);
     void update(T object);
     void delete(Long id);

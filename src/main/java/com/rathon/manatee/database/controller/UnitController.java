@@ -1,8 +1,7 @@
 package com.rathon.manatee.database.controller;
 
-import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedDtoList;
+import com.rathon.manatee.database.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.UnitService;
@@ -28,7 +27,7 @@ public class UnitController {
     }
 
     @GetMapping
-    public PagedDtoList<UnitDto> getPaged(
+    public PagedList<UnitDto> getPaged(
             @RequestParam(required = false) String sort,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
@@ -85,8 +84,8 @@ public class UnitController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUnit(@PathVariable Long id, @RequestBody UnitDto d) {
+    @PutMapping
+    public ResponseEntity<Void> updateUnit(@RequestBody UnitDto d) {
         uService.updateUnit(uMapper.toEntity(d));
         return ResponseEntity.ok().build();
     }
@@ -104,7 +103,7 @@ public class UnitController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<PagedDtoList<UnitDto>> search(
+    public ResponseEntity<PagedList<UnitDto>> search(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) String company,
@@ -115,7 +114,7 @@ public class UnitController {
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String sort
     ) {
-        PagedDtoList<UnitDto> pagedList = null;
+        PagedList<UnitDto> pagedList = null;
         if (query != null) {
             pagedList = uService.search(query, page, size, sort);
         } else {

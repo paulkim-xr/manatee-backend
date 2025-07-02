@@ -1,16 +1,24 @@
 package com.rathon.manatee.community.service.mapper;
 
 import com.rathon.manatee.community.dto.CommentDto;
+import com.rathon.manatee.community.mapper.CommentMapper;
 import com.rathon.manatee.community.model.Comment;
+import com.rathon.manatee.core.dto.Dto;
+import com.rathon.manatee.core.service.mapper.ObjectMapperService;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CommentMapperService {
-    @Autowired
-    private EmployeeMapper employeeMapper;
+public class CommentMapperService implements ObjectMapperService<Comment, CommentDto> {
+    private final EmployeeMapper employeeMapper;
 
+    public CommentMapperService(EmployeeMapper employeeMapper) {
+        super();
+        this.employeeMapper = employeeMapper;
+    }
+
+    @Override
     public CommentDto toDto(Comment c) {
         CommentDto d = new CommentDto();
         d.setId(c.getId());
@@ -24,6 +32,7 @@ public class CommentMapperService {
         return d;
     }
 
+    @Override
     public Comment toEntity(CommentDto d) {
         Comment c = new Comment();
         c.setId(d.getId());

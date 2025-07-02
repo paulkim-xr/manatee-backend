@@ -11,48 +11,65 @@
             OFFSET #{offset}
         </if>
     </sql>
+    <sql id="sorting">
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">p.id</when>
+            <when test="sortColumn == 'boardId'">p.board_id</when>
+            <when test="sortColumn == 'authorId'">p.author_id</when>
+            <when test="sortColumn == 'postedTime'">p.posted_time</when>
+            <when test="sortColumn == 'editedTime'">p.edited_time</when>
+            <when test="sortColumn == 'title'">p.title</when>
+            <when test="sortColumn == 'content'">p.content</when>
+            <when test="sortColumn == 'isAnnouncement'">p.is_announcement</when>
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+    </sql>
 
     <select id="findById" resultType="Post">
-        SELECT * FROM posts
+        SELECT * FROM posts p
         WHERE id = #{id}
     </select>
 
-    <select id="getPagedPosts" resultType="Post">
-        SELECT * FROM posts
+    <select id="getPagedObjects" resultType="Post">
+        SELECT * FROM posts p
         ORDER BY id
         <include refid="paging" />
     </select>
 
     <select id="findPostsByBoardId" resultType="Post">
-        SELECT * FROM posts
+        SELECT * FROM posts p
         WHERE board_id = #{id}
-        ORDER BY id
+        <include refid="sorting" />
         <include refid="paging" />
     </select>
 
     <select id="countPostsByBoardId" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM posts
+        SELECT COUNT(*) FROM posts p
         WHERE board_id = #{id}
     </select>
 
     <select id="getCount" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM posts
+        SELECT COUNT(*) FROM posts p
     </select>
 
     <insert id="insert" parameterType="Post" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO posts
+        INSERT INTO posts p
         (board_id, author_id, posted_time, edited_time, title, content, is_announcement)
         VALUES (#{boardId}, #{authorId}, #{postedTime}, #{editedTime}, #{title}, #{content}, #{isAnnouncement})
     </insert>
 
     <update id="update" parameterType="Post">
-        UPDATE posts SET
+        UPDATE posts p SET
         board_id = #{boardId}, author_id = #{authorId}, posted_time = #{postedTime}, edited_time = #{editedTime}, title = #{title}, content = #{content}, is_announcement = #{isAnnouncement}
         WHERE id = #{id}
     </update>
 
     <delete id="delete" parameterType="long">
-        DELETE FROM posts WHERE id = #{id}
+        DELETE FROM posts p WHERE id = #{id}
     </delete>
 
     <select id="search" resultType="Post">
@@ -76,10 +93,11 @@
         <if test="id != null">
             AND p.board_id = #{id}
         </if>
+        <include refid="sorting" />
         <include refid="paging" />
     </select>
 
-    <select id="countSearchResult" resultType="java.lang.Integer">
+    <select id="searchCount" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM posts p
         LEFT JOIN employees e ON p.author_id = e.id
         <choose>

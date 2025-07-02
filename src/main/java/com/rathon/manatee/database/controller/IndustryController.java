@@ -35,8 +35,8 @@ public class IndustryController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateIndustry(@PathVariable Long id, @RequestBody Industry i) {
+    @PutMapping
+    public ResponseEntity<Void> updateIndustry(@RequestBody Industry i) {
         service.updateIndustry(i);
         return ResponseEntity.ok().build();
     }

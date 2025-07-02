@@ -1,4 +1,4 @@
-package com.rathon.manatee.core.dto;
+package com.rathon.manatee.database.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class PagedDtoList<T> {
+public class PagedList<T> {
     List<T> content;
     Integer page;
     Integer size;

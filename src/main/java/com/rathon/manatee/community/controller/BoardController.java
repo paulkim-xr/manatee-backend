@@ -1,14 +1,9 @@
 package com.rathon.manatee.community.controller;
 
 import com.rathon.manatee.community.dto.BoardDto;
-import com.rathon.manatee.community.dto.PostDto;
 import com.rathon.manatee.community.dto.PostSummaryDto;
 import com.rathon.manatee.community.service.BoardService;
-import com.rathon.manatee.database.dto.CompanyDto;
-import com.rathon.manatee.database.dto.PagedDtoList;
-import com.rathon.manatee.database.dto.UnitDto;
-import com.rathon.manatee.database.model.Company;
-import com.rathon.manatee.database.model.Unit;
+import com.rathon.manatee.core.dto.PagedList;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +20,7 @@ public class BoardController {
 
     @GetMapping("/{id}")
     public ResponseEntity<BoardDto> getBoard(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getBoard(id));
+        return ResponseEntity.ok(service.getObjectById(id));
     }
 
     @GetMapping("/all")
@@ -34,7 +29,7 @@ public class BoardController {
     }
 
     @GetMapping("/{id}/posts")
-    public ResponseEntity<PagedDtoList<PostSummaryDto>> getPosts(
+    public ResponseEntity<PagedList<PostSummaryDto>> getPosts(
             @PathVariable Long id,
             @RequestParam(required = false) String sort,
             @RequestParam(required = false, defaultValue = "0") Integer page,
@@ -44,7 +39,7 @@ public class BoardController {
     }
 
     @GetMapping("/{id}/posts/search")
-    public ResponseEntity<PagedDtoList<PostSummaryDto>> searchBoard(
+    public ResponseEntity<PagedList<PostSummaryDto>> searchBoard(
             @PathVariable Long id,
             @RequestParam(required = false) String query,
             @RequestParam(required = false, defaultValue = "0") Integer option,
@@ -52,7 +47,7 @@ public class BoardController {
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
-        return ResponseEntity.ok(service.getBoardPosts(id, page, size, sort, query, option));
+        return ResponseEntity.ok(service.searchBoardPosts(id, page, size, sort, query, option));
     }
 
     @PostMapping
@@ -61,8 +56,8 @@ public class BoardController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> update(@PathVariable Long id, @RequestBody BoardDto d) {
+    @PutMapping
+    public ResponseEntity<Void> update(@RequestBody BoardDto d) {
         service.update(d);
         return ResponseEntity.ok().build();
     }

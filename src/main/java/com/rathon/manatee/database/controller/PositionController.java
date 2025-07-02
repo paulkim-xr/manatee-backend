@@ -35,8 +35,8 @@ public class PositionController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updatePosition(@PathVariable Long id, @RequestBody Position p) {
+    @PutMapping
+    public ResponseEntity<Void> updatePosition(@RequestBody Position p) {
         service.updatePosition(p);
         return ResponseEntity.ok().build();
     }

@@ -35,8 +35,8 @@ public class UnitTypeController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Void> updateUnitType(@PathVariable Long id, @RequestBody UnitType t) {
+    @PutMapping
+    public ResponseEntity<Void> updateUnitType(@RequestBody UnitType t) {
         service.updateUnitType(t);
         return ResponseEntity.ok().build();
     }

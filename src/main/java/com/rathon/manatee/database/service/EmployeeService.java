@@ -1,7 +1,7 @@
 package com.rathon.manatee.database.service;
 
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedDtoList;
+import com.rathon.manatee.database.dto.PagedList;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
 import com.rathon.manatee.database.model.Employee;
 import org.springframework.stereotype.Service;
@@ -52,7 +52,7 @@ public class EmployeeService {
         return mapper.findByUsername(name);
     }
 
-    public PagedDtoList<EmployeeDto> getPagedEmployees(int page, int size, String sort) {
+    public PagedList<EmployeeDto> getPagedEmployees(int page, int size, String sort) {
         String sortColumn = "id";
         String sortDirection = "asc";
         if (sort != null && sort.contains(",")) {
@@ -68,11 +68,11 @@ public class EmployeeService {
         return mapper.getCount();
     }
 
-    public PagedDtoList<EmployeeDto> search(String query, Integer page, Integer size, String sort) {
+    public PagedList<EmployeeDto> search(String query, Integer page, Integer size, String sort) {
         return search(query, query, query, query, query, query, query, query, query, page, size, sort);
     }
 
-    public PagedDtoList<EmployeeDto> search(
+    public PagedList<EmployeeDto> search(
             String company,
             String unit,
             String lastName,
@@ -119,8 +119,8 @@ public class EmployeeService {
         ));
     }
 
-    private PagedDtoList<EmployeeDto> toPagedDto(List<EmployeeDto> list, int page, int size, int totalCount) {
-        PagedDtoList<EmployeeDto> pagedList = new PagedDtoList<>();
+    private PagedList<EmployeeDto> toPagedDto(List<EmployeeDto> list, int page, int size, int totalCount) {
+        PagedList<EmployeeDto> pagedList = new PagedList<>();
         pagedList.setContent(list);
         pagedList.setPage(page);
         pagedList.setSize(size);

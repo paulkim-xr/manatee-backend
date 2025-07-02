@@ -43,7 +43,6 @@ public class EmployeeMapperService {
         Employee e = new Employee();
         e.setFirstName(d.getFirstName());
         e.setLastName(d.getLastName());
-//        e.setUnitId(d.getUnit().getId());
         e.setUnitId(d.getUnit().id());
         e.setPositionId(d.getPosition().id());
         e.setEmail(d.getEmail());
