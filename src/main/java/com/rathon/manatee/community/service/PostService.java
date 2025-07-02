@@ -5,6 +5,7 @@ import com.rathon.manatee.community.dto.PostDto;
 import com.rathon.manatee.community.dto.PostSummaryDto;
 import com.rathon.manatee.community.mapper.CommentMapper;
 import com.rathon.manatee.community.mapper.PostMapper;
+import com.rathon.manatee.community.model.Comment;
 import com.rathon.manatee.community.service.mapper.CommentMapperService;
 import com.rathon.manatee.community.service.mapper.PostMapperService;
 import com.rathon.manatee.database.dto.PagedDtoList;
@@ -68,6 +69,11 @@ public class PostService {
     }
 
     public void delete(Long id) {
+        List<Comment> comments = commentMapper.findByParentId(id);
+        for (Comment comment : comments) {
+            commentMapper.delete(comment.getId());
+        }
+
         mapper.delete(id);
     }
 

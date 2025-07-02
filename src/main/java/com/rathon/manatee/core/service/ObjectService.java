@@ -1,63 +1,23 @@
 package com.rathon.manatee.core.service;
 
-import com.rathon.manatee.core.dto.ObjectDto;
+import com.rathon.manatee.core.dto.Dto;
 import com.rathon.manatee.core.dto.PagedDtoList;
 import com.rathon.manatee.core.mapper.ObjectMapper;
+import com.rathon.manatee.core.service.mapper.ObjectMapperService;
 
 import java.util.List;
 
 public class ObjectService<T> {
     private final ObjectMapper<T> mapper;
+    private final ObjectMapperService<T> service;
 
-    public ObjectService(ObjectMapper<T> mapper) {
+    public ObjectService(ObjectMapper<T> mapper, ObjectMapperService<T> service) {
         this.mapper = mapper;
+        this.service = service;
     }
 
-    public ObjectDto<T> getObjectById(Long id) {
-        return mapper.findByIdDto(id);
-    }
-
-    public List<ObjectDto<T>> getObjectList() {
-        return mapper.findAllDto();
-    }
-
-    public PagedDtoList<ObjectDto<T>> getPagedObjects(int page, int size, String sort) {
-        String sortColumn = "id";
-        String sortDirection = "asc";
-        if (sort != null && sort.contains(",")) {
-            sortColumn = sort.split(",")[0];
-            sortDirection = sort.split(",")[1];
-        }
-
-        List<ObjectDto<T>> list = mapper.getPagedObjectsDto(page * size, size, sortColumn, sortDirection);
-        return toPagedDto(list, page, size);
-    }
-
-    public PagedDtoList<ObjectDto<T>> search(
-            String query,
-            int page,
-            int size,
-            String sort
-    ) {
-
-        return search(page, size, sort, query);
-    }
-
-    public PagedDtoList<ObjectDto<T>> search(
-            int page,
-            int size,
-            String sort,
-            String... args
-    ) {
-        SortInfo sortInfo = new SortInfo(sort);
-
-        List<ObjectDto<T>> list = mapper.searchDto(page * size, size, sortInfo.column, sortInfo.direction, args);
-
-        return toPagedDto(list, page, size);
-    }
-
-    public PagedDtoList<ObjectDto<T>> toPagedDto(List<ObjectDto<T>> list, int page, int size) {
-        PagedDtoList<ObjectDto<T>> pagedList = new PagedDtoList<>();
+    public PagedDtoList<Dto<T>> toPagedDto(List<Dto<T>> list, int page, int size) {
+        PagedDtoList<Dto<T>> pagedList = new PagedDtoList<>();
         int totalCount = list.size();
         pagedList.setContent(list);
         pagedList.setPage(page);
@@ -80,5 +40,60 @@ public class ObjectService<T> {
                 direction = sort.split(",")[1];
             }
         }
+    }
+
+    public Dto<T> getObjectById(Long id) {
+        return service.toDto(mapper.findById(id));
+    }
+
+    public List<Dto<T>> getAll() {
+        return mapper.findAll().stream().map(service::toDto).toList();
+    }
+
+    public PagedDtoList<Dto<T>> getPagedObjects(int page, int size, String sort) {
+        String sortColumn = "id";
+        String sortDirection = "asc";
+        if (sort != null && sort.contains(",")) {
+            sortColumn = sort.split(",")[0];
+            sortDirection = sort.split(",")[1];
+        }
+
+        List<Dto<T>> list = mapper.getPagedObjects(page * size, size, sortColumn, sortDirection).stream().map(service::toDto).toList();
+        return toPagedDto(list, page, size);
+    }
+
+    public PagedDtoList<Dto<T>> search(
+            int page,
+            int size,
+            String sort,
+            String query
+    ) {
+
+        return search(page, size, sort, query, null);
+    }
+
+    public PagedDtoList<Dto<T>> search(
+            int page,
+            int size,
+            String sort,
+            String... args
+    ) {
+        SortInfo sortInfo = new SortInfo(sort);
+
+        List<Dto<T>> list = mapper.search(page * size, size, sortInfo.column, sortInfo.direction, args).stream().map(service::toDto).toList();
+
+        return toPagedDto(list, page, size);
+    }
+
+    public void insert(Dto<T> dto) {
+        mapper.insert(service.toEntity(dto));
+    }
+
+    public void update(Dto<T> dto) {
+        mapper.update(service.toEntity(dto));
+    }
+
+    public void delete(Long id) {
+        mapper.delete(id);
     }
 }

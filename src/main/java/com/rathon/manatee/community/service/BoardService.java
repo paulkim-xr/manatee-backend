@@ -4,6 +4,7 @@ import com.rathon.manatee.community.dto.BoardDto;
 import com.rathon.manatee.community.dto.PostSummaryDto;
 import com.rathon.manatee.community.mapper.BoardMapper;
 import com.rathon.manatee.community.mapper.PostMapper;
+import com.rathon.manatee.community.model.Post;
 import com.rathon.manatee.community.service.mapper.BoardMapperService;
 import com.rathon.manatee.community.service.mapper.PostMapperService;
 import com.rathon.manatee.database.dto.PagedDtoList;
@@ -17,12 +18,14 @@ public class BoardService {
     private final PostMapper postMapper;
     private final PostMapperService postMapperService;
     private final BoardMapperService boardMapperService;
+    private final PostService postService;
 
-    public BoardService(BoardMapper mapper, PostMapper postMapper, PostMapperService postMapperService, BoardMapperService boardMapperService) {
+    public BoardService(BoardMapper mapper, PostMapper postMapper, PostMapperService postMapperService, BoardMapperService boardMapperService, PostService postService) {
         this.mapper = mapper;
         this.postMapper = postMapper;
         this.postMapperService = postMapperService;
         this.boardMapperService = boardMapperService;
+        this.postService = postService;
     }
 
     public BoardDto findById(Long id) {
@@ -68,6 +71,11 @@ public class BoardService {
     }
 
     public void delete(Long id) {
+        List<Post> posts = postMapper.findPostsByBoardId(id, Integer.MAX_VALUE, Integer.MAX_VALUE, null, null);
+        for(Post post : posts) {
+            postService.delete(post.getId());
+        }
+
         mapper.delete(id);
     }
 

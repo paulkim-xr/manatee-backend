@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ObjectDto<T> {
+public class Dto<T> {
     private Long id;
 }

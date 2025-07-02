@@ -3,17 +3,19 @@ package com.rathon.manatee.community.typeHandler;
 import com.rathon.manatee.community.model.BoardType;
 import org.apache.ibatis.type.BaseTypeHandler;
 import org.apache.ibatis.type.JdbcType;
+import org.apache.ibatis.type.MappedTypes;
 
 import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@MappedTypes(BoardType.class)
 public class BoardTypeHandler extends BaseTypeHandler<BoardType> {
 
     @Override
     public void setNonNullParameter(PreparedStatement ps, int i, BoardType parameter, JdbcType jdbcType) throws SQLException {
-        ps.setString(i, parameter.name());
+        ps.setObject(i, parameter.name(), java.sql.Types.OTHER);
     }
 
     @Override
