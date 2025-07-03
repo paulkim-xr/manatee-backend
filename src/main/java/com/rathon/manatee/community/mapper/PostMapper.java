@@ -1,5 +1,6 @@
 package com.rathon.manatee.community.mapper;
 
+import com.rathon.manatee.community.dto.PostDto;
 import com.rathon.manatee.community.model.Post;
 import com.rathon.manatee.core.mapper.ObjectMapper;
 import org.apache.ibatis.annotations.Mapper;
@@ -7,7 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 
 @Mapper
-public interface PostMapper extends ObjectMapper<Post> {
+public interface PostMapper extends ObjectMapper<Post, PostDto> {
     List<Post> findPostsByBoardId(Long id, Integer offset, Integer size, String sortColumn, String sortDirection);
     int countPostsByBoardId(Long id);
 

@@ -1,51 +1,38 @@
 package com.rathon.manatee.database.service;
 
+import com.rathon.manatee.core.service.ObjectService;
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedList;
+import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
 import com.rathon.manatee.database.model.Employee;
+import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class EmployeeService {
-    private final EmployeeMapper mapper;
+public class EmployeeService extends ObjectService<Employee, EmployeeDto, EmployeeMapper, EmployeeMapperService> {
 
-    public EmployeeService(EmployeeMapper mapper) {
-        this.mapper = mapper;
+    public EmployeeService(EmployeeMapper mapper, EmployeeMapperService service) {
+        super(mapper, service);
     }
 
-    public EmployeeDto getEmployeeById(Long id) {
-        return mapper.findById(id);
+    @Override
+    public EmployeeDto getObjectById(Long id) {
+        return mapper.findByIdDto(id);
     }
 
-    public List<EmployeeDto> getAllEmployees() {
-        return mapper.findAll();
+    @Override
+    public List<EmployeeDto> getAll() {
+        return mapper.findAllDto();
     }
 
-    public List<EmployeeDto> findByFirstName(String firstName) {
-        return mapper.findByFirstname(firstName);
-    }
-
-    public List<EmployeeDto> findByLastName(String lastName) {
-        return mapper.findByLastname(lastName);
-    }
-
-    public void createEmployee(Employee e) {
+    public void insert(Employee e) {
         mapper.insert(e);
     }
 
-    public void updateEmployee(Employee e) {
+    public void update(Employee e) {
         mapper.update(e);
-    }
-
-    public void deleteEmployee(Long id) {
-        mapper.delete(id);
-    }
-
-    public List<EmployeeDto> searchAll(String query) {
-        return mapper.searchAll(query);
     }
 
     public Employee findByUsername(String name) {
@@ -53,19 +40,10 @@ public class EmployeeService {
     }
 
     public PagedList<EmployeeDto> getPagedEmployees(int page, int size, String sort) {
-        String sortColumn = "id";
-        String sortDirection = "asc";
-        if (sort != null && sort.contains(",")) {
-            sortColumn = sort.split(",")[0];
-            sortDirection = sort.split(",")[1];
-        }
+        SortInfo sortInfo = new SortInfo(sort);
 
-        List<EmployeeDto> list = mapper.getPagedEmployees(page * size, size, sortColumn, sortDirection);
-        return toPagedDto(list, page, size, getCount());
-    }
-
-    public Integer getCount() {
-        return mapper.getCount();
+        List<EmployeeDto> list = mapper.getPagedObjectsDto(page * size, size, sortInfo.column, sortInfo.direction);
+        return PagedList.build(list, page, size, getCount());
     }
 
     public PagedList<EmployeeDto> search(String query, Integer page, Integer size, String sort) {
@@ -84,14 +62,9 @@ public class EmployeeService {
             String dob,
             Integer page, Integer size, String sort
     ) {
-        String sortColumn = "id";
-        String sortDirection = "asc";
-        if (sort != null && sort.contains(",")) {
-            sortColumn = sort.split(",")[0];
-            sortDirection = sort.split(",")[1];
-        }
+        SortInfo sortInfo = new SortInfo(sort);
 
-        List<EmployeeDto> list = mapper.search(
+        List<EmployeeDto> list = mapper.searchDto(
                 company,
                 unit,
                 lastName,
@@ -101,12 +74,12 @@ public class EmployeeService {
                 email,
                 phone,
                 dob,
-                sortColumn,
-                sortDirection,
+                sortInfo.column,
+                sortInfo.direction,
                 page * size,
                 size);
 
-        return toPagedDto(list, page, size, mapper.getSearchCount(
+        return PagedList.build(list, page, size, mapper.searchCount(
                 company,
                 unit,
                 lastName,
@@ -117,18 +90,5 @@ public class EmployeeService {
                 phone,
                 dob
         ));
-    }
-
-    private PagedList<EmployeeDto> toPagedDto(List<EmployeeDto> list, int page, int size, int totalCount) {
-        PagedList<EmployeeDto> pagedList = new PagedList<>();
-        pagedList.setContent(list);
-        pagedList.setPage(page);
-        pagedList.setSize(size);
-        pagedList.setTotalCount(totalCount);
-        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
-        pagedList.setFirst(page == 0);
-        pagedList.setLast(page == (pagedList.getTotalPages() - 1));
-
-        return pagedList;
     }
 }

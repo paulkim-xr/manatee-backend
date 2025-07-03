@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-public class ObjectController<T, D extends Dto<T>, S extends ObjectService<T, D, ? extends ObjectMapper<T>, ? extends ObjectMapperService<T, D>>> {
+public class ObjectController<T, D extends Dto<T>, S extends ObjectService<T, D, ? extends ObjectMapper<T, D>, ? extends ObjectMapperService<T, D>>> {
     public final S service;
 
     public ObjectController(S service) {
@@ -31,6 +31,11 @@ public class ObjectController<T, D extends Dto<T>, S extends ObjectService<T, D,
         return ResponseEntity.ok(service.getAll());
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCount() {
+        return ResponseEntity.ok(service.getCount());
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<D> getObject(@PathVariable Long id) {
         return ResponseEntity.ok(service.getObjectById(id));
@@ -46,19 +51,16 @@ public class ObjectController<T, D extends Dto<T>, S extends ObjectService<T, D,
         return ResponseEntity.notFound().build();
     }
 
-    @PostMapping
     public ResponseEntity<Void> insert(@RequestBody D d) {
         service.insert(d);
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping
     public ResponseEntity<Void> update(@RequestBody D d) {
         service.update(d);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.ok().build();

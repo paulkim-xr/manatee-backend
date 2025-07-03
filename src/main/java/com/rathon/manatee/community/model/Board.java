@@ -8,7 +8,7 @@ import lombok.Setter;
 public class Board {
     private Long id;
     private String name;
-    private Long groupId;
+    private Long parentId;
     private String description;
     private BoardType type;
 

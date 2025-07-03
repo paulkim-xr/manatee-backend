@@ -12,81 +12,81 @@
         </if>
     </sql>
     <sql id="sorting">
-        ORDER BY
-        <choose>
-            <when test="sortColumn == 'id'">p.id</when>
-            <when test="sortColumn == 'boardId'">p.board_id</when>
-            <when test="sortColumn == 'authorId'">p.author_id</when>
-            <when test="sortColumn == 'postedTime'">p.posted_time</when>
-            <when test="sortColumn == 'editedTime'">p.edited_time</when>
-            <when test="sortColumn == 'title'">p.title</when>
-            <when test="sortColumn == 'content'">p.content</when>
-            <when test="sortColumn == 'isAnnouncement'">p.is_announcement</when>
-        </choose>
-        <choose>
-            <when test="sortDirection == 'desc'">DESC</when>
-            <otherwise>ASC</otherwise>
-        </choose>
+        <if test="sortColumn != null">
+            ORDER BY
+            <choose>
+                <when test="sortColumn == 'id'">id</when>
+                <when test="sortColumn == 'boardId'">board_id</when>
+                <when test="sortColumn == 'authorId'">author_id</when>
+                <when test="sortColumn == 'postedTime'">posted_time</when>
+                <when test="sortColumn == 'editedTime'">edited_time</when>
+                <when test="sortColumn == 'title'">title</when>
+                <when test="sortColumn == 'content'">content</when>
+                <when test="sortColumn == 'isAnnouncement'">is_announcement</when>
+            </choose>
+            <choose>
+                <when test="sortDirection == 'desc'">DESC</when>
+                <otherwise>ASC</otherwise>
+            </choose>
+        </if>
     </sql>
 
     <select id="findById" resultType="Post">
-        SELECT * FROM posts p
+        SELECT * FROM posts
         WHERE id = #{id}
     </select>
 
     <select id="getPagedObjects" resultType="Post">
-        SELECT * FROM posts p
+        SELECT * FROM posts
         ORDER BY id
         <include refid="paging" />
     </select>
 
     <select id="findPostsByBoardId" resultType="Post">
-        SELECT * FROM posts p
+        SELECT * FROM posts
         WHERE board_id = #{id}
         <include refid="sorting" />
         <include refid="paging" />
     </select>
 
     <select id="countPostsByBoardId" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM posts p
+        SELECT COUNT(*) FROM posts
         WHERE board_id = #{id}
     </select>
 
     <select id="getCount" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM posts p
+        SELECT COUNT(*) FROM posts
     </select>
 
     <insert id="insert" parameterType="Post" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO posts p
+        INSERT INTO posts
         (board_id, author_id, posted_time, edited_time, title, content, is_announcement)
         VALUES (#{boardId}, #{authorId}, #{postedTime}, #{editedTime}, #{title}, #{content}, #{isAnnouncement})
     </insert>
 
     <update id="update" parameterType="Post">
-        UPDATE posts p SET
+        UPDATE posts SET
         board_id = #{boardId}, author_id = #{authorId}, posted_time = #{postedTime}, edited_time = #{editedTime}, title = #{title}, content = #{content}, is_announcement = #{isAnnouncement}
         WHERE id = #{id}
     </update>
 
     <delete id="delete" parameterType="long">
-        DELETE FROM posts p WHERE id = #{id}
+        DELETE FROM posts WHERE id = #{id}
     </delete>
 
     <select id="search" resultType="Post">
         SELECT * FROM posts p
         LEFT JOIN employees e ON p.author_id = e.id
+        WHERE
         <choose>
             <when test="option == 0">
-                WHERE
                 (p.title ILIKE CONCAT('%', #{query}, '%') OR
                 p.content ILIKE CONCAT('%', #{query}, '%'))
             </when>
             <when test="option == 1">
-                WHERE
                 p.title ILIKE CONCAT('%', #{query}, '%')
             </when>
             <when test="option == 2">
-                WHERE
                 CONCAT(e.last_name, e.first_name) ILIKE CONCAT('%', #{query}, '%')
             </when>
         </choose>

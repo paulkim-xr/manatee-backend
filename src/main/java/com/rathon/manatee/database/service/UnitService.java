@@ -1,28 +1,30 @@
 package com.rathon.manatee.database.service;
 
+import com.rathon.manatee.core.service.ObjectService;
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedList;
+import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.UnitMapper;
 import com.rathon.manatee.database.model.Unit;
+import com.rathon.manatee.database.service.mapper.UnitMapperService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UnitService {
-    private final UnitMapper mapper;
+public class UnitService extends ObjectService<Unit, UnitDto, UnitMapper, UnitMapperService> {
 
-    public UnitService(UnitMapper mapper) {
-        this.mapper = mapper;
+    public UnitService(UnitMapper mapper, UnitMapperService service) {
+        super(mapper, service);
     }
 
-    public UnitDto getUnitById(Long id) {
-        return mapper.findById(id);
+    @Override
+    public UnitDto getObjectById(Long id) {
+        return mapper.findByIdDto(id);
     }
 
-    public List<UnitDto> getUnitList() {
-        return mapper.findAll();
+    public List<UnitDto> getAll(Boolean root) {
+        return mapper.findAllDto(root);
     }
 
     public UnitDto getParent(Long id) {
@@ -37,49 +39,18 @@ public class UnitService {
         return mapper.getEmployees(id);
     }
 
-    public void createUnit(Unit u) {
+    public void insert(Unit u) {
         mapper.insert(u);
     }
 
-    public void updateUnit(Unit u) {
+    public void update(Unit u) {
         mapper.update(u);
     }
 
-    public void deleteUnit(Long id) {
+    @Override
+    public void delete(Long id) {
+        // Implement check logic
         mapper.delete(id);
-    }
-
-    public List<UnitDto> getFullUnitList() {
-        return mapper.findAllFull();
-    }
-
-    public PagedList<UnitDto> getPagedUnits(Integer page, Integer size, String sort) {
-        String sortColumn = "id";
-        String sortDirection = "asc";
-        if (sort != null && sort.contains(",")) {
-            sortColumn = sort.split(",")[0];
-            sortDirection = sort.split(",")[1];
-        }
-
-        List<UnitDto> list = mapper.getPagedUnits(page * size, size, sortColumn, sortDirection);
-        return toPagedDto(list, getCount(), page, size);
-    }
-
-    public Integer getCount() {
-        return mapper.getCount();
-    }
-
-    public Integer getSearchCount(
-            String name,
-            String company,
-            String type,
-            String code,
-            String parent,
-            Integer page,
-            Integer size,
-            String sort
-    ) {
-        return mapper.getSearchCount(name, company, type, code, parent);
     }
 
     public PagedList<UnitDto> search(String query, Integer page, Integer size, String sort) {
@@ -105,19 +76,6 @@ public class UnitService {
 
         List<UnitDto> list = mapper.search(name, company, type, code, parent, sortColumn, sortDirection, page * size, size);
 
-        return toPagedDto(list, mapper.getSearchCount(name, company, type, code, parent), page, size);
-    }
-
-    private PagedList<UnitDto> toPagedDto(List<UnitDto> list, int count, int page, int size) {
-        PagedList<UnitDto> pagedList = new PagedList<>();
-        pagedList.setContent(list);
-        pagedList.setPage(page);
-        pagedList.setSize(size);
-        pagedList.setTotalCount(count);
-        pagedList.setTotalPages(Math.ceilDiv(count, size));
-        pagedList.setFirst(page == 0);
-        pagedList.setLast(page == (pagedList.getTotalPages() - 1));
-
-        return pagedList;
+        return PagedList.build(list, page, size, mapper.searchCount(name, company, type, code, parent));
     }
 }

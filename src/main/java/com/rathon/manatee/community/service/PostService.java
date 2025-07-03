@@ -12,21 +12,25 @@ import com.rathon.manatee.community.service.mapper.PostMapperService;
 import com.rathon.manatee.core.service.ObjectService;
 import com.rathon.manatee.core.dto.PagedList;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class PostService extends ObjectService<Post, PostDto, PostMapper, PostMapperService> {
+    private final CommentService commentService;
     private final CommentMapper commentMapper;
     private final CommentMapperService commentMapperService;
 
     public PostService(
             PostMapper mapper,
-            CommentMapper commentMapper,
             PostMapperService service,
+            CommentService commentService,
+            CommentMapper commentMapper,
             CommentMapperService commentMapperService
     ) {
         super(mapper, service);
+        this.commentService = commentService;
         this.commentMapper = commentMapper;
         this.commentMapperService = commentMapperService;
     }
@@ -48,17 +52,18 @@ public class PostService extends ObjectService<Post, PostDto, PostMapper, PostMa
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
-        List<Comment> comments = commentMapper.findByParentId(id);
+        List<Comment> comments = commentMapper.findByPostId(id).stream().filter(comment -> comment.getParentId() == null).toList();
         for (Comment comment : comments) {
-            commentMapper.delete(comment.getId());
+            commentService.deepDelete(comment.getId());
         }
 
         mapper.delete(id);
     }
 
     public PagedList<PostSummaryDto> search(Integer page, Integer size, String sort, String query, Integer option) {
-        String sortColumn = "posted_time";
+        String sortColumn = "postedTime";
         String sortDirection = "desc";
         if (sort != null && sort.contains(",")) {
             sortColumn = sort.split(",")[0];

@@ -1,5 +1,6 @@
 package com.rathon.manatee.database.model;
 
+import com.rathon.manatee.core.types.RoleType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,6 +17,8 @@ public class Employee {
     private String email;
     private String phone;
     private Date dob;
+
+    private RoleType roleType;
 
     private String username;
     private String passwordHash;

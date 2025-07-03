@@ -2,59 +2,56 @@ package com.rathon.manatee.community.controller;
 
 import com.rathon.manatee.community.dto.BoardDto;
 import com.rathon.manatee.community.dto.BoardGroupDto;
+import com.rathon.manatee.community.model.BoardGroup;
 import com.rathon.manatee.community.service.BoardGroupService;
 import com.rathon.manatee.community.service.BoardService;
+import com.rathon.manatee.core.controller.ObjectController;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/boardgroups")
-public class BoardGroupController {
-    private final BoardGroupService gService;
-    private final BoardService bService;
-
-    public BoardGroupController(BoardGroupService gService, BoardService bService) {
-        this.gService = gService;
-        this.bService = bService;
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<BoardGroupDto>> getAll() {
-        return ResponseEntity.ok(gService.getAll());
+public class BoardGroupController extends ObjectController<BoardGroup, BoardGroupDto, BoardGroupService> {
+    public BoardGroupController(BoardGroupService service) {
+        super(service);
     }
 
     @GetMapping("/root")
     public ResponseEntity<BoardGroupDto> getRoot() {
-        return ResponseEntity.ok(gService.getObjectById(1L));
+        return ResponseEntity.ok(service.getObjectById(1L));
     }
 
     @GetMapping("/{id}/boards")
     public ResponseEntity<List<BoardDto>> getBoards(@PathVariable Long id) {
-        return ResponseEntity.ok(gService.getBoards(id));
+        return ResponseEntity.ok(service.getBoards(id));
     }
 
     @GetMapping("/{id}/boardgroups")
     public ResponseEntity<List<BoardGroupDto>> getChildGroups(@PathVariable Long id) {
-        return ResponseEntity.ok(gService.getChildGroups(id));
+        return ResponseEntity.ok(service.getChildGroups(id));
     }
 
+    @Secured("ROLE_ADMIN")
+    @Override
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody BoardGroupDto d) {
-        gService.insert(d);
-        return ResponseEntity.ok().build();
+        return super.insert(d);
     }
 
+    @Secured("ROLE_ADMIN")
+    @Override
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody BoardGroupDto d) {
-        gService.update(d);
-        return ResponseEntity.ok().build();
+        return super.update(d);
     }
 
+    @Secured("ROLE_ADMIN")
+    @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        gService.delete(id);
-        return ResponseEntity.ok().build();
+        return super.delete(id);
     }
 }

@@ -1,12 +1,9 @@
 package com.rathon.manatee.community.service.mapper;
 
 import com.rathon.manatee.community.dto.CommentDto;
-import com.rathon.manatee.community.mapper.CommentMapper;
 import com.rathon.manatee.community.model.Comment;
-import com.rathon.manatee.core.dto.Dto;
 import com.rathon.manatee.core.service.mapper.ObjectMapperService;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -24,7 +21,7 @@ public class CommentMapperService implements ObjectMapperService<Comment, Commen
         d.setId(c.getId());
         d.setPostId(c.getPostId());
         d.setParentId(c.getParentId());
-        d.setAuthor(employeeMapper.findById(c.getAuthorId()));
+        d.setAuthor(employeeMapper.findByIdDto(c.getAuthorId()));
         d.setPostedTime(c.getPostedTime());
         d.setEditedTime(c.getEditedTime());
         d.setContent(c.getContent());

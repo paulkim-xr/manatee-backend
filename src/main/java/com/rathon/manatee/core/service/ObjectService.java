@@ -7,7 +7,7 @@ import com.rathon.manatee.core.service.mapper.ObjectMapperService;
 
 import java.util.List;
 
-public class ObjectService<T, D extends Dto<T>, M extends ObjectMapper<T>, S extends ObjectMapperService<T, D>> {
+public class ObjectService<T, D extends Dto<T>, M extends ObjectMapper<T, D>, S extends ObjectMapperService<T, D>> {
     public final M mapper;
     public final S service;
 
@@ -16,7 +16,7 @@ public class ObjectService<T, D extends Dto<T>, M extends ObjectMapper<T>, S ext
         this.service = service;
     }
 
-    private static class SortInfo {
+    public static class SortInfo {
         public String column = "id";
         public String direction = "asc";
 
@@ -34,6 +34,10 @@ public class ObjectService<T, D extends Dto<T>, M extends ObjectMapper<T>, S ext
 
     public List<D> getAll() {
         return mapper.findAll().stream().map(service::toDto).toList();
+    }
+
+    public Integer getCount() {
+        return mapper.getCount();
     }
 
     public PagedList<D> getPagedObjects(int page, int size, String sort) {

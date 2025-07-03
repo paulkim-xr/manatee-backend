@@ -1,79 +1,96 @@
-<!--<?xml version="1.0" encoding="UTF-8"?>-->
-<!--<!DOCTYPE mapper-->
-<!--        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"-->
-<!--        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">-->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!--<mapper namespace="com.rathon.manatee.core.mapper.ObjectMapper">-->
-<!--    <sql id="table">&lt;!&ndash; TABLE NAME &ndash;&gt;</sql>-->
-<!--    <sql id="sorting">-->
-<!--        ORDER BY-->
-<!--        <choose>-->
-<!--            <when test="sortColumn == 'id'">id</when>-->
-<!--            &lt;!&ndash; TABLE COLUMNS &ndash;&gt;-->
-<!--        </choose>-->
-<!--        <choose>-->
-<!--            <when test="sortDirection == 'desc'">DESC</when>-->
-<!--            <otherwise>ASC</otherwise>-->
-<!--        </choose>-->
-<!--    </sql>-->
-<!--    <sql id="paging">-->
-<!--        <if test="size != null and offset != null">-->
-<!--            LIMIT #{size}-->
-<!--            OFFSET #{offset}-->
-<!--        </if>-->
-<!--    </sql>-->
+<mapper namespace="com.rathon.manatee.core.mapper.ObjectMapper">
+    <sql id="tableName"><!-- TABLE NAME --></sql>
+    <sql id="sorting">
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">id</when>
+            <!-- TABLE COLUMNS -->
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+    </sql>
+    <sql id="paging">
+        <if test="size != null and offset != null">
+            LIMIT #{size}
+            OFFSET #{offset}
+        </if>
+    </sql>
 
-<!--    <select id="findById" resultType="java.lang.Object">-->
-<!--        SELECT *-->
-<!--        FROM <include refid="table" />-->
-<!--        WHERE id = #{id}-->
-<!--    </select>-->
+    <select id="findById" resultType="java.lang.Object">
+        SELECT *
+        FROM <include refid="tableName" />
+        WHERE id = #{id}
+    </select>
 
-<!--    <select id="findAll" resultType="java.lang.Object">-->
-<!--        SELECT *-->
-<!--        FROM <include refid="table" />-->
-<!--    </select>-->
+    <select id="findAll" resultType="java.lang.Object">
+        SELECT *
+        FROM <include refid="tableName" />
+    </select>
 
-<!--    <select id="getPagedObjects" resultType="java.lang.Object">-->
-<!--        SELECT *-->
-<!--        FROM <include refid="table" />-->
-<!--        <include refid="sorting" />-->
-<!--        <include refid="paging" />-->
-<!--    </select>-->
+    <select id="getPagedObjects" resultType="java.lang.Object">
+        SELECT *
+        FROM <include refid="tableName" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
 
-<!--    <select id="getCount" resultType="java.lang.Integer">-->
-<!--        SELECT COUNT(*) FROM <include refid="table" />-->
-<!--    </select>-->
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM <include refid="tableName" />
+    </select>
 
-<!--    <select id="search" resultType="java.lang.Object">-->
-<!--        SELECT *-->
-<!--        FROM <include refid="table" />-->
-<!--        <where>-->
-<!--            FALSE-->
-<!--            <if test="name != null">-->
-<!--                OR c.name ILIKE CONCAT('%', #{name}, '%')-->
-<!--            </if>-->
-<!--            &lt;!&ndash; TABLE COLUMNS &ndash;&gt;-->
-<!--        </where>-->
-<!--        <include refid="sorting" />-->
-<!--        <include refid="paging" />-->
-<!--    </select>-->
 
-<!--    <insert id="insert" parameterType="java.lang.Object" useGeneratedKeys="true" keyProperty="id">-->
-<!--        INSERT INTO <include refid="table" />-->
-<!--        (&lt;!&ndash; TABLE COLUMNS &ndash;&gt;)-->
-<!--        VALUES (&lt;!&ndash; #{OBJECT FIELDS} &ndash;&gt;)-->
-<!--    </insert>-->
+    <select id="searchTemplate" resultType="java.lang.Object">
+        SELECT NULL
+        FROM <include refid="tableName" />
+        <where>
+            FALSE
+            <if test="name != null">
+                OR c.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <!-- TABLE COLUMNS -->
+        </where>
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+    
+    <select id="searchCountTemplate" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM <include refid="tableName" />
+        <where>
+            FALSE
+            <if test="name != null">
+                OR c.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <!-- TABLE COLUMNS -->
+        </where>
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
 
-<!--    <update id="update" parameterType="java.lang.Object">-->
-<!--        UPDATE <include refid="table" /> SET-->
-<!--        &lt;!&ndash; TABLE COLUMNs = #{OBJECT FIELDS} &ndash;&gt;-->
-<!--        WHERE id = #{id}-->
-<!--    </update>-->
 
-<!--    <delete id="delete" parameterType="long">-->
-<!--        DELETE FROM <include refid="table" /> WHERE id = #{id}-->
-<!--    </delete>-->
+    <insert id="insert" parameterType="java.lang.Object" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="tableName" />
+        (<!-- TABLE COLUMNS -->)
+        VALUES (<!-- #{OBJECT FIELDS} -->)
+    </insert>
 
-<!--    &lt;!&ndash; DIRECT DTO QUERIES &ndash;&gt;-->
-<!--</mapper>-->
+    <update id="update" parameterType="java.lang.Object">
+        UPDATE <include refid="tableName" /> SET
+        <!-- TABLE COLUMNS = #{OBJECT FIELDS} -->
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM <include refid="tableName" />
+        WHERE id = #{id}
+    </delete>
+
+    <!-- DIRECT DTO QUERIES -->
+</mapper>

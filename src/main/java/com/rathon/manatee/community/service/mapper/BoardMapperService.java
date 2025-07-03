@@ -12,6 +12,7 @@ public class BoardMapperService implements ObjectMapperService<Board, BoardDto> 
         BoardDto d = new BoardDto();
         d.setId(b.getId());
         d.setName(b.getName());
+        d.setParentId(b.getParentId());
         d.setDescription(b.getDescription());
         d.setType(b.getType());
 
@@ -22,7 +23,7 @@ public class BoardMapperService implements ObjectMapperService<Board, BoardDto> 
     public Board toEntity(BoardDto d) {
         Board b = new Board();
         b.setId(d.getId());
-        b.setGroupId(d.getParentId());
+        b.setParentId(d.getParentId());
         b.setName(d.getName());
         b.setDescription(d.getDescription());
         b.setType(d.getType());

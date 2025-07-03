@@ -1,8 +1,9 @@
 package com.rathon.manatee.database.controller;
 
+import com.rathon.manatee.core.controller.ObjectController;
 import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedList;
+import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Company;
 import com.rathon.manatee.database.model.Unit;
@@ -16,13 +17,12 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/companies")
-public class CompanyController {
-    private final CompanyService cService;
+public class CompanyController extends ObjectController<Company, CompanyDto, CompanyService> {
     private final UnitService uService;
     private final CompanyMapperService cMapper;
 
-    public CompanyController(CompanyService cService, UnitService uService, CompanyMapperService cMapper) {
-        this.cService = cService;
+    public CompanyController(CompanyService service, UnitService uService, CompanyMapperService cMapper) {
+        super(service);
         this.uService = uService;
         this.cMapper = cMapper;
     }
@@ -33,32 +33,19 @@ public class CompanyController {
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
-        return cService.getPagedCompanies(page, size, sort);
+        return service.getPagedObjects(page, size, sort);
     }
 
-    @GetMapping("/all")
-    public List<CompanyDto> getAll() {
-        return cService.getCompanyList();
-    }
-
-    @GetMapping("/count")
-    public ResponseEntity<Integer> getCount() {
-        return ResponseEntity.ok(cService.getCount());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<CompanyDto> getById(@PathVariable Long id) {
-        if (cService.getCompanyById(id) == null) return ResponseEntity.notFound().build();
-        CompanyDto c = cService.getCompanyById(id);
-        return (c == null) ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(c);
+    @GetMapping("/{id}/root")
+    public ResponseEntity<UnitDto> getRoot(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getRoot(id));
     }
 
     @GetMapping("/{id}/units")
-    public ResponseEntity<List<UnitDto>> getUnits(@PathVariable Long id) {
-        if (cService.getCompanyById(id) == null) return ResponseEntity.badRequest().build();
+    public ResponseEntity<List<UnitDto>> getUnits(@PathVariable Long id, @RequestParam(required = false, defaultValue = "false") Boolean root) {
+        if (service.getObjectById(id) == null) return ResponseEntity.badRequest().build();
 
-        List<UnitDto> list =  cService.getUnits(id);
+        List<UnitDto> list =  service.getUnits(id, root);
 
         if (list.isEmpty()) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(list);
@@ -66,51 +53,43 @@ public class CompanyController {
 
     @GetMapping("/{id}/employees")
     public List<EmployeeDto> getEmployees(@PathVariable Long id) {
-        return cService.getEmployees(id);
+        return service.getEmployees(id);
     }
 
-    @GetMapping("/{id}/root")
-    public ResponseEntity<UnitDto> getRoot(@PathVariable Long id) {
-        return ResponseEntity.ok(cService.getRoot(id));
-    }
-
+    @Override
     @PostMapping
-    public ResponseEntity<Void> createCompany(@RequestBody CompanyDto d) {
+    public ResponseEntity<Void> insert(@RequestBody CompanyDto d) {
         Company c = cMapper.toEntity(d);
-        cService.createCompany(c);
+        service.insert(c);
         Unit u = new Unit();
         u.setCompanyId(c.getId());
         u.setName(c.getName());
         u.setTypeId(1L);
-        uService.createUnit(u);
+        uService.insert(u);
 
         return ResponseEntity.ok().build();
     }
 
+    @Override
     @PutMapping
-    public ResponseEntity<Void> updateCompany(@RequestBody CompanyDto d) {
+    public ResponseEntity<Void> update(@RequestBody CompanyDto d) {
         Company c = cMapper.toEntity(d);
-        cService.updateCompany(c); // TODO
+        service.update(c); // TODO
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/{id}/full-units")
-    public ResponseEntity<List<UnitDto>> fullUnits(@PathVariable Long id) {
-        return ResponseEntity.ok(cService.getUnitsFull(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteCompany(@PathVariable Long id) {
-        List<UnitDto> units = cService.getUnits(id);
+    public ResponseEntity<String> deleteA(@PathVariable Long id) {
+        List<UnitDto> units = service.getUnits(id, true);
         if (units.size() > 1) {
             return ResponseEntity.badRequest().body("Remove all units to delete");
         }
 
         if (units.size() == 1) {
-            uService.deleteUnit(units.getFirst().getId());
+            uService.delete(units.getFirst().getId());
         }
 
-        cService.deleteCompany(id);
+        service.delete(id);
         return ResponseEntity.ok().build();
     }
 
@@ -127,9 +106,9 @@ public class CompanyController {
     ) {
         PagedList<CompanyDto> pagedList = null;
         if (query != null) {
-            pagedList = cService.search(query, page, size, sort);
+            pagedList = service.search(query, page, size, sort);
         } else {
-            pagedList = cService.search(name, address, industry, registrationNumber, page, size, sort);
+            pagedList = service.search(name, address, industry, registrationNumber, page, size, sort);
         }
 
         return ResponseEntity.ok(pagedList);

@@ -8,6 +8,7 @@ import com.rathon.manatee.community.service.PostService;
 import com.rathon.manatee.core.controller.ObjectController;
 import com.rathon.manatee.core.dto.PagedList;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,5 +44,26 @@ public class PostController extends ObjectController<Post, PostDto, PostService>
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
         return ResponseEntity.ok(service.search(page, size, sort, query, option));
+    }
+
+    @PreAuthorize("authentication.name == #dto.author.username")
+    @Override
+    @PostMapping
+    public ResponseEntity<Void> insert(PostDto dto) {
+        return super.insert(dto);
+    }
+
+    @PreAuthorize("authentication.name == #dto.author.username")
+    @Override
+    @PutMapping
+    public ResponseEntity<Void> update(PostDto dto) {
+        return super.update(dto);
+    }
+
+    @PreAuthorize("hasRole('ADMIN') or @postSecurity.ownsEntity(#id, authentication)")
+    @Override
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return super.delete(id);
     }
 }

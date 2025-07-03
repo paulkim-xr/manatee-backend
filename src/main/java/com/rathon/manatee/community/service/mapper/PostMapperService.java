@@ -6,7 +6,6 @@ import com.rathon.manatee.community.mapper.CommentMapper;
 import com.rathon.manatee.community.model.Post;
 import com.rathon.manatee.core.service.mapper.ObjectMapperService;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -23,7 +22,7 @@ public class PostMapperService implements ObjectMapperService<Post, PostDto> {
         PostSummaryDto d = new PostSummaryDto();
         d.setId(p.getId());
         d.setPosted(p.getPostedTime());
-        d.setAuthor(employeeMapper.findById(p.getAuthorId()));
+        d.setAuthor(employeeMapper.findByIdDto(p.getAuthorId()));
         d.setBoardId(p.getBoardId());
         d.setTitle(p.getTitle());
         d.setIsAnnouncement(p.getIsAnnouncement());
@@ -39,7 +38,7 @@ public class PostMapperService implements ObjectMapperService<Post, PostDto> {
         PostDto d = new PostDto();
         d.setId(p.getId());
         d.setPosted(p.getPostedTime());
-        d.setAuthor(employeeMapper.findById(p.getAuthorId()));
+        d.setAuthor(employeeMapper.findByIdDto(p.getAuthorId()));
         d.setBoardId(p.getBoardId());
         d.setTitle(p.getTitle());
         d.setIsAnnouncement(p.getIsAnnouncement());

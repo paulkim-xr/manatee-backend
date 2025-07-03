@@ -1,4 +1,4 @@
-package com.rathon.manatee.community.typeHandler;
+package com.rathon.manatee.core.typeHandler;
 
 import com.rathon.manatee.community.model.BoardType;
 import org.apache.ibatis.type.BaseTypeHandler;

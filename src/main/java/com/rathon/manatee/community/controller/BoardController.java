@@ -2,30 +2,21 @@ package com.rathon.manatee.community.controller;
 
 import com.rathon.manatee.community.dto.BoardDto;
 import com.rathon.manatee.community.dto.PostSummaryDto;
+import com.rathon.manatee.community.model.Board;
 import com.rathon.manatee.community.service.BoardService;
+import com.rathon.manatee.core.controller.ObjectController;
 import com.rathon.manatee.core.dto.PagedList;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/boards")
-public class BoardController {
-    private final BoardService service;
-
+public class BoardController extends ObjectController<Board, BoardDto, BoardService> {
     public BoardController(BoardService service) {
-        this.service = service;
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<BoardDto> getBoard(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getObjectById(id));
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity<List<BoardDto>> getAll() {
-        return ResponseEntity.ok(service.getAll());
+        super(service);
     }
 
     @GetMapping("/{id}/posts")
@@ -50,21 +41,21 @@ public class BoardController {
         return ResponseEntity.ok(service.searchBoardPosts(id, page, size, sort, query, option));
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody BoardDto d) {
-        service.insert(d);
-        return ResponseEntity.ok().build();
+        return super.insert(d);
     }
 
+    @Secured("ROLE_ADMIN")
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody BoardDto d) {
-        service.update(d);
-        return ResponseEntity.ok().build();
+        return super.update(d);
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        service.delete(id);
-        return ResponseEntity.ok().build();
+        return super.delete(id);
     }
 }

@@ -1,0 +1,37 @@
+package com.rathon.manatee.auth;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
+import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm;
+
+import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+class SecurityConfigTest {
+
+    @Autowired
+    public MUserDetailsService service;
+
+    @Test
+    void passwordEncoder() {
+
+
+        Long start = new Date().getTime();
+        System.out.println(start);
+        Pbkdf2PasswordEncoder encoder = new Pbkdf2PasswordEncoder("%1c,&z;",
+                32,
+                300000,
+                Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm.PBKDF2WithHmacSHA512
+        );
+        encoder.setEncodeHashAsBase64(true);
+        System.out.println(encoder.encode("1234"));
+        Long end = new Date().getTime();
+        System.out.println(end - start);
+
+    }
+}

@@ -5,11 +5,13 @@ import com.rathon.manatee.community.dto.PostSummaryDto;
 import com.rathon.manatee.community.mapper.BoardMapper;
 import com.rathon.manatee.community.mapper.PostMapper;
 import com.rathon.manatee.community.model.Board;
+import com.rathon.manatee.community.model.Post;
 import com.rathon.manatee.community.service.mapper.BoardMapperService;
 import com.rathon.manatee.community.service.mapper.PostMapperService;
 import com.rathon.manatee.core.service.ObjectService;
 import com.rathon.manatee.core.dto.PagedList;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -58,14 +60,18 @@ public class BoardService extends ObjectService<Board, BoardDto, BoardMapper, Bo
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
-        postMapper.findPostsByBoardId(
+        System.out.printf("Delete board id: %d%n", id);
+        List<Post> posts = postMapper.findPostsByBoardId(
                 id,
-                Integer.MAX_VALUE,
+                0,
                 Integer.MAX_VALUE,
                 null,
                 null
-        ).forEach(post -> postService.delete(post.getId()));
+        );
+        System.out.println(posts.size());
+        posts.forEach(post -> postService.delete(post.getId()));
         mapper.delete(id);
     }
 }

@@ -22,7 +22,7 @@ public class MUserDetailsService implements UserDetailsService {
         return User.builder()
                 .username(username)
                 .password(e.getPasswordHash())
-                .roles("USER")
+                .roles(e.getRoleType().toString())
                 .build();
     }
 }

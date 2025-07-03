@@ -1,7 +1,7 @@
 package com.rathon.manatee.database.controller;
 
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedList;
+import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.UnitService;
@@ -32,12 +32,12 @@ public class UnitController {
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
-        return uService.getPagedUnits(page, size, sort);
+        return uService.getPagedObjects(page, size, sort);
     }
 
     @GetMapping("/all")
-    public List<UnitDto> getAll(@RequestParam(required = false, defaultValue = "false") Boolean all) {
-        return (all != null && all) ? uService.getFullUnitList() : uService.getUnitList();
+    public List<UnitDto> getAll(@RequestParam(required = false, defaultValue = "false") Boolean root) {
+        return uService.getAll(root);
     }
 
     @GetMapping("/count")
@@ -47,8 +47,8 @@ public class UnitController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UnitDto> getById(@PathVariable Long id) {
-        if (uService.getUnitById(id) == null) return ResponseEntity.notFound().build();
-        UnitDto u = uService.getUnitById(id);
+        if (uService.getObjectById(id) == null) return ResponseEntity.notFound().build();
+        UnitDto u = uService.getObjectById(id);
         return (u == null) ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok(u);
     }
@@ -67,7 +67,7 @@ public class UnitController {
     @GetMapping("/{id}/tree")
     public ResponseEntity<List<UnitDto>> getFullPath(@PathVariable Long id) {
         List<UnitDto> parents = new ArrayList<>();
-        parents.add(uService.getUnitById(id));
+        parents.add(uService.getObjectById(id));
         UnitDto unit = uService.getParent(id);
         while (unit != null) {
             parents.add(unit);
@@ -79,14 +79,14 @@ public class UnitController {
     @PostMapping
     public ResponseEntity<Void> createUnit(@RequestBody UnitDto d) {
         Unit u = uMapper.toEntity(d);
-        uService.createUnit(u);
+        uService.insert(u);
 
         return ResponseEntity.ok().build();
     }
 
     @PutMapping
     public ResponseEntity<Void> updateUnit(@RequestBody UnitDto d) {
-        uService.updateUnit(uMapper.toEntity(d));
+        uService.update(uMapper.toEntity(d));
         return ResponseEntity.ok().build();
     }
 
@@ -98,7 +98,7 @@ public class UnitController {
         List<UnitDto> children = uService.getChildren(id);
         if (!children.isEmpty()) return ResponseEntity.badRequest().body("Remove all child units to delete");
 
-        uService.deleteUnit(id);
+        uService.delete(id);
         return ResponseEntity.ok().build();
     }
 

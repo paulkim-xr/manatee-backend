@@ -17,7 +17,7 @@
     </select>
 
     <select id="getBoards" resultType="Board">
-        SELECT * FROM boards WHERE group_id = #{id}
+        SELECT * FROM boards WHERE parent_id = #{id}
     </select>
 
     <insert id="insert" parameterType="BoardGroup" useGeneratedKeys="true" keyProperty="id">

@@ -1,60 +1,66 @@
 package com.rathon.manatee.database.service;
 
+import com.rathon.manatee.core.service.ObjectService;
 import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedList;
+import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.CompanyMapper;
 import com.rathon.manatee.database.model.Company;
+import com.rathon.manatee.database.service.mapper.CompanyMapperService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class CompanyService {
-    private final CompanyMapper mapper;
-    private final IndustryService iService;
+public class CompanyService extends ObjectService<Company, CompanyDto, CompanyMapper, CompanyMapperService> {
 
-    public CompanyService(CompanyMapper mapper, IndustryService iService) {
-        this.mapper = mapper;
-        this.iService = iService;
+    public CompanyService(CompanyMapper mapper, CompanyMapperService service) {
+        super(mapper, service);
     }
 
-    public CompanyDto getCompanyById(Long id) {
-        return mapper.findById(id);
+    @Override
+    public CompanyDto getObjectById(Long id) {
+        return mapper.findByIdDto(id);
     }
 
-    public List<CompanyDto> getCompanyList() {
-        return mapper.findAll();
+    @Override
+    public List<CompanyDto> getAll() {
+        return mapper.findAllDto();
     }
 
-    public List<UnitDto> getUnits(Long id) {
-        return mapper.getUnits(id);
-    }
+    @Override
+    public PagedList<CompanyDto> getPagedObjects(int page, int size, String sort) {
+        SortInfo sortInfo = new SortInfo(sort);
 
-    public List<EmployeeDto> getEmployees(Long id) {
-        return mapper.getEmployees(id);
-    }
-
-    public void createCompany(Company c) {
-        mapper.insert(c);
-    }
-
-    public void updateCompany(Company c) {
-        mapper.update(c);
-    }
-
-    public void deleteCompany(Long id) {
-        mapper.delete(id);
-    }
-
-    public List<UnitDto> getUnitsFull(Long id) {
-        return mapper.getUnitsFull();
+        List<CompanyDto> list = mapper.getPagedObjectsDto(page * size, size, sortInfo.column, sortInfo.direction);
+        return PagedList.build(list, page, size, getCount());
     }
 
     public UnitDto getRoot(Long id) {
+        return mapper.getRootUnitDto(id);
+    }
 
-        return mapper.getRoot(id);
+    public List<UnitDto> getUnits(Long id, Boolean root) {
+        return mapper.getUnitsDto(id, root);
+    }
+
+    public List<EmployeeDto> getEmployees(Long id) {
+        return mapper.getEmployeesDto(id);
+    }
+
+    public void insert(Company c) {
+        mapper.insert(c);
+    }
+
+    public void update(Company c) {
+        mapper.update(c);
+    }
+
+    @Override
+    public void delete(Long id) {
+        // RECURSIVE DELETE OR THROW ERROR WHEN CHILDREN EXIST?
+        mapper.delete(id);
     }
 
     public PagedList<CompanyDto> search(
@@ -75,44 +81,10 @@ public class CompanyService {
             int size,
             String sort
     ) {
-        String sortColumn = "id";
-        String sortDirection = "asc";
-        if (sort != null && sort.contains(",")) {
-            sortColumn = sort.split(",")[0];
-            sortDirection = sort.split(",")[1];
-        }
+        SortInfo sortInfo = new SortInfo(sort);
 
-        List<CompanyDto> list = mapper.search(name, address, industry, registrationNumber, sortColumn, sortDirection, page * size, size);
+        List<CompanyDto> list = mapper.searchDto(name, address, industry, registrationNumber, sortInfo.column, sortInfo.direction, page * size, size);
 
-        return toPagedDto(list, page, size, mapper.getSearchCount(name, address, industry, registrationNumber));
-    }
-
-    public PagedList<CompanyDto> getPagedCompanies(int page, int size, String sort) {
-        String sortColumn = "id";
-        String sortDirection = "asc";
-        if (sort != null && sort.contains(",")) {
-            sortColumn = sort.split(",")[0];
-            sortDirection = sort.split(",")[1];
-        }
-
-        List<CompanyDto> list = mapper.getPagedCompanies(page * size, size, sortColumn, sortDirection);
-        return toPagedDto(list, page, size, getCount());
-    }
-
-    public Integer getCount() {
-        return mapper.getCount();
-    }
-
-    private PagedList<CompanyDto> toPagedDto(List<CompanyDto> list, int page, int size, int totalCount) {
-        PagedList<CompanyDto> pagedList = new PagedList<>();
-        pagedList.setContent(list);
-        pagedList.setPage(page);
-        pagedList.setSize(size);
-        pagedList.setTotalCount(totalCount);
-        pagedList.setTotalPages(Math.ceilDiv(totalCount, size));
-        pagedList.setFirst(page == 0);
-        pagedList.setLast(page == (pagedList.getTotalPages() - 1));
-
-        return pagedList;
+        return PagedList.build(list, page, size, mapper.getSearchCount(name, address, industry, registrationNumber));
     }
 }

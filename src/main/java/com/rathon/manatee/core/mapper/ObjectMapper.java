@@ -6,7 +6,7 @@ import com.rathon.manatee.core.dto.Dto;
 import java.util.List;
 
 //@Mapper
-public interface ObjectMapper<T> {
+public interface ObjectMapper<T, D extends Dto<T>> {
     T findById(Long id);
     List<T> findAll();
     List<T> getPagedObjects(int offset, int size, String sortColumn, String sortDirection);
@@ -19,8 +19,8 @@ public interface ObjectMapper<T> {
     void update(T object);
     void delete(Long id);
 
-    Dto<T> findByIdDto(Long id);
-    List<Dto<T>> findAllDto();
-    List<Dto<T>> getPagedObjectsDto(int offset, int size, String sortColumn, String sortDirection);
-    List<Dto<T>> searchDto(int offset, int size, String sortColumn, String sortDirection, String... args);
+    D findByIdDto(Long id);
+    List<D> findAllDto();
+    List<D> getPagedObjectsDto(int offset, int size, String sortColumn, String sortDirection);
+    List<D> searchDto(int offset, int size, String sortColumn, String sortDirection, String... args);
 }

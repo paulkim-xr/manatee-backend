@@ -4,6 +4,8 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.rathon.manatee.database.mapper.CompanyMapper">
+<!--  CONFIG  -->
+    <sql id="tableName">companies</sql>
     <sql id="sorting">
         ORDER BY
         <choose>
@@ -27,71 +29,118 @@
         </if>
     </sql>
 
-    <select id="findById" resultMap="ObjectResultMap.CompanyDtoMap">
+<!--  ObjectMapper  -->
+
+    <select id="findById" resultType="java.lang.Object">
+        SELECT *
+        FROM <include refid="tableName" />
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultType="java.lang.Object">
+        SELECT *
+        FROM <include refid="tableName" />
+    </select>
+
+    <select id="getPagedObjects" resultType="java.lang.Object">
+        SELECT *
+        FROM <include refid="tableName" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM <include refid="tableName" />
+    </select>
+
+
+    <select id="searchTemplate" resultType="java.lang.Object">
+        SELECT NULL
+        FROM <include refid="tableName" />
+        <where>
+            FALSE
+            <if test="name != null">
+                OR c.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <!-- TABLE COLUMNS -->
+        </where>
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <select id="searchCountTemplate" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM <include refid="tableName" />
+        <where>
+            FALSE
+            <if test="name != null">
+                OR c.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <!-- TABLE COLUMNS -->
+        </where>
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+
+    <insert id="insert" parameterType="Company" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="tableName" />
+        (name, address, industry_id, registration_number)
+        VALUES (#{name}, #{address}, #{industryId}, #{registrationNumber})
+    </insert>
+
+    <update id="update" parameterType="Company">
+        UPDATE <include refid="tableName" /> SET
+        name = #{name}, address = #{address}, industry_id = #{industryId}, registration_number = #{registrationNumber}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM <include refid="tableName" />
+        WHERE id = #{id}
+    </delete>
+
+    <!-- DIRECT DTO QUERIES -->
+
+    <select id="findByIdDto" resultMap="ObjectResultMap.CompanyDtoMap">
         <include refid="ObjectResultMap.CompanyDtoSql" />
         WHERE c.id = #{id}
     </select>
 
-    <select id="findAll" resultMap="ObjectResultMap.CompanyDtoMap">
+    <select id="findAllDto" resultMap="ObjectResultMap.CompanyDtoMap">
         <include refid="ObjectResultMap.CompanyDtoSql" />
         ORDER BY c.id
         <include refid="paging" />
     </select>
 
-    <select id="getPagedCompanies" resultMap="ObjectResultMap.CompanyDtoMap">
+    <select id="getPagedObjectsDto" resultMap="ObjectResultMap.CompanyDtoMap">
         <include refid="ObjectResultMap.CompanyDtoSql" />
         <include refid="sorting" />
         <include refid="paging" />
     </select>
 
-    <select id="getUnits" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSql" />
-        WHERE u.company_id = #{id}
-        ORDER BY u.id
-    </select>
+<!--    -->
+<!--  CompanyMapper  -->
 
-    <select id="getRoot" resultMap="ObjectResultMap.UnitDtoMap">
+    <select id="getRootUnitDto" resultMap="ObjectResultMap.UnitDtoMap">
         <include refid="ObjectResultMap.UnitDtoSql" />
         WHERE u.company_id = #{id} AND u.type_id = 1
         ORDER BY u.id
     </select>
 
-    <select id="getEmployees" resultMap="ObjectResultMap.EmployeeDtoMap">
-        <include refid="ObjectResultMap.EmployeeDtoSql" />
-        WHERE u.company_id = #{id}
-        ORDER BY e.id
-    </select>
-
-    <insert id="insert" parameterType="Company" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO companies (name, address, industry_id, registration_number) VALUES (#{name}, #{address}, #{industryId}, #{registrationNumber})
-    </insert>
-
-    <update id="update" parameterType="Company">
-        UPDATE companies SET name = #{name}, address = #{address}, industry_id = #{industryId}, registration_number = #{registrationNumber} WHERE id = #{id}
-    </update>
-
-    <delete id="delete" parameterType="long">
-        DELETE FROM companies WHERE id = #{id}
-    </delete>
-
-    <select id="searchAll" resultMap="ObjectResultMap.CompanyDtoMap">
-        <include refid="ObjectResultMap.CompanyDtoSql" />
-        WHERE
-        LOWER(c.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
-        LOWER(c.address) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
-        LOWER(c.registration_number) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
-        LOWER(i.name) LIKE LOWER(CONCAT('%', #{query}, '%'))
-        ORDER BY c.id
-    </select>
-
-    <select id="getUnitsFull" resultMap="ObjectResultMap.UnitDtoMap">
+    <select id="getUnitsDto" resultMap="ObjectResultMap.UnitDtoMap">
         <include refid="ObjectResultMap.UnitDtoSql" />
         WHERE u.company_id = #{id}
+        <if test="!root">
+            AND NOT u.type_id = 1
+        </if>
         ORDER BY u.id
     </select>
 
-    <select id="getCount" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM companies
+    <select id="getEmployeesDto" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSql" />
+        WHERE u.company_id = #{id}
+        ORDER BY e.id
     </select>
 
     <select id="search" resultMap="ObjectResultMap.CompanyDtoMap">

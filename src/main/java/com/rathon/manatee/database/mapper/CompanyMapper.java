@@ -1,5 +1,6 @@
 package com.rathon.manatee.database.mapper;
 
+import com.rathon.manatee.core.mapper.ObjectMapper;
 import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
@@ -10,24 +11,11 @@ import com.rathon.manatee.database.model.Company;
 import java.util.List;
 
 @Mapper
-public interface CompanyMapper {
-    CompanyDto findById(Long id);
-    List<CompanyDto> findAll();
-    List<UnitDto> getUnits(Long id);
-    List<EmployeeDto> getEmployees(Long id);
-    void insert(Company company);
-    void update(Company company);
-    void delete(Long id);
+public interface CompanyMapper extends ObjectMapper<Company, CompanyDto> {
+    UnitDto getRootUnitDto(Long id);
+    List<UnitDto> getUnitsDto(Long id, Boolean root);
+    List<EmployeeDto> getEmployeesDto(Long id);
 
-    List<UnitDto> getUnitsFull();
-
-    UnitDto getRoot(Long id);
-
-    List<CompanyDto> getPagedCompanies(int offset, int size, String sortColumn, String sortDirection);
-
-    Integer getCount();
-
-    List<CompanyDto> search(String name, String address, String industry, String registrationNumber, String sortColumn, String sortDirection, int offset, int size);
-
+    List<CompanyDto> searchDto(String name, String address, String industry, String registrationNumber, String sortColumn, String sortDirection, int offset, int size);
     Integer getSearchCount(String name, String address, String industry, String registrationNumber);
 }

@@ -1,5 +1,6 @@
 package com.rathon.manatee.database.service.mapper;
 
+import com.rathon.manatee.core.service.mapper.ObjectMapperService;
 import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.model.Company;
 import com.rathon.manatee.database.model.Industry;
@@ -8,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CompanyMapperService {
+public class CompanyMapperService implements ObjectMapperService<Company, CompanyDto> {
     @Autowired
     private IndustryService industryService;
 

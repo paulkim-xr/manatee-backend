@@ -1,6 +1,5 @@
-package com.rathon.manatee.database.controller;
+package com.rathon.manatee.auth;
 
-import com.rathon.manatee.auth.LoginDto;
 import com.rathon.manatee.database.service.EmployeeService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,12 +19,6 @@ public class SessionController {
 
     public SessionController(EmployeeService service) {
         this.service = service;
-    }
-
-    @GetMapping("/test")
-    public ResponseEntity<?> test(HttpServletRequest request) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return ResponseEntity.ok(Map.of("user", auth.getName(), "roles", auth.getAuthorities()));
     }
 
     @GetMapping("/me")

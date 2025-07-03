@@ -8,6 +8,7 @@ import com.rathon.manatee.core.service.ObjectService;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class CommentService extends ObjectService<Comment, CommentDto, CommentMapper, CommentMapperService> {
@@ -31,5 +32,13 @@ public class CommentService extends ObjectService<Comment, CommentDto, CommentMa
 
             mapper.update(service.toEntity(dto));
         }
+    }
+
+    public void deepDelete(Long id) {
+        List<Comment> children = mapper.findByParentId(id);
+        if (!children.isEmpty()) {
+            children.forEach(child -> deepDelete(child.getId()));
+        }
+        mapper.delete(id);
     }
 }

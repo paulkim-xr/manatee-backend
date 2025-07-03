@@ -1,28 +1,26 @@
 package com.rathon.manatee.database.controller;
 
+import com.rathon.manatee.core.controller.ObjectController;
 import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.PagedList;
+import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.service.EmployeeService;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/employees")
-public class EmployeeController {
-    private final EmployeeService service;
+public class EmployeeController extends ObjectController<Employee, EmployeeDto, EmployeeService> {
     private final EmployeeMapperService mapper;
 
     public EmployeeController(EmployeeService service, EmployeeMapperService mapper) {
-        this.service = service;
+        super(service);
         this.mapper = mapper;
     }
 
     @GetMapping
-    public PagedList<EmployeeDto> getPaged(
+    public PagedList<EmployeeDto> getPagedObjects(
             @RequestParam(required = false) String sort,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
@@ -30,43 +28,28 @@ public class EmployeeController {
         return service.getPagedEmployees(page, size, sort);
     }
 
-    @GetMapping("/all")
-    public List<EmployeeDto> getAll() {
-        return service.getAllEmployees();
-    }
-
-    @GetMapping("/count")
-    public ResponseEntity<Integer> getCount() {
-        return ResponseEntity.ok(service.getCount());
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<EmployeeDto> getById(@PathVariable Long id) {
-        EmployeeDto e = service.getEmployeeById(id);
-        return (e == null) ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(e);
-    }
-
+    @Override
     @PostMapping
-    public ResponseEntity<Void> createEmployee(@RequestBody EmployeeDto d) {
+    public ResponseEntity<Void> insert(@RequestBody EmployeeDto d) {
         Employee e = mapper.toEntity(d);
         // TODO - add logic to check required fields
-        service.createEmployee(e);
+        service.insert(e);
 
         return ResponseEntity.ok().build();
     }
 
+    @Override
     @PutMapping
-    public ResponseEntity<Void> updateEmployee(@RequestBody EmployeeDto d) {
+    public ResponseEntity<Void> update(@RequestBody EmployeeDto d) {
         Employee c = mapper.toEntity(d);
-        service.updateEmployee(c); // TODO
+        service.update(c); // TODO
         return ResponseEntity.ok().build();
     }
 
+    @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEmployee(@PathVariable Long id) {
-        service.deleteEmployee(id);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        return super.delete(id);
     }
 
     @GetMapping("/search")

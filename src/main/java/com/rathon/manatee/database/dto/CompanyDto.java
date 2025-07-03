@@ -1,5 +1,6 @@
 package com.rathon.manatee.database.dto;
 
+import com.rathon.manatee.core.dto.Dto;
 import com.rathon.manatee.database.model.Company;
 import com.rathon.manatee.database.model.Industry;
 import lombok.Getter;
@@ -7,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CompanyDto extends ObjectDto<Company> {
+public class CompanyDto extends Dto<Company> {
 //    private Long id;
     private String name;
     private String address;

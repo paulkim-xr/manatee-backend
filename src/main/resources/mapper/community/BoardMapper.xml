@@ -18,13 +18,13 @@
 
     <insert id="insert" parameterType="Board" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO boards
-        (group_id, name, description, type)
-        VALUES (#{groupId}, #{name}, #{description}, #{type, typeHandler=com.rathon.manatee.community.typeHandler.BoardTypeHandler})
+        (parent_id, name, description, type)
+        VALUES (#{parentId}, #{name}, #{description}, #{type})
     </insert>
 
     <update id="update" parameterType="Board">
         UPDATE boards SET
-        group_id = #{groupId}, name = #{name}, description = #{description}, type = #{type, typeHandler=com.rathon.manatee.community.typeHandler.BoardTypeHandler}
+        parent_id = #{parentId}, name = #{name}, description = #{description}, type = #{type}
         WHERE id = #{id}
     </update>
 
