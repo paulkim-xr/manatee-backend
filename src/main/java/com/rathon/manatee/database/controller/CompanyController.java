@@ -1,12 +1,13 @@
 package com.rathon.manatee.database.controller;
 
 import com.rathon.manatee.core.controller.ObjectController;
+import com.rathon.manatee.core.dto.IdNameDto;
 import com.rathon.manatee.database.dto.CompanyDto;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Company;
-import com.rathon.manatee.database.model.Unit;
+import com.rathon.manatee.database.model.UnitType;
 import com.rathon.manatee.database.service.CompanyService;
 import com.rathon.manatee.database.service.UnitService;
 import com.rathon.manatee.database.service.mapper.CompanyMapperService;
@@ -61,10 +62,10 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
     public ResponseEntity<Void> insert(@RequestBody CompanyDto d) {
         Company c = cMapper.toEntity(d);
         service.insert(c);
-        Unit u = new Unit();
-        u.setCompanyId(c.getId());
+        UnitDto u = new UnitDto();
+        u.setCompany(new IdNameDto(c.getId(), c.getName()));
         u.setName(c.getName());
-        u.setTypeId(1L);
+        u.setType(new UnitType(1L, ""));
         uService.insert(u);
 
         return ResponseEntity.ok().build();
@@ -104,7 +105,7 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String sort
     ) {
-        PagedList<CompanyDto> pagedList = null;
+        PagedList<CompanyDto> pagedList;
         if (query != null) {
             pagedList = service.search(query, page, size, sort);
         } else {

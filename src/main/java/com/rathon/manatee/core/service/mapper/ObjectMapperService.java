@@ -1,7 +1,5 @@
 package com.rathon.manatee.core.service.mapper;
 
-import com.rathon.manatee.community.dto.CommentDto;
-import com.rathon.manatee.community.model.Comment;
 import com.rathon.manatee.core.dto.Dto;
 
 public interface ObjectMapperService<T, D extends Dto<T>> {

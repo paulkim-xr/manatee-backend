@@ -10,13 +10,10 @@ import java.util.List;
 
 @Mapper
 public interface UnitMapper extends ObjectMapper<Unit, UnitDto> {
+    List<Unit> findAll(Boolean root);
+
     List<UnitDto> findAllDto(Boolean root);
-
-    UnitDto getParent(Long id);
-    List<UnitDto> getChildren(Long id);
-    List<EmployeeDto> getEmployees(Long id);
-
-    List<UnitDto> search(
+    List<UnitDto> searchDto(
             String name,
             String company,
             String type,
@@ -27,5 +24,9 @@ public interface UnitMapper extends ObjectMapper<Unit, UnitDto> {
             Integer offset,
             Integer size
     );
-    Integer searchCount(String name, String company, String type, String code, String parent);
+    Integer searchCountDto(String name, String company, String type, String code, String parent);
+
+    UnitDto getParent(Long id);
+    List<UnitDto> getChildren(Long id);
+    List<EmployeeDto> getEmployees(Long id);
 }

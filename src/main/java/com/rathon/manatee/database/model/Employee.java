@@ -10,8 +10,7 @@ import java.util.Date;
 @Setter
 public class Employee {
     private Long id;
-    private String firstName;
-    private String lastName;
+    private String name;
     private Long unitId;
     private Long positionId;
     private String email;

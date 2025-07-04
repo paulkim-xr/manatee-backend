@@ -4,74 +4,83 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="ObjectResultMap">
-    <sql id="CompanyDtoSql">
+
+    <sql id="CompanyDtoJOIN">
+        FROM companies
+        LEFT JOIN industries ON industries.id = companies.industry_id
+        LEFT JOIN (
+            SELECT units.company_id, COUNT(*) AS unit_count
+            FROM units
+            WHERE NOT units.type_id = 1
+            GROUP BY units.company_id
+        ) uc ON uc.company_id = companies.id
+        LEFT JOIN (
+            SELECT units.company_id, COUNT(employees.id) AS employee_count
+            FROM units
+            LEFT JOIN employees ON employees.unit_id = units.id
+            GROUP BY units.company_id
+        ) ec ON ec.company_id = companies.id
+    </sql>
+    <sql id="CompanyDtoSelect">
         SELECT
-            c.id,
-            c.name,
-            c.address,
-            i.id AS industry_id,
-            i.name AS industry_name,
-            c.registration_number,
+            companies.id,
+            companies.name,
+            companies.address,
+            industries.id AS industry_id,
+            industries.name AS industry_name,
+            companies.registration_number,
             COALESCE(uc.unit_count, 0) AS unit_count,
             COALESCE(ec.employee_count, 0) AS employee_count
-        FROM companies c
-        LEFT JOIN industries i ON i.id = c.industry_id
-        LEFT JOIN (
-            SELECT u.company_id, COUNT(*) AS unit_count
-            FROM units u
-            WHERE NOT u.type_id = 1
-            GROUP BY u.company_id
-        ) uc ON uc.company_id = c.id
-        LEFT JOIN (
-            SELECT u.company_id, COUNT(e.id) AS employee_count
-            FROM units u
-            LEFT JOIN employees e ON e.unit_id = u.id
-            GROUP BY u.company_id
-        ) ec ON ec.company_id = c.id
+        <include refid="ObjectResultMap.CompanyDtoJOIN" />
     </sql>
 
-    <sql id="EmployeeDtoSql">
+    <sql id="EmployeeDtoJOIN">
+        FROM employees
+        LEFT JOIN units ON units.id = employees.unit_id
+        LEFT JOIN positions ON positions.id = employees.position_id
+        LEFT JOIN companies ON companies.id = units.company_id
+    </sql>
+    <sql id="EmployeeDtoSelect">
         SELECT
-            e.id,
-            c.id AS company_id,
-            c.name AS company_name,
-            u.id AS unit_id,
-            u.name AS unit_name,
-            p.id AS position_id,
-            p.name AS position_name,
-            e.first_name,
-            e.last_name,
-            e.username,
-            e.email,
-            e.phone,
-            e.dob
-        FROM employees e
-        LEFT JOIN units u ON u.id = e.unit_id
-        LEFT JOIN positions p ON p.id = e.position_id
-        LEFT JOIN companies c ON c.id = u.company_id
+            employees.id,
+            companies.id AS company_id,
+            companies.name AS company_name,
+            units.id AS unit_id,
+            units.name AS unit_name,
+            positions.id AS position_id,
+            positions.name AS position_name,
+            employees.name,
+            employees.username,
+            employees.email,
+            employees.phone,
+            employees.dob
+        <include refid="ObjectResultMap.EmployeeDtoJOIN" />
     </sql>
 
-    <sql id="UnitDtoSql">
+    <sql id="UnitDtoJOIN">
+        FROM units
+        LEFT JOIN companies ON units.company_id = companies.id
+        LEFT JOIN unit_types ON units.type_id = unit_types.id
+        LEFT JOIN units parent ON units.parent_id = parent.id
+        LEFT JOIN (
+            SELECT employees.unit_id, COUNT(*) AS employee_count
+            FROM employees
+            GROUP BY employees.unit_id
+        ) ec ON ec.unit_id = units.id
+    </sql>
+    <sql id="UnitDtoSelect">
         SELECT
-            u.id,
-            c.id AS company_id,
-            c.name AS company_name,
-            u.name,
-            t.id AS type_id,
-            t.name AS type_name,
-            u.code,
-            p.id AS parent_id,
-            p.name AS parent_name,
+            units.id,
+            companies.id AS company_id,
+            companies.name AS company_name,
+            units.name,
+            unit_types.id AS type_id,
+            unit_types.name AS type_name,
+            units.code,
+            parent.id AS parent_id,
+            parent.name AS parent_name,
             COALESCE(ec.employee_count, 0) AS employee_count
-        FROM units u
-        LEFT JOIN companies c ON u.company_id = c.id
-        LEFT JOIN unit_types t ON u.type_id = t.id
-        LEFT JOIN units p ON u.parent_id = p.id
-        LEFT JOIN (
-            SELECT e.unit_id, COUNT(*) AS employee_count
-            FROM employees e
-            GROUP BY e.unit_id
-        ) ec ON ec.unit_id = u.id
+        <include refid="ObjectResultMap.UnitDtoJOIN" />
     </sql>
 
     <resultMap id="IndustryResultMap" type="Industry">
@@ -108,8 +117,7 @@
     <resultMap id="EmployeeDtoMap" type="EmployeeDto">
         <id property="id" column="id"/>
 
-        <result property="firstName" column="first_name"/>
-        <result property="lastName" column="last_name"/>
+        <result property="name" column="name"/>
         <result property="username" column="username"/>
         <result property="email" column="email"/>
         <result property="phone" column="phone"/>

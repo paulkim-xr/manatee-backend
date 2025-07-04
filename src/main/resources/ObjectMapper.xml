@@ -4,7 +4,28 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.rathon.manatee.core.mapper.ObjectMapper">
-    <sql id="tableName"><!-- TABLE NAME --></sql>
+    <!-- CONFIG -->
+    <sql id="tableName">
+        <!-- TABLE NAME -->
+    </sql>
+    <sql id="searchCols">
+        <where>
+            FALSE
+            <!-- TABLE COLUMNS -->
+<!--            <if test="name != null">-->
+<!--                OR <include refid="tableName" />.name ILIKE CONCAT('%', #{name}, '%')-->
+<!--            </if>-->
+        </where>
+    </sql>
+    <sql id="searchColsDto">
+        <where>
+            FALSE
+            <!-- TABLE COLUMNS -->
+<!--            <if test="name != null">-->
+<!--                OR <include refid="tableName" />.name ILIKE CONCAT('%', #{name}, '%')-->
+<!--            </if>-->
+        </where>
+    </sql>
     <sql id="sorting">
         ORDER BY
         <choose>
@@ -22,6 +43,8 @@
             OFFSET #{offset}
         </if>
     </sql>
+
+<!--  ObjectMapper  -->
 
     <select id="findById" resultType="java.lang.Object">
         SELECT *
@@ -46,39 +69,27 @@
     </select>
 
 
-    <select id="searchTemplate" resultType="java.lang.Object">
-        SELECT NULL
+    <select id="search" resultType="java.lang.Object">
+        SELECT *
         FROM <include refid="tableName" />
-        <where>
-            FALSE
-            <if test="name != null">
-                OR c.name ILIKE CONCAT('%', #{name}, '%')
-            </if>
-            <!-- TABLE COLUMNS -->
-        </where>
+        <include refid="searchCols" />
         <include refid="sorting" />
         <include refid="paging" />
     </select>
     
-    <select id="searchCountTemplate" resultType="java.lang.Integer">
+    <select id="searchCount" resultType="java.lang.Integer">
         SELECT COUNT(*)
         FROM <include refid="tableName" />
-        <where>
-            FALSE
-            <if test="name != null">
-                OR c.name ILIKE CONCAT('%', #{name}, '%')
-            </if>
-            <!-- TABLE COLUMNS -->
-        </where>
-        <include refid="sorting" />
-        <include refid="paging" />
+        <include refid="searchCols" />
     </select>
 
 
     <insert id="insert" parameterType="java.lang.Object" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO <include refid="tableName" />
-        (<!-- TABLE COLUMNS -->)
-        VALUES (<!-- #{OBJECT FIELDS} -->)
+        INSERT INTO <include refid="tableName" /> (
+        <!-- TABLE COLUMNS -->
+        ) VALUES (
+        <!-- #{OBJECT FIELDS} -->
+        )
     </insert>
 
     <update id="update" parameterType="java.lang.Object">
@@ -93,4 +104,33 @@
     </delete>
 
     <!-- DIRECT DTO QUERIES -->
+
+    <select id="findByIdDto" resultMap="ObjectDtoMap">
+        <include refid="ObjectDtoSelect" />
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAllDto" resultMap="ObjectDtoMap">
+        <include refid="ObjectDtoSelect" />
+        ORDER BY id
+    </select>
+
+    <select id="getPagedObjectsDto" resultMap="ObjectDtoMap">
+        <include refid="ObjectDtoSelect" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <select id="searchDto" resultMap="ObjectDtoMap">
+        <include refid="ObjectDtoSelect" />
+        <include refid="searchColsDto" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <select id="searchCountDto" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        <include refid="ObjectDtoJOIN" />
+        <include refid="searchColsDto" />
+    </select>
 </mapper>

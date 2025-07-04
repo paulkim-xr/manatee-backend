@@ -39,14 +39,6 @@ public class UnitService extends ObjectService<Unit, UnitDto, UnitMapper, UnitMa
         return mapper.getEmployees(id);
     }
 
-    public void insert(Unit u) {
-        mapper.insert(u);
-    }
-
-    public void update(Unit u) {
-        mapper.update(u);
-    }
-
     @Override
     public void delete(Long id) {
         // Implement check logic
@@ -67,15 +59,10 @@ public class UnitService extends ObjectService<Unit, UnitDto, UnitMapper, UnitMa
             Integer size,
             String sort
     ) {
-        String sortColumn = "id";
-        String sortDirection = "asc";
-        if (sort != null && sort.contains(",")) {
-            sortColumn = sort.split(",")[0];
-            sortDirection = sort.split(",")[1];
-        }
+        SortInfo sortInfo = new SortInfo(sort);
 
-        List<UnitDto> list = mapper.search(name, company, type, code, parent, sortColumn, sortDirection, page * size, size);
+        List<UnitDto> list = mapper.searchDto(name, company, type, code, parent, sortInfo.column, sortInfo.direction, page * size, size);
 
-        return PagedList.build(list, page, size, mapper.searchCount(name, company, type, code, parent));
+        return PagedList.build(list, page, size, mapper.searchCountDto(name, company, type, code, parent));
     }
 }

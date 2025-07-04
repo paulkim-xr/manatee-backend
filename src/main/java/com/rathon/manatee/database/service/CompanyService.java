@@ -85,6 +85,6 @@ public class CompanyService extends ObjectService<Company, CompanyDto, CompanyMa
 
         List<CompanyDto> list = mapper.searchDto(name, address, industry, registrationNumber, sortInfo.column, sortInfo.direction, page * size, size);
 
-        return PagedList.build(list, page, size, mapper.getSearchCount(name, address, industry, registrationNumber));
+        return PagedList.build(list, page, size, mapper.searchCountDto(name, address, industry, registrationNumber));
     }
 }

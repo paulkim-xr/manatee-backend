@@ -70,8 +70,8 @@ public class ObjectService<T, D extends Dto<T>, M extends ObjectMapper<T, D>, S 
     ) {
         SortInfo sortInfo = new SortInfo(sort);
 
-        List<D> list = mapper.searchTemplate(page * size, size, sortInfo.column, sortInfo.direction, args).stream().map(service::toDto).toList();
-        int totalCount = mapper.searchCountTemplate(page * size, size, sortInfo.column, sortInfo.direction, args);
+        List<D> list = mapper.search(page * size, size, sortInfo.column, sortInfo.direction, args).stream().map(service::toDto).toList();
+        int totalCount = mapper.searchCount(args);
         return PagedList.build(list, page, size, totalCount);
     }
 

@@ -9,8 +9,6 @@ import java.util.List;
 
 @Mapper
 public interface EmployeeMapper extends ObjectMapper<Employee, EmployeeDto> {
-    Employee findByUsername(String username);
-
     List<EmployeeDto> searchDto(
             String company,
             String unit,
@@ -25,8 +23,7 @@ public interface EmployeeMapper extends ObjectMapper<Employee, EmployeeDto> {
             String sortDirection,
             Integer offset,
             Integer size);
-
-    Integer searchCount(
+    Integer searchCountDto(
             String company,
             String unit,
             String lastName,
@@ -37,4 +34,6 @@ public interface EmployeeMapper extends ObjectMapper<Employee, EmployeeDto> {
             String phone,
             String dob
     );
+
+    Employee findByUsername(String username);
 }

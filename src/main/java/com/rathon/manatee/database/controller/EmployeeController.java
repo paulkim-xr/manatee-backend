@@ -68,7 +68,7 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String sort
     ) {
-        PagedList<EmployeeDto> pagedList = null;
+        PagedList<EmployeeDto> pagedList;
         if (query != null) {
             pagedList = service.search(query, page, size, sort);
         } else {

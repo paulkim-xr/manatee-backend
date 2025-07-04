@@ -5,15 +5,51 @@
 
 <mapper namespace="com.rathon.manatee.database.mapper.CompanyMapper">
 <!--  CONFIG  -->
-    <sql id="tableName">companies</sql>
+    <sql id="tableName">
+        companies
+    </sql>
+    <sql id="searchCols">
+        <where>
+            FALSE
+            <if test="name != null">
+                OR <include refid="tableName" />.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="address != null">
+                OR <include refid="tableName" />.address ILIKE CONCAT('%', #{address}, '%')
+            </if>
+            <if test="industryId != null">
+                OR <include refid="tableName" />.industry_id = #{industryId}
+            </if>
+            <if test="registrationNumber != null">
+                OR <include refid="tableName" />.registration_number ILIKE CONCAT('%', #{registrationNumber}, '%')
+            </if>
+        </where>
+    </sql>
+    <sql id="searchColsDto">
+        <where>
+            FALSE
+            <if test="name != null">
+                OR companies.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="address != null">
+                OR companies.address ILIKE CONCAT('%', #{address}, '%')
+            </if>
+            <if test="industry != null">
+                OR industries.name ILIKE CONCAT('%', #{industry}, '%')
+            </if>
+            <if test="registrationNumber != null">
+                OR companies.registration_number ILIKE CONCAT('%', #{registrationNumber}, '%')
+            </if>
+        </where>
+    </sql>
     <sql id="sorting">
         ORDER BY
         <choose>
-            <when test="sortColumn == 'id'">c.id</when>
-            <when test="sortColumn == 'name'">c.name</when>
-            <when test="sortColumn == 'address'">c.address</when>
-            <when test="sortColumn == 'industry'">i.name</when>
-            <when test="sortColumn == 'registrationNumber'">c.registration_number</when>
+            <when test="sortColumn == 'id'">companies.id</when>
+            <when test="sortColumn == 'name'">companies.name</when>
+            <when test="sortColumn == 'address'">companies.address</when>
+            <when test="sortColumn == 'industry'">industries.name</when>
+            <when test="sortColumn == 'registrationNumber'">companies.registration_number</when>
             <when test="sortColumn == 'unitCount'">unit_count</when>
             <when test="sortColumn == 'employeeCount'">employee_count</when>
         </choose>
@@ -31,18 +67,18 @@
 
 <!--  ObjectMapper  -->
 
-    <select id="findById" resultType="java.lang.Object">
+    <select id="findById" resultType="Company">
         SELECT *
         FROM <include refid="tableName" />
         WHERE id = #{id}
     </select>
 
-    <select id="findAll" resultType="java.lang.Object">
+    <select id="findAll" resultType="Company">
         SELECT *
         FROM <include refid="tableName" />
     </select>
 
-    <select id="getPagedObjects" resultType="java.lang.Object">
+    <select id="getPagedObjects" resultType="Company">
         SELECT *
         FROM <include refid="tableName" />
         <include refid="sorting" />
@@ -54,32 +90,18 @@
     </select>
 
 
-    <select id="searchTemplate" resultType="java.lang.Object">
-        SELECT NULL
+    <select id="search" resultType="Company">
+        SELECT *
         FROM <include refid="tableName" />
-        <where>
-            FALSE
-            <if test="name != null">
-                OR c.name ILIKE CONCAT('%', #{name}, '%')
-            </if>
-            <!-- TABLE COLUMNS -->
-        </where>
+        <include refid="searchCols" />
         <include refid="sorting" />
         <include refid="paging" />
     </select>
 
-    <select id="searchCountTemplate" resultType="java.lang.Integer">
+    <select id="searchCount" resultType="java.lang.Integer">
         SELECT COUNT(*)
         FROM <include refid="tableName" />
-        <where>
-            FALSE
-            <if test="name != null">
-                OR c.name ILIKE CONCAT('%', #{name}, '%')
-            </if>
-            <!-- TABLE COLUMNS -->
-        </where>
-        <include refid="sorting" />
-        <include refid="paging" />
+        <include refid="searchCols" />
     </select>
 
 
@@ -103,65 +125,54 @@
     <!-- DIRECT DTO QUERIES -->
 
     <select id="findByIdDto" resultMap="ObjectResultMap.CompanyDtoMap">
-        <include refid="ObjectResultMap.CompanyDtoSql" />
-        WHERE c.id = #{id}
+        <include refid="ObjectResultMap.CompanyDtoSelect" />
+        WHERE companies.id = #{id}
     </select>
 
     <select id="findAllDto" resultMap="ObjectResultMap.CompanyDtoMap">
-        <include refid="ObjectResultMap.CompanyDtoSql" />
-        ORDER BY c.id
-        <include refid="paging" />
+        <include refid="ObjectResultMap.CompanyDtoSelect" />
+        ORDER BY companies.id
     </select>
-
+    
     <select id="getPagedObjectsDto" resultMap="ObjectResultMap.CompanyDtoMap">
-        <include refid="ObjectResultMap.CompanyDtoSql" />
+        <include refid="ObjectResultMap.CompanyDtoSelect" />
         <include refid="sorting" />
         <include refid="paging" />
     </select>
 
-<!--    -->
+    <select id="searchDto" resultMap="ObjectResultMap.CompanyDtoMap">
+        <include refid="ObjectResultMap.CompanyDtoSelect" />
+        <include refid="searchColsDto" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <select id="searchCountDto" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        <include refid="ObjectResultMap.CompanyDtoJOIN" />
+        <include refid="searchColsDto" />
+    </select>
+
 <!--  CompanyMapper  -->
 
     <select id="getRootUnitDto" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSql" />
-        WHERE u.company_id = #{id} AND u.type_id = 1
-        ORDER BY u.id
+        <include refid="ObjectResultMap.UnitDtoSelect" />
+        WHERE units.company_id = #{id} AND units.type_id = 1
+        ORDER BY units.id
     </select>
 
     <select id="getUnitsDto" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSql" />
-        WHERE u.company_id = #{id}
+        <include refid="ObjectResultMap.UnitDtoSelect" />
+        WHERE units.company_id = #{id}
         <if test="!root">
-            AND NOT u.type_id = 1
+            AND NOT units.type_id = 1
         </if>
-        ORDER BY u.id
+        ORDER BY units.id
     </select>
 
     <select id="getEmployeesDto" resultMap="ObjectResultMap.EmployeeDtoMap">
-        <include refid="ObjectResultMap.EmployeeDtoSql" />
-        WHERE u.company_id = #{id}
-        ORDER BY e.id
+        <include refid="ObjectResultMap.EmployeeDtoSelect" />
+        WHERE units.company_id = #{id}
+        ORDER BY employees.id
     </select>
-
-    <select id="search" resultMap="ObjectResultMap.CompanyDtoMap">
-        <include refid="ObjectResultMap.CompanyDtoSql" />
-        <where>
-            FALSE
-            <if test="name != null">
-                OR c.name ILIKE CONCAT('%', #{name}, '%')
-            </if>
-            <if test="address != null">
-                OR c.address ILIKE CONCAT('%', #{address}, '%')
-            </if>
-            <if test="industry != null">
-                OR i.name ILIKE CONCAT('%', #{industry}, '%')
-            </if>
-            <if test="registrationNumber != null">
-                OR c.registration_number ILIKE CONCAT('%', #{registrationNumber}, '%')
-            </if>
-        </where>
-        <include refid="sorting" />
-        <include refid="paging" />
-    </select>
-
 </mapper>

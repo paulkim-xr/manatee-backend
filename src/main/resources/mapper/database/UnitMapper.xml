@@ -4,15 +4,64 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.rathon.manatee.database.mapper.UnitMapper">
+    <!-- CONFIG -->
+    <sql id="tableName">
+        units
+    </sql>
+    <sql id="searchCols">
+        <where>
+            (FALSE
+            <if test="companyId != null">
+                OR <include refid="tableName" />.company_id ILIKE CONCAT('%', #{companyId}, '%')
+            </if>
+            <if test="name != null">
+                OR <include refid="tableName" />.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="typeId != null">
+                OR <include refid="tableName" />.type_id ILIKE CONCAT('%', #{typeId}, '%')
+            </if>
+            <if test="code != null">
+                OR <include refid="tableName" />.code ILIKE CONCAT('%', #{code}, '%')
+            </if>
+            <if test="parentId != null">
+                OR <include refid="tableName" />.parent_id ILIKE CONCAT('%', #{parentId}, '%')
+            </if>
+            <if test="leaderId != null">
+                OR <include refid="tableName" />.leader_id ILIKE CONCAT('%', #{leaderId}, '%')
+            </if>
+            ) AND NOT units.type_id = 1
+        </where>
+    </sql>
+    <sql id="searchColsDto">
+        <where>
+            (FALSE
+            <if test="name != null">
+                OR units.name ILIKE CONCAT('%', #{name}, '%')
+            </if>
+            <if test="company != null">
+                OR companies.name ILIKE CONCAT('%', #{company}, '%')
+            </if>
+            <if test="type != null">
+                OR unit_types.name ILIKE CONCAT('%', #{type}, '%')
+            </if>
+            <if test="code != null">
+                OR units.code ILIKE CONCAT('%', #{code}, '%')
+            </if>
+            <if test="parent != null">
+                OR parent.name ILIKE CONCAT('%', #{parent}, '%')
+            </if>
+            ) AND NOT units.type_id = 1
+        </where>
+    </sql>
     <sql id="sorting">
         ORDER BY
         <choose>
-            <when test="sortColumn == 'id'">u.id</when>
-            <when test="sortColumn == 'name'">u.name</when>
-            <when test="sortColumn == 'company'">c.name</when>
-            <when test="sortColumn == 'type'">t.name</when>
-            <when test="sortColumn == 'code'">u.code</when>
-            <when test="sortColumn == 'parent'">p.name</when>
+            <when test="sortColumn == 'id'">units.id</when>
+            <when test="sortColumn == 'name'">units.name</when>
+            <when test="sortColumn == 'company'">companies.name</when>
+            <when test="sortColumn == 'type'">unit_types.name</when>
+            <when test="sortColumn == 'code'">units.code</when>
+            <when test="sortColumn == 'parent'">parent.name</when>
         </choose>
         <choose>
             <when test="sortDirection == 'desc'">DESC</when>
@@ -26,150 +75,151 @@
         </if>
     </sql>
 
-    <select id="findById" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSql" />
-        WHERE u.id = #{id}
+    <!--  ObjectMapper  -->
+
+    <select id="findById" resultType="Unit">
+        SELECT *
+        FROM <include refid="tableName" />
+        WHERE id = #{id}
     </select>
 
-    <select id="findAll" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSql" />
-        WHERE NOT u.type_id = 1
-        ORDER BY u.id
+    <select id="findAll" resultType="Unit">
+        SELECT *
+        FROM <include refid="tableName" />
+        <if test="root != null and root">
+            WHERE NOT <include refid="tableName" />.type_id = 1
+        </if>
     </select>
 
-    <select id="getPagedUnits" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSql" />
-        WHERE NOT u.type_id = 1
+    <select id="getPagedObjects" resultType="Unit">
+        SELECT *
+        FROM <include refid="tableName" />
+        WHERE NOT <include refid="tableName" />.type_id = 1
         <include refid="sorting" />
         <include refid="paging" />
     </select>
 
-    <select id="findAllFull" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSql" />
-        ORDER BY u.id
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM <include refid="tableName" />
+        WHERE NOT <include refid="tableName" />.type_id = 1
     </select>
+
+
+    <select id="search" resultType="Unit">
+        SELECT *
+        FROM <include refid="tableName" />
+        <include refid="searchCols" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <select id="searchCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM <include refid="tableName" />
+        <include refid="searchCols" />
+    </select>
+
+
+    <insert id="insert" parameterType="Unit" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="tableName" /> (
+            company_id, name, type_id, code, parent_id, leader_id
+        ) VALUES (
+            #{companyId}, #{name}, #{typeId}, #{code}, #{parentId}, #{leaderId}
+        )
+    </insert>
+
+    <update id="update" parameterType="Unit">
+        UPDATE <include refid="tableName" /> SET
+            company_id = #{companyId}, 
+            name = #{name}, 
+            type_id = #{typeId}, 
+            code = #{code}, 
+            parent_id = #{parentId}, 
+            leader_id = #{leaderId}
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM <include refid="tableName" />
+        WHERE id = #{id}
+    </delete>
+
+    <!-- DIRECT DTO QUERIES -->
+
+    <select id="findByIdDto" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSelect" />
+        WHERE <include refid="tableName" />.id = #{id}
+    </select>
+
+    <select id="findAllDto" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSelect" />
+        <if test="root != null and root">
+            WHERE NOT <include refid="tableName" />.type_id = 1
+        </if>
+        ORDER BY id
+    </select>
+
+    <select id="getPagedObjectsDto" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSelect" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <select id="searchDto" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSelect" />
+        <include refid="searchColsDto" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <select id="searchCountDto" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        <include refid="ObjectResultMap.UnitDtoJOIN" />
+        <include refid="searchColsDto" />
+    </select>
+
+<!--  UnitMapper  -->
 
     <select id="getParent" resultMap="ObjectResultMap.UnitDtoMap">
         SELECT
-            u.id,
-            c.id AS company_id,
-            c.name AS company_name,
-            u.name,
-            t.id AS type_id,
-            t.name AS type_name,
-            u.code,
-            p.id AS parent_id,
-            p.name AS parent_name,
+            units.id,
+            companies.id AS company_id,
+            companies.name AS company_name,
+            units.name,
+            unit_types.id AS type_id,
+            unit_types.name AS type_name,
+            units.code,
+            parent.id AS parent_id,
+            parent.name AS parent_name,
             COALESCE(ch.children_count, 0) AS children_count,
-            COALESCE(ec.employee_count, 0) AS employee_count
+            COALESCE(ecompanies.employee_count, 0) AS employee_count
         FROM units child
-        LEFT JOIN units u ON u.id = child.parent_id
-        LEFT JOIN companies c ON u.company_id = c.id
-        LEFT JOIN unit_types t ON u.type_id = t.id
-        LEFT JOIN units p ON u.parent_id = p.id
+        LEFT JOIN units ON units.id = child.parent_id
+        LEFT JOIN companies ON units.company_id = companies.id
+        LEFT JOIN unit_types ON units.type_id = unit_types.id
+        LEFT JOIN units parent ON units.parent_id = parent.id
         LEFT JOIN (
             SELECT ch.parent_id, COUNT(*) AS children_count
             FROM units ch
             GROUP BY ch.parent_id
-        ) ch ON ch.parent_id = u.id
+        ) ch ON ch.parent_id = units.id
         LEFT JOIN (
             SELECT e.unit_id, COUNT(*) AS employee_count
             FROM employees e
             GROUP BY e.unit_id
-        ) ec ON ec.unit_id = u.id
+        ) ec ON ecompanies.unit_id = units.id
         WHERE child.id = #{id} OR child.parent_id IS NOT NULL
     </select>
 
     <select id="getChildren" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSql" />
-        WHERE u.parent_id = #{id}
-        ORDER BY u.id
+        <include refid="ObjectResultMap.UnitDtoSelect" />
+        WHERE units.parent_id = #{id}
+        ORDER BY units.id
     </select>
 
     <select id="getEmployees" resultMap="ObjectResultMap.EmployeeDtoMap">
-        <include refid="ObjectResultMap.EmployeeDtoSql" />
-        WHERE e.unit_id = #{id}
-        ORDER BY e.id
+        <include refid="ObjectResultMap.EmployeeDtoSelect" />
+        WHERE employees.unit_id = #{id}
+        ORDER BY employees.id
     </select>
-
-    <insert id="insert" parameterType="Unit" useGeneratedKeys="true" keyProperty="id">
-        INSERT INTO units (company_id, name, type_id, code, parent_id, leader_id) VALUES (#{companyId}, #{name}, #{typeId}, #{code}, #{parentId}, #{leaderId})
-    </insert>
-
-    <update id="update" parameterType="Unit">
-        UPDATE units SET company_id = #{companyId}, name = #{name}, type_id = #{typeId}, code = #{code}, parent_id = #{parentId}, leader_id = #{leaderId} WHERE id = #{id}
-    </update>
-
-    <delete id="delete" parameterType="long">
-        DELETE FROM units WHERE id = #{id}
-    </delete>
-
-    <select id="search" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSql" />
-        <where>
-            NOT u.type_id = 1 AND (FALSE
-            <if test="name != null">
-                OR u.name ILIKE CONCAT('%', #{name}, '%')
-            </if>
-            <if test="company != null">
-                OR c.name ILIKE CONCAT('%', #{company}, '%')
-            </if>
-            <if test="type != null">
-                OR t.name ILIKE CONCAT('%', #{type}, '%')
-            </if>
-            <if test="code != null">
-                OR u.code ILIKE CONCAT('%', #{code}, '%')
-            </if>
-            <if test="parent != null">
-                OR p.name ILIKE CONCAT('%', #{parent}, '%')
-            </if>
-            )
-        </where>
-        <include refid="sorting" />
-        <include refid="paging" />
-    </select>
-
-    <select id="getSearchCount" resultType="java.lang.Integer">
-        SELECT COUNT(*)
-        FROM units u
-        LEFT JOIN companies c ON u.company_id = c.id
-        LEFT JOIN unit_types t ON u.type_id = t.id
-        LEFT JOIN units p ON u.parent_id = p.id
-        <where>
-            NOT u.type_id = 1 AND (FALSE
-            <if test="name != null">
-                OR u.name ILIKE CONCAT('%', #{name}, '%')
-            </if>
-            <if test="company != null">
-                OR c.name ILIKE CONCAT('%', #{company}, '%')
-            </if>
-            <if test="type != null">
-                OR t.name ILIKE CONCAT('%', #{type}, '%')
-            </if>
-            <if test="code != null">
-                OR u.code ILIKE CONCAT('%', #{code}, '%')
-            </if>
-            <if test="parent != null">
-                OR p.name ILIKE CONCAT('%', #{parent}, '%')
-            </if>
-            )
-        </where>
-        <include refid="sorting" />
-        <include refid="paging" />
-    </select>
-
-    <select id="searchAll" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSql" />
-        WHERE
-        LOWER(u.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
-        LOWER(c.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
-        LOWER(t.name) LIKE LOWER(CONCAT('%', #{query}, '%')) OR
-        LOWER(u.code) LIKE LOWER(CONCAT('%', #{query}, '%'))
-        ORDER BY u.id
-    </select>
-
-    <select id="getCount" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM units WHERE NOT type_id = 1
-    </select>
-
 </mapper>

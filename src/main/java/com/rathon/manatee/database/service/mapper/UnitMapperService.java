@@ -15,8 +15,8 @@ public class UnitMapperService implements ObjectMapperService<Unit, UnitDto> {
     @Autowired
     private CompanyService companyService;
 
-    @Autowired
-    private UnitService unitService;
+//    @Autowired
+//    private UnitService unitService;
 
     @Autowired
     private UnitTypeService unitTypeService;
@@ -29,19 +29,21 @@ public class UnitMapperService implements ObjectMapperService<Unit, UnitDto> {
         d.setName(u.getName());
         d.setType(unitTypeService.getUnitTypeById(u.getTypeId()));
         d.setCode(u.getCode());
-        d.setChildrenCount(unitService.getChildren(u.getId()).size());
-        d.setParent(getAncestor(u.getParentId()));
+//        d.setChildrenCount(unitService.getChildren(u.getId()).size());
+        d.setChildrenCount(0); // set it in service
+//        d.setParent(getAncestor(u.getParentId()));
+        d.setParent(new IdNameDto(u.getParentId(), "")); // set it in service
 
         return d;
     }
 
-    private IdNameDto getAncestor(Long id) {
-        UnitDto unit = unitService.getObjectById(id);
-        return unit != null
-                ? new IdNameDto(id, unit.getName())
-//                ? new IdNameDto(id, unit.getName(), getAncestor(unit.getParent().id()))
-                : null;
-    }
+//    private IdNameDto getAncestor(Long id) {
+//        UnitDto unit = unitService.getObjectById(id);
+//        return unit != null
+//                ? new IdNameDto(id, unit.getName())
+////                ? new IdNameDto(id, unit.getName(), getAncestor(unit.getParent().id()))
+//                : null;
+//    }
 
     @Override
     public Unit toEntity(UnitDto d) {

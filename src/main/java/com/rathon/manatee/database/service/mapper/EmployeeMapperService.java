@@ -32,8 +32,7 @@ public class EmployeeMapperService implements ObjectMapperService<Employee, Empl
         d.setDob(e.getDob());
         d.setEmail(e.getEmail());
         d.setPhone(e.getPhone());
-        d.setLastName(e.getLastName());
-        d.setFirstName(e.getFirstName());
+        d.setName(e.getName());
         d.setUsername(e.getUsername());
         d.setUnit(new IdNameDto(u.getId(), u.getName()));
         d.setPosition(positionService.getPositionById(e.getPositionId()));
@@ -44,8 +43,7 @@ public class EmployeeMapperService implements ObjectMapperService<Employee, Empl
     @Override
     public Employee toEntity(EmployeeDto d) {
         Employee e = new Employee();
-        e.setFirstName(d.getFirstName());
-        e.setLastName(d.getLastName());
+        e.setName(d.getName());
         e.setUnitId(d.getUnit().id());
         e.setPositionId(d.getPosition().id());
         e.setUsername(d.getUsername());

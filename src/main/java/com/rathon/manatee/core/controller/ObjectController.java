@@ -27,7 +27,7 @@ public class ObjectController<T, D extends Dto<T>, S extends ObjectService<T, D,
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<D>> getAll() {
+    public ResponseEntity<List<D>> getAll(@RequestParam(required = false) Boolean root) {
         return ResponseEntity.ok(service.getAll());
     }
 

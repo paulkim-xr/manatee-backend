@@ -79,7 +79,7 @@ public class EmployeeService extends ObjectService<Employee, EmployeeDto, Employ
                 page * size,
                 size);
 
-        return PagedList.build(list, page, size, mapper.searchCount(
+        return PagedList.build(list, page, size, mapper.searchCountDto(
                 company,
                 unit,
                 lastName,
