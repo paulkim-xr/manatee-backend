@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -47,7 +48,11 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception{
+        JsonAuthFilter jsonFilter = new JsonAuthFilter();
+        jsonFilter.setAuthenticationManager(authenticationManager);
+        jsonFilter.setFilterProcessesUrl("/api/auth/login");
+
         http
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
@@ -60,8 +65,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest()
                         .authenticated())
-                .formLogin(AbstractHttpConfigurer::disable)
-                .logout(AbstractHttpConfigurer::disable);
+                .formLogin(form -> form
+                        .loginProcessingUrl("/api/auth/login")
+                        .successHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
+                        .failureHandler((req, res, ex) -> res.setStatus(HttpServletResponse.SC_UNAUTHORIZED))
+                )
+//                .addFilter(jsonFilter)
+                .logout(logout -> logout
+                        .logoutUrl("/api/auth/logout")
+                        .logoutSuccessHandler((req, res, auth) -> res.setStatus(HttpServletResponse.SC_OK))
+                );
 
         return http.build();
     }

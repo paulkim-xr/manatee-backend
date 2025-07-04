@@ -18,6 +18,7 @@ public class MUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         Employee e = mapper.findByUsername(username);
+        if (e == null) return null;
 
         return User.builder()
                 .username(username)
