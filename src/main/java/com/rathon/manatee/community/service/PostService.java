@@ -35,6 +35,14 @@ public class PostService extends ObjectService<Post, PostDto, PostMapper, PostMa
         this.commentMapperService = commentMapperService;
     }
 
+    @Override
+    public PostDto getObjectById(Long id) {
+        PostDto post = super.getObjectById(id);
+        post.setViewCount(post.getViewCount() + 1);
+        super.update(post);
+        return post;
+    }
+
     public PagedList<PostSummaryDto> getPagedObjects(Integer page, Integer size, String sort) {
         String sortColumn = "id";
         String sortDirection = "asc";

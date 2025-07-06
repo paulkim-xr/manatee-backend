@@ -1,4 +1,4 @@
-package com.rathon.manatee.community.model;
+package com.rathon.manatee.core.types;
 
 public enum BoardType {
     CLASSIC, FEED

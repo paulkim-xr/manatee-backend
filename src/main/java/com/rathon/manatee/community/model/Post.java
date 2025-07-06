@@ -16,6 +16,6 @@ public class Post {
     private String title;
     private String content;
     private Boolean isAnnouncement;
-//    private Integer viewCount;
+    private Integer viewCount;
 //    private Integer likeCount;
 }

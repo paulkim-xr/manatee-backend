@@ -1,7 +1,7 @@
 package com.rathon.manatee.community.dto;
 
 import com.rathon.manatee.community.model.Board;
-import com.rathon.manatee.community.model.BoardType;
+import com.rathon.manatee.core.types.BoardType;
 import com.rathon.manatee.core.dto.Dto;
 import lombok.Getter;
 import lombok.Setter;

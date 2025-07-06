@@ -1,5 +1,6 @@
 package com.rathon.manatee.community.model;
 
+import com.rathon.manatee.core.types.BoardType;
 import lombok.Getter;
 import lombok.Setter;
 
