@@ -119,4 +119,10 @@
             AND p.board_id = #{id}
         </if>
     </select>
+
+    <update id="increaseViewCount">
+        UPDATE posts SET
+        view_count = (view_count + 1)
+        WHERE id = #{id}
+    </update>
 </mapper>

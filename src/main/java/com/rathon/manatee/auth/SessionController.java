@@ -15,17 +15,14 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/auth")
 public class SessionController {
-    private final EmployeeService service;
 
-    public SessionController(EmployeeService service) {
-        this.service = service;
-    }
+    public SessionController(){}
 
     @GetMapping("/me")
     public ResponseEntity<?> check(Authentication authentication) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            return ResponseEntity.ok(Map.of("user", auth.getName(), "id", service.findByUsername(auth.getName()).getId(), "roles", auth.getAuthorities()));
+            return ResponseEntity.ok(Map.of("username", auth.getName(),"roles", auth.getAuthorities()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
     }
@@ -35,8 +32,7 @@ public class SessionController {
                                         @RequestBody LoginDto authRequest) {
         try {
             request.login(authRequest.username(), authRequest.password());
-            return ResponseEntity.ok(Map.of("user", authRequest.username(),
-                    "id", service.findByUsername(authRequest.username()).getId(),
+            return ResponseEntity.ok(Map.of("username", authRequest.username(),
                     "roles", SecurityContextHolder.getContext().getAuthentication().getAuthorities())
             );
         } catch (ServletException e) {

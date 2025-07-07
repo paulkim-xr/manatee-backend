@@ -161,6 +161,7 @@
 
     <select id="getPagedObjectsDto" resultMap="ObjectResultMap.UnitDtoMap">
         <include refid="ObjectResultMap.UnitDtoSelect" />
+        WHERE NOT <include refid="tableName" />.type_id = 1
         <include refid="sorting" />
         <include refid="paging" />
     </select>

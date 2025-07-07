@@ -41,14 +41,9 @@ public class ObjectService<T, D extends Dto<T>, M extends ObjectMapper<T, D>, S 
     }
 
     public PagedList<D> getPagedObjects(int page, int size, String sort) {
-        String sortColumn = "id";
-        String sortDirection = "asc";
-        if (sort != null && sort.contains(",")) {
-            sortColumn = sort.split(",")[0];
-            sortDirection = sort.split(",")[1];
-        }
+        SortInfo sortInfo = new SortInfo(sort);
 
-        List<D> list = mapper.getPagedObjects(page * size, size, sortColumn, sortDirection).stream().map(service::toDto).toList();
+        List<D> list = mapper.getPagedObjects(page * size, size, sortInfo.column, sortInfo.direction).stream().map(service::toDto).toList();
         return PagedList.build(list, page, size, mapper.getCount());
     }
 

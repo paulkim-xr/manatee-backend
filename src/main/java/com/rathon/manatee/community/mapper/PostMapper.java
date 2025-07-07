@@ -11,6 +11,7 @@ import java.util.List;
 public interface PostMapper extends ObjectMapper<Post, PostDto> {
     List<Post> findPostsByBoardId(Long id, Integer offset, Integer size, String sortColumn, String sortDirection);
     int countPostsByBoardId(Long id);
+    void increaseViewCount(Long id);
 
     List<Post> search(Long id, Integer offset, Integer size, String sortColumn, String sortDirection, String query, Integer option);
     int searchCount(Long id, String query, Integer option);

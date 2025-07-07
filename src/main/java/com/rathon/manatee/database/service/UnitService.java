@@ -23,6 +23,14 @@ public class UnitService extends ObjectService<Unit, UnitDto, UnitMapper, UnitMa
         return mapper.findByIdDto(id);
     }
 
+    @Override
+    public PagedList<UnitDto> getPagedObjects(int page, int size, String sort) {
+        SortInfo sortInfo = new SortInfo(sort);
+        List<UnitDto> list = mapper.getPagedObjectsDto(page * size, size, sortInfo.column, sortInfo.direction);
+
+        return PagedList.build(list, page, size, getCount());
+    }
+
     public List<UnitDto> getAll(Boolean root) {
         return mapper.findAllDto(root);
     }

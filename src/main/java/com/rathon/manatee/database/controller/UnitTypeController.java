@@ -3,6 +3,7 @@ package com.rathon.manatee.database.controller;
 import com.rathon.manatee.database.model.UnitType;
 import com.rathon.manatee.database.service.UnitTypeService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class UnitTypeController {
                 : ResponseEntity.ok(t);
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping
     public ResponseEntity<Void> createUnitType(@RequestBody UnitType t) {
         service.createUnitType(t);
@@ -35,12 +37,14 @@ public class UnitTypeController {
         return ResponseEntity.ok().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @PutMapping
     public ResponseEntity<Void> updateUnitType(@RequestBody UnitType t) {
         service.updateUnitType(t);
         return ResponseEntity.ok().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUnitType(@PathVariable Long id) {
         service.deleteUnitType(id);

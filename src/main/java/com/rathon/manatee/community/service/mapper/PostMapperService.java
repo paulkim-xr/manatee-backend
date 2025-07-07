@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class PostMapperService implements ObjectMapperService<Post, PostDto> {
-    private EmployeeMapper employeeMapper;
-    private CommentMapper commentMapper;
+    private final EmployeeMapper employeeMapper;
+    private final CommentMapper commentMapper;
 
     public PostMapperService(EmployeeMapper employeeMapper, CommentMapper commentMapper) {
         this.employeeMapper = employeeMapper;
@@ -28,7 +28,7 @@ public class PostMapperService implements ObjectMapperService<Post, PostDto> {
         d.setIsAnnouncement(p.getIsAnnouncement());
         d.setCommentCount(commentMapper.countByPostId(p.getId()));
         d.setLikeCount(0);
-        d.setViewCount(0);
+        d.setViewCount(p.getViewCount());
 
         return d;
     }
@@ -44,7 +44,7 @@ public class PostMapperService implements ObjectMapperService<Post, PostDto> {
         d.setIsAnnouncement(p.getIsAnnouncement());
         d.setCommentCount(commentMapper.countByPostId(p.getId()));
         d.setLikeCount(0);
-        d.setViewCount(0);
+        d.setViewCount(p.getViewCount());
         d.setEdited(p.getEditedTime());
         d.setContent(p.getContent());
 
@@ -56,7 +56,7 @@ public class PostMapperService implements ObjectMapperService<Post, PostDto> {
         Post p = new Post();
         p.setId(d.getId());
         p.setPostedTime(d.getPosted());
-        p.setAuthorId(d.getAuthor().getId());
+        p.setAuthorId(employeeMapper.findByUsername(d.getAuthor().getUsername()).getId());
         p.setBoardId(d.getBoardId());
         p.setTitle(d.getTitle());
         p.setIsAnnouncement(d.getIsAnnouncement());

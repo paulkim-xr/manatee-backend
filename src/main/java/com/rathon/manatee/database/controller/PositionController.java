@@ -3,6 +3,7 @@ package com.rathon.manatee.database.controller;
 import com.rathon.manatee.database.model.Position;
 import com.rathon.manatee.database.service.PositionService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class PositionController {
                 : ResponseEntity.ok(p);
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping
     public ResponseEntity<Void> createPosition(@RequestBody Position p) {
         service.createPosition(p);
@@ -35,12 +37,14 @@ public class PositionController {
         return ResponseEntity.ok().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @PutMapping
     public ResponseEntity<Void> updatePosition(@RequestBody Position p) {
         service.updatePosition(p);
         return ResponseEntity.ok().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deletePosition(@PathVariable Long id) {
         service.deletePosition(id);

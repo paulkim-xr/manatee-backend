@@ -11,6 +11,7 @@ import com.rathon.manatee.community.service.mapper.CommentMapperService;
 import com.rathon.manatee.community.service.mapper.PostMapperService;
 import com.rathon.manatee.core.service.ObjectService;
 import com.rathon.manatee.core.dto.PagedList;
+import org.springframework.data.repository.cdi.Eager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,11 +37,10 @@ public class PostService extends ObjectService<Post, PostDto, PostMapper, PostMa
     }
 
     @Override
+    @Transactional
     public PostDto getObjectById(Long id) {
-        PostDto post = super.getObjectById(id);
-        post.setViewCount(post.getViewCount() + 1);
-        super.update(post);
-        return post;
+        mapper.increaseViewCount(id);
+        return super.getObjectById(id);
     }
 
     public PagedList<PostSummaryDto> getPagedObjects(Integer page, Integer size, String sort) {

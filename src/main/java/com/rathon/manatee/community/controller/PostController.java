@@ -20,7 +20,6 @@ public class PostController extends ObjectController<Post, PostDto, PostService>
         super(service);
     }
 
-    // TODO
     @GetMapping
     public PagedList<PostSummaryDto> getPagedSummaries(
             @RequestParam(required = false) String sort,
@@ -46,14 +45,14 @@ public class PostController extends ObjectController<Post, PostDto, PostService>
         return ResponseEntity.ok(service.search(page, size, sort, query, option));
     }
 
-    @PreAuthorize("authentication.name == #dto.author.username")
+    @PreAuthorize("authentication.getName() == #dto.author.username")
     @Override
     @PostMapping
     public ResponseEntity<Void> insert(PostDto dto) {
         return super.insert(dto);
     }
 
-    @PreAuthorize("authentication.name == #dto.author.username")
+    @PreAuthorize("authentication.getName() == #dto.author.username")
     @Override
     @PutMapping
     public ResponseEntity<Void> update(PostDto dto) {

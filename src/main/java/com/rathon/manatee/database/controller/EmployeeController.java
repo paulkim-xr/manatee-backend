@@ -7,6 +7,7 @@ import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.service.EmployeeService;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -28,6 +29,7 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
         return service.getPagedEmployees(page, size, sort);
     }
 
+    @Secured("ROLE_ADMIN")
     @Override
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody EmployeeDto d) {
@@ -38,6 +40,7 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
         return ResponseEntity.ok().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @Override
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody EmployeeDto d) {
@@ -46,6 +49,7 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
         return ResponseEntity.ok().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {

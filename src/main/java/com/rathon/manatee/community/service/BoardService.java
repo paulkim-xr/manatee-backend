@@ -28,10 +28,6 @@ public class BoardService extends ObjectService<Board, BoardDto, BoardMapper, Bo
         this.postService = postService;
     }
 
-    public BoardDto findById(Long id) {
-        return service.toDto(mapper.findById(id));
-    }
-
     public PagedList<PostSummaryDto> getBoardPosts(Long id, Integer page, Integer size, String sort) {
         String sortColumn = "postedTime";
         String sortDirection = "desc";

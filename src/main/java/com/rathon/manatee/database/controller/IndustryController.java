@@ -3,6 +3,7 @@ package com.rathon.manatee.database.controller;
 import com.rathon.manatee.database.model.Industry;
 import com.rathon.manatee.database.service.IndustryService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -28,6 +29,7 @@ public class IndustryController {
                 : ResponseEntity.ok(e);
     }
 
+    @Secured("ROLE_ADMIN")
     @PostMapping
     public ResponseEntity<Void> createIndustry(@RequestBody Industry i) {
         service.createIndustry(i);
@@ -35,12 +37,14 @@ public class IndustryController {
         return ResponseEntity.ok().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @PutMapping
     public ResponseEntity<Void> updateIndustry(@RequestBody Industry i) {
         service.updateIndustry(i);
         return ResponseEntity.ok().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteIndustry(@PathVariable Long id) {
         service.deleteIndustry(id);

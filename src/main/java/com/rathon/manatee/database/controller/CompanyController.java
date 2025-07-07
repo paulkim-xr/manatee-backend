@@ -12,6 +12,7 @@ import com.rathon.manatee.database.service.CompanyService;
 import com.rathon.manatee.database.service.UnitService;
 import com.rathon.manatee.database.service.mapper.CompanyMapperService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,6 +58,7 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
         return service.getEmployees(id);
     }
 
+    @Secured("ROLE_ADMIN")
     @Override
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody CompanyDto d) {
@@ -71,14 +73,15 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
         return ResponseEntity.ok().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @Override
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody CompanyDto d) {
-        Company c = cMapper.toEntity(d);
-        service.update(c); // TODO
+        super.update(d);
         return ResponseEntity.ok().build();
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteA(@PathVariable Long id) {
         List<UnitDto> units = service.getUnits(id, true);

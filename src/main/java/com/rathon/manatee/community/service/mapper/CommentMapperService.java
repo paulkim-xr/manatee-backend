@@ -35,7 +35,7 @@ public class CommentMapperService implements ObjectMapperService<Comment, Commen
         c.setId(d.getId());
         c.setPostId(d.getPostId());
         c.setParentId(d.getParentId());
-        c.setAuthorId(d.getAuthor().getId());
+        c.setAuthorId(employeeMapper.findByUsername(d.getAuthor().getUsername()).getId());
         c.setPostedTime(d.getPostedTime());
         c.setEditedTime(d.getEditedTime());
         c.setContent(d.getContent());

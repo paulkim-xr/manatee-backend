@@ -8,6 +8,7 @@ import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.UnitService;
 import com.rathon.manatee.database.service.mapper.UnitMapperService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -57,18 +58,21 @@ public class UnitController extends ObjectController<Unit, UnitDto, UnitService>
         return ResponseEntity.ok(parents);
     }
 
+    @Secured("ROLE_ADMIN")
     @Override
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody UnitDto d) {
         return super.insert(d);
     }
 
+    @Secured("ROLE_ADMIN")
     @Override
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody UnitDto d) {
         return super.update(d);
     }
 
+    @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUnit(@PathVariable Long id) {
         List<EmployeeDto> list = service.getEmployees(id);

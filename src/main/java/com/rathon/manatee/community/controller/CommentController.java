@@ -15,14 +15,14 @@ public class CommentController extends ObjectController<Comment, CommentDto, Com
         super(service);
     }
 
-    @PreAuthorize("authentication.name == #dto.author.username")
+    @PreAuthorize("authentication.getName == #dto.author.username")
     @Override
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody CommentDto dto) {
         return super.insert(dto);
     }
 
-    @PreAuthorize("authentication.name = #dto.author.username")
+    @PreAuthorize("authentication.getName == #dto.author.username")
     @Override
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody CommentDto dto) {
