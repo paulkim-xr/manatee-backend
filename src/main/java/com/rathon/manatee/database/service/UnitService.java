@@ -73,4 +73,8 @@ public class UnitService extends ObjectService<Unit, UnitDto, UnitMapper, UnitMa
 
         return PagedList.build(list, page, size, mapper.searchCountDto(name, company, type, code, parent));
     }
+
+    public Boolean checkUniqueCode(String code) {
+        return mapper.checkUniqueCode(code);
+    }
 }

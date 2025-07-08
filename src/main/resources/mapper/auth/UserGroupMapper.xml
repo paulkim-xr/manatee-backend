@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.rathon.manatee.auth.mapper.UserGroupMapper">
+    <!-- CONFIG -->
+    <sql id="tableName">
+        user_groups
+    </sql>
+    <sql id="searchCols">
+        <where>
+            FALSE
+            <!-- TABLE COLUMNS -->
+<!--            <if test="name != null">-->
+<!--                OR <include refid="tableName" />.name ILIKE CONCAT('%', #{name}, '%')-->
+<!--            </if>-->
+        </where>
+    </sql>
+    <sql id="searchColsDto">
+        <where>
+            FALSE
+            <!-- TABLE COLUMNS -->
+<!--            <if test="name != null">-->
+<!--                OR <include refid="tableName" />.name ILIKE CONCAT('%', #{name}, '%')-->
+<!--            </if>-->
+        </where>
+    </sql>
+    <sql id="sorting">
+        ORDER BY
+        <choose>
+            <when test="sortColumn == 'id'">id</when>
+            <!-- TABLE COLUMNS -->
+        </choose>
+        <choose>
+            <when test="sortDirection == 'desc'">DESC</when>
+            <otherwise>ASC</otherwise>
+        </choose>
+    </sql>
+    <sql id="paging">
+        <if test="size != null and offset != null">
+            LIMIT #{size}
+            OFFSET #{offset}
+        </if>
+    </sql>
+
+<!--  ObjectMapper  -->
+
+    <select id="findById" resultType="UserGroup">
+        SELECT *
+        FROM <include refid="tableName" />
+        WHERE id = #{id}
+    </select>
+
+    <select id="findAll" resultType="UserGroup">
+        SELECT *
+        FROM <include refid="tableName" />
+    </select>
+
+    <select id="getPagedObjects" resultType="UserGroup">
+        SELECT *
+        FROM <include refid="tableName" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+
+    <select id="getCount" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM <include refid="tableName" />
+    </select>
+
+
+    <select id="search" resultType="UserGroup">
+        SELECT *
+        FROM <include refid="tableName" />
+        <include refid="searchCols" />
+        <include refid="sorting" />
+        <include refid="paging" />
+    </select>
+    
+    <select id="searchCount" resultType="java.lang.Integer">
+        SELECT COUNT(*)
+        FROM <include refid="tableName" />
+        <include refid="searchCols" />
+    </select>
+
+
+    <insert id="insert" parameterType="UserGroup" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO <include refid="tableName" /> (
+        <!-- TABLE COLUMNS -->
+        ) VALUES (
+        <!-- #{OBJECT FIELDS} -->
+        )
+    </insert>
+
+    <update id="update" parameterType="UserGroup">
+        UPDATE <include refid="tableName" /> SET
+        <!-- TABLE COLUMNS = #{OBJECT FIELDS} -->
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="long">
+        DELETE FROM <include refid="tableName" />
+        WHERE id = #{id}
+    </delete>
+
+    <!-- DIRECT DTO QUERIES -->
+
+<!--    <select id="findByIdDto" resultMap="ObjectDtoMap">-->
+<!--        <include refid="ObjectDtoSelect" />-->
+<!--        WHERE id = #{id}-->
+<!--    </select>-->
+
+<!--    <select id="findAllDto" resultMap="ObjectDtoMap">-->
+<!--        <include refid="ObjectDtoSelect" />-->
+<!--        ORDER BY id-->
+<!--    </select>-->
+
+<!--    <select id="getPagedObjectsDto" resultMap="ObjectDtoMap">-->
+<!--        <include refid="ObjectDtoSelect" />-->
+<!--        <include refid="sorting" />-->
+<!--        <include refid="paging" />-->
+<!--    </select>-->
+
+<!--    <select id="searchDto" resultMap="ObjectDtoMap">-->
+<!--        <include refid="ObjectDtoSelect" />-->
+<!--        <include refid="searchColsDto" />-->
+<!--        <include refid="sorting" />-->
+<!--        <include refid="paging" />-->
+<!--    </select>-->
+
+<!--    <select id="searchCountDto" resultType="java.lang.Integer">-->
+<!--        SELECT COUNT(*)-->
+<!--        <include refid="ObjectDtoJOIN" />-->
+<!--        <include refid="searchColsDto" />-->
+<!--    </select>-->
+</mapper>

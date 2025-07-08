@@ -63,6 +63,11 @@
         LEFT JOIN unit_types ON units.type_id = unit_types.id
         LEFT JOIN units parent ON units.parent_id = parent.id
         LEFT JOIN (
+            SELECT children.parent_id, COUNT(*) AS children_count
+            FROM units children
+            GROUP BY children.parent_id
+        ) ch ON ch.parent_id = units.id
+        LEFT JOIN (
             SELECT employees.unit_id, COUNT(*) AS employee_count
             FROM employees
             GROUP BY employees.unit_id
@@ -79,6 +84,7 @@
             units.code,
             parent.id AS parent_id,
             parent.name AS parent_name,
+            COALESCE(ch.children_count, 0) AS children_count,
             COALESCE(ec.employee_count, 0) AS employee_count
         <include refid="ObjectResultMap.UnitDtoJOIN" />
     </sql>

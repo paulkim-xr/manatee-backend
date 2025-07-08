@@ -1,21 +1,11 @@
 package com.rathon.manatee.auth;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
-import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder.SecretKeyFactoryAlgorithm;
 
 import java.util.Date;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class SecurityConfigTest {
-
-    @Autowired
-    public MUserDetailsService service;
 
     @Test
     void passwordEncoder() {

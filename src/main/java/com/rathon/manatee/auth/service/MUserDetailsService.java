@@ -1,4 +1,4 @@
-package com.rathon.manatee.auth;
+package com.rathon.manatee.auth.service;
 
 import com.rathon.manatee.database.mapper.EmployeeMapper;
 import com.rathon.manatee.database.model.Employee;

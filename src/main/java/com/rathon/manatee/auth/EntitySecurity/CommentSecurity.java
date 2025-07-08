@@ -1,4 +1,4 @@
-package com.rathon.manatee.auth.entitySecurity;
+package com.rathon.manatee.auth.EntitySecurity;
 
 import com.rathon.manatee.community.mapper.CommentMapper;
 import com.rathon.manatee.community.model.Comment;

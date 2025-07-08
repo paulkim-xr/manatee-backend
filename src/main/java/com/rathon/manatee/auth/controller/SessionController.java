@@ -1,6 +1,6 @@
-package com.rathon.manatee.auth;
+package com.rathon.manatee.auth.controller;
 
-import com.rathon.manatee.database.service.EmployeeService;
+import com.rathon.manatee.auth.dto.LoginDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

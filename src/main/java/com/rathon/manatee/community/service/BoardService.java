@@ -58,7 +58,6 @@ public class BoardService extends ObjectService<Board, BoardDto, BoardMapper, Bo
     @Override
     @Transactional
     public void delete(Long id) {
-        System.out.printf("Delete board id: %d%n", id);
         List<Post> posts = postMapper.findPostsByBoardId(
                 id,
                 0,
@@ -66,7 +65,6 @@ public class BoardService extends ObjectService<Board, BoardDto, BoardMapper, Bo
                 null,
                 null
         );
-        System.out.println(posts.size());
         posts.forEach(post -> postService.delete(post.getId()));
         mapper.delete(id);
     }

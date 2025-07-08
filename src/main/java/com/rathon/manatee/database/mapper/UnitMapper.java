@@ -29,4 +29,6 @@ public interface UnitMapper extends ObjectMapper<Unit, UnitDto> {
     UnitDto getParent(Long id);
     List<UnitDto> getChildren(Long id);
     List<EmployeeDto> getEmployees(Long id);
+
+    Boolean checkUniqueCode(String code);
 }

@@ -36,4 +36,6 @@ public interface EmployeeMapper extends ObjectMapper<Employee, EmployeeDto> {
     );
 
     Employee findByUsername(String username);
+
+    Boolean checkUniqueUsername(String username);
 }

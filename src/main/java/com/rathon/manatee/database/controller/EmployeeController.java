@@ -6,6 +6,7 @@ import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.service.EmployeeService;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -21,12 +22,18 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
     }
 
     @GetMapping
-    public PagedList<EmployeeDto> getPagedObjects(
+    public ResponseEntity<PagedList<EmployeeDto>> getPagedObjects(
             @RequestParam(required = false) String sort,
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size
     ) {
-        return service.getPagedEmployees(page, size, sort);
+        return ResponseEntity.ok(service.getPagedEmployees(page, size, sort));
+    }
+
+    @GetMapping("/validate/username")
+    public ResponseEntity<?> checkUniqueUsername(@RequestParam String username) {
+        if (service.checkUniqueUsername(username)) return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     @Secured("ROLE_ADMIN")

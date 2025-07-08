@@ -91,4 +91,8 @@ public class EmployeeService extends ObjectService<Employee, EmployeeDto, Employ
                 dob
         ));
     }
+
+    public Boolean checkUniqueUsername(String username) {
+        return mapper.checkUniqueUsername(username);
+    }
 }

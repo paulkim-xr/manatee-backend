@@ -1,4 +1,4 @@
-package com.rathon.manatee.auth.entitySecurity;
+package com.rathon.manatee.auth.EntitySecurity;
 
 import com.rathon.manatee.community.mapper.PostMapper;
 import com.rathon.manatee.community.model.Post;

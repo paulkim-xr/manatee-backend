@@ -129,16 +129,15 @@
 
     <insert id="insert" parameterType="Employee" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="tableName" /> (
-            first_name, last_name, unit_id, position_id, email, phone, dob
+            name, unit_id, position_id, email, phone, dob
         ) VALUES (
-            #{firstName}, #{lastName}, #{unitId}, #{positionId}, #{email}, #{phone}, #{dob}
+            #{name}, #{unitId}, #{positionId}, #{email}, #{phone}, #{dob}
         )
     </insert>
 
     <update id="update" parameterType="Employee">
         UPDATE <include refid="tableName" /> SET
-            first_name = #{firstName},
-            last_name = #{lastName},
+            name = #{name},
             unit_id = #{unitId},
             position_id = #{positionId},
             email = #{email},
@@ -187,5 +186,13 @@
 
     <select id="findByUsername" resultType="Employee">
         SELECT * FROM employees WHERE employees.username = #{username}
+    </select>
+
+    <select id="checkUniqueUsername" resultType="java.lang.Boolean">
+        SELECT EXISTS (
+            SELECT 1 FROM employees
+            WHERE employees.username = #{username}
+            LIMIT 1
+        )
     </select>
 </mapper>

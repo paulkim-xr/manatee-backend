@@ -1,3 +1,3 @@
-package com.rathon.manatee.auth;
+package com.rathon.manatee.auth.dto;
 
 public record LoginDto(String username, String password) {}

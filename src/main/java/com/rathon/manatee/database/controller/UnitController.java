@@ -7,6 +7,7 @@ import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.UnitService;
 import com.rathon.manatee.database.service.mapper.UnitMapperService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/units")
 public class UnitController extends ObjectController<Unit, UnitDto, UnitService> {
-    public UnitController(UnitService service, UnitMapperService mapper) {
+    public UnitController(UnitService service) {
         super(service);
     }
 
@@ -56,6 +57,12 @@ public class UnitController extends ObjectController<Unit, UnitDto, UnitService>
             unit = service.getParent(unit.getId());
         }
         return ResponseEntity.ok(parents);
+    }
+
+    @GetMapping("/validate/code")
+    public ResponseEntity<?> checkUniqueCode(@RequestParam String code) {
+        if (service.checkUniqueCode(code)) return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 
     @Secured("ROLE_ADMIN")
@@ -97,7 +104,7 @@ public class UnitController extends ObjectController<Unit, UnitDto, UnitService>
             @RequestParam(defaultValue = "10") Integer size,
             @RequestParam(required = false) String sort
     ) {
-        PagedList<UnitDto> pagedList = null;
+        PagedList<UnitDto> pagedList;
         if (query != null) {
             pagedList = service.search(query, page, size, sort);
         } else {
