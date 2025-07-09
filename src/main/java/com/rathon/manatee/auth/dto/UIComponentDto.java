@@ -9,4 +9,5 @@ import lombok.Setter;
 @Setter
 public class UIComponentDto extends Dto<UIComponent> {
     private String name;
+    private String description;
 }

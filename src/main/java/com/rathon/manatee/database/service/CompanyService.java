@@ -6,6 +6,8 @@ import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.mapper.CompanyMapper;
+import com.rathon.manatee.database.mapper.EmployeeMapper;
+import com.rathon.manatee.database.mapper.UnitMapper;
 import com.rathon.manatee.database.model.Company;
 import com.rathon.manatee.database.service.mapper.CompanyMapperService;
 import org.springframework.stereotype.Service;
@@ -14,9 +16,18 @@ import java.util.List;
 
 @Service
 public class CompanyService extends ObjectService<Company, CompanyDto, CompanyMapper, CompanyMapperService> {
+    private final UnitMapper unitMapper;
+    private final EmployeeMapper employeeMapper;
 
-    public CompanyService(CompanyMapper mapper, CompanyMapperService service) {
+    public CompanyService(
+            CompanyMapper mapper,
+            CompanyMapperService service,
+            UnitMapper unitMapper,
+            EmployeeMapper employeeMapper
+    ) {
         super(mapper, service);
+        this.unitMapper = unitMapper;
+        this.employeeMapper = employeeMapper;
     }
 
     @Override
@@ -38,15 +49,15 @@ public class CompanyService extends ObjectService<Company, CompanyDto, CompanyMa
     }
 
     public UnitDto getRoot(Long id) {
-        return mapper.getRootUnitDto(id);
+        return unitMapper.findCompanyRootUnitDto(id);
     }
 
     public List<UnitDto> getUnits(Long id, Boolean root) {
-        return mapper.getUnitsDto(id, root);
+        return unitMapper.findCompanyUnitsDto(id, root);
     }
 
     public List<EmployeeDto> getEmployees(Long id) {
-        return mapper.getEmployeesDto(id);
+        return employeeMapper.findCompanyEmployeesDto(id);
     }
 
     public void insert(Company c) {
@@ -59,7 +70,7 @@ public class CompanyService extends ObjectService<Company, CompanyDto, CompanyMa
 
     @Override
     public void delete(Long id) {
-        // RECURSIVE DELETE OR THROW ERROR WHEN CHILDREN EXIST?
+        // TODO - RECURSIVE DELETE OR THROW ERROR WHEN CHILDREN EXIST?
         mapper.delete(id);
     }
 

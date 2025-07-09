@@ -188,6 +188,18 @@
         SELECT * FROM employees WHERE employees.username = #{username}
     </select>
 
+    <select id="findCompanyEmployeesDto" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSelect" />
+        WHERE units.company_id = #{id}
+        ORDER BY employees.id
+    </select>
+
+    <select id="findUnitEmployeesDto" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSelect" />
+        WHERE employees.unit_id = #{id}
+        ORDER BY employees.id
+    </select>
+
     <select id="checkUniqueUsername" resultType="java.lang.Boolean">
         SELECT EXISTS (
             SELECT 1 FROM employees

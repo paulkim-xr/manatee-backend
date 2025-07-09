@@ -4,6 +4,7 @@ import com.rathon.manatee.core.service.ObjectService;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.dto.UnitDto;
+import com.rathon.manatee.database.mapper.EmployeeMapper;
 import com.rathon.manatee.database.mapper.UnitMapper;
 import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.mapper.UnitMapperService;
@@ -13,9 +14,15 @@ import java.util.List;
 
 @Service
 public class UnitService extends ObjectService<Unit, UnitDto, UnitMapper, UnitMapperService> {
+    private final EmployeeMapper employeeMapper;
 
-    public UnitService(UnitMapper mapper, UnitMapperService service) {
+    public UnitService(
+            UnitMapper mapper,
+            UnitMapperService service,
+            EmployeeMapper employeeMapper
+    ) {
         super(mapper, service);
+        this.employeeMapper = employeeMapper;
     }
 
     @Override
@@ -36,15 +43,15 @@ public class UnitService extends ObjectService<Unit, UnitDto, UnitMapper, UnitMa
     }
 
     public UnitDto getParent(Long id) {
-        return mapper.getParent(id);
+        return mapper.findParent(id);
     }
 
     public List<UnitDto> getChildren(Long id) {
-        return mapper.getChildren(id);
+        return mapper.findChildren(id);
     }
 
     public List<EmployeeDto> getEmployees(Long id) {
-        return mapper.getEmployees(id);
+        return employeeMapper.findUnitEmployeesDto(id);
     }
 
     @Override

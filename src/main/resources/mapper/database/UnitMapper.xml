@@ -181,7 +181,7 @@
 
 <!--  UnitMapper  -->
 
-    <select id="getParent" resultMap="ObjectResultMap.UnitDtoMap">
+    <select id="findParent" resultMap="ObjectResultMap.UnitDtoMap">
         SELECT
             units.id,
             companies.id AS company_id,
@@ -212,16 +212,25 @@
         WHERE child.id = #{id} OR child.parent_id IS NOT NULL
     </select>
 
-    <select id="getChildren" resultMap="ObjectResultMap.UnitDtoMap">
+    <select id="findCompanyRootUnitDto" resultMap="ObjectResultMap.UnitDtoMap">
         <include refid="ObjectResultMap.UnitDtoSelect" />
-        WHERE units.parent_id = #{id}
+        WHERE units.company_id = #{id} AND units.type_id = 1
         ORDER BY units.id
     </select>
 
-    <select id="getEmployees" resultMap="ObjectResultMap.EmployeeDtoMap">
-        <include refid="ObjectResultMap.EmployeeDtoSelect" />
-        WHERE employees.unit_id = #{id}
-        ORDER BY employees.id
+    <select id="findCompanyUnitsDto" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSelect" />
+        WHERE units.company_id = #{id}
+        <if test="!root">
+            AND NOT units.type_id = 1
+        </if>
+        ORDER BY units.id
+    </select>
+
+    <select id="findChildren" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSelect" />
+        WHERE units.parent_id = #{id}
+        ORDER BY units.id
     </select>
 
     <select id="checkUniqueCode" resultType="java.lang.Boolean">

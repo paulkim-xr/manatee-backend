@@ -5,6 +5,9 @@ import com.rathon.manatee.auth.model.UserRole;
 import com.rathon.manatee.core.mapper.ObjectMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface UserRoleMapper extends ObjectMapper<UserRole, UserRoleDto> {
+    List<UserRole> findRolesByGroupId(Long id);
 }

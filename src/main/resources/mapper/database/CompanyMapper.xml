@@ -155,24 +155,4 @@
 
 <!--  CompanyMapper  -->
 
-    <select id="getRootUnitDto" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSelect" />
-        WHERE units.company_id = #{id} AND units.type_id = 1
-        ORDER BY units.id
-    </select>
-
-    <select id="getUnitsDto" resultMap="ObjectResultMap.UnitDtoMap">
-        <include refid="ObjectResultMap.UnitDtoSelect" />
-        WHERE units.company_id = #{id}
-        <if test="!root">
-            AND NOT units.type_id = 1
-        </if>
-        ORDER BY units.id
-    </select>
-
-    <select id="getEmployeesDto" resultMap="ObjectResultMap.EmployeeDtoMap">
-        <include refid="ObjectResultMap.EmployeeDtoSelect" />
-        WHERE units.company_id = #{id}
-        ORDER BY employees.id
-    </select>
 </mapper>

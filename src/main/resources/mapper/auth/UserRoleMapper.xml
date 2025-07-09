@@ -133,4 +133,12 @@
 <!--        <include refid="ObjectDtoJOIN" />-->
 <!--        <include refid="searchColsDto" />-->
 <!--    </select>-->
+
+<!--  UserRoleMapper  -->
+    <select id="findRolesByGroupId" resultType="UserRole">
+        SELECT * FROM roles WHERE id IN (
+            SELECT role_id FROM role_mapping
+            WHERE usergroup_id = #{id}
+        )
+    </select>
 </mapper>

@@ -16,10 +16,6 @@
         SELECT * FROM board_groups WHERE parent_id = #{id}
     </select>
 
-    <select id="getBoards" resultType="Board">
-        SELECT * FROM boards WHERE parent_id = #{id}
-    </select>
-
     <insert id="insert" parameterType="BoardGroup" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO board_groups
         (name, parent_id)

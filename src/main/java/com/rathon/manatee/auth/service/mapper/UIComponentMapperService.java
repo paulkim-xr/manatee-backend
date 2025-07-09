@@ -8,15 +8,22 @@ import org.springframework.stereotype.Service;
 @Service
 public class UIComponentMapperService implements ObjectMapperService<UIComponent, UIComponentDto> {
     @Override
-    public UIComponentDto toDto(UIComponent u) {
-        UIComponentDto d = new UIComponentDto();
-        d.setId(u.getId());
+    public UIComponentDto toDto(UIComponent object) {
+        UIComponentDto dto = new UIComponentDto();
+        dto.setId(object.getId());
+        dto.setName(object.getName());
+        dto.setDescription(object.getDescription());
 
-        return d;
+        return dto;
     }
 
     @Override
     public UIComponent toEntity(UIComponentDto dto) {
-        return null;
+        UIComponent object = new UIComponent();
+        object.setId(dto.getId());
+        object.setName(dto.getName());
+        object.setDescription(dto.getDescription());
+
+        return object;
     }
 }

@@ -5,9 +5,11 @@ import com.rathon.manatee.core.dto.Dto;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 public class UserGroupDto extends Dto<UserGroup> {
     private String name;
-    private UserRoleDto[] roles;
+    private List<UserRoleDto> roles;
 }

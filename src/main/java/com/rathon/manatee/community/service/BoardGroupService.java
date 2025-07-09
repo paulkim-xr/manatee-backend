@@ -3,6 +3,7 @@ package com.rathon.manatee.community.service;
 import com.rathon.manatee.community.dto.BoardDto;
 import com.rathon.manatee.community.dto.BoardGroupDto;
 import com.rathon.manatee.community.mapper.BoardGroupMapper;
+import com.rathon.manatee.community.mapper.BoardMapper;
 import com.rathon.manatee.community.model.BoardGroup;
 import com.rathon.manatee.community.service.mapper.BoardGroupMapperService;
 import com.rathon.manatee.community.service.mapper.BoardMapperService;
@@ -13,10 +14,17 @@ import java.util.List;
 
 @Service
 public class BoardGroupService extends ObjectService<BoardGroup, BoardGroupDto, BoardGroupMapper, BoardGroupMapperService> {
+    private final BoardMapper boardMapper;
     private final BoardMapperService boardMapperService;
 
-    public BoardGroupService(BoardGroupMapper mapper, BoardMapperService boardMapperService, BoardGroupMapperService service) {
+    public BoardGroupService(
+            BoardGroupMapper mapper,
+            BoardGroupMapperService service,
+            BoardMapper boardMapper,
+            BoardMapperService boardMapperService
+    ) {
         super(mapper, service);
+        this.boardMapper = boardMapper;
         this.boardMapperService = boardMapperService;
     }
 
@@ -24,11 +32,11 @@ public class BoardGroupService extends ObjectService<BoardGroup, BoardGroupDto, 
     public BoardGroupDto getObjectById(Long id) {
         BoardGroup g = this.mapper.findById(id);
 
-        return service.toDto(g, mapper.getBoards(id), mapper.getChildGroups(id));
+        return service.toDto(g, boardMapper.findBoardsByParentId(id), mapper.getChildGroups(id));
     }
 
     public List<BoardDto> getBoards(Long id) {
-        return mapper.getBoards(id).stream().map(boardMapperService::toDto).toList();
+        return boardMapper.findBoardsByParentId(id).stream().map(boardMapperService::toDto).toList();
     }
 
     public List<BoardGroupDto> getChildGroups(Long id) {

@@ -1,7 +1,6 @@
 package com.rathon.manatee.database.mapper;
 
 import com.rathon.manatee.core.mapper.ObjectMapper;
-import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.dto.UnitDto;
 import com.rathon.manatee.database.model.Unit;
 import org.apache.ibatis.annotations.Mapper;
@@ -26,9 +25,12 @@ public interface UnitMapper extends ObjectMapper<Unit, UnitDto> {
     );
     Integer searchCountDto(String name, String company, String type, String code, String parent);
 
-    UnitDto getParent(Long id);
-    List<UnitDto> getChildren(Long id);
-    List<EmployeeDto> getEmployees(Long id);
+    UnitDto findParent(Long id);
+    List<UnitDto> findChildren(Long id);
 
     Boolean checkUniqueCode(String code);
+
+    UnitDto findCompanyRootUnitDto(Long id);
+
+    List<UnitDto> findCompanyUnitsDto(Long id, Boolean root);
 }

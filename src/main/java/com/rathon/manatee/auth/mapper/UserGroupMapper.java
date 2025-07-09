@@ -5,6 +5,9 @@ import com.rathon.manatee.auth.model.UserGroup;
 import com.rathon.manatee.core.mapper.ObjectMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 @Mapper
 public interface UserGroupMapper extends ObjectMapper<UserGroup, UserGroupDto> {
+    List<UserGroup> findByUserId(Long id);
 }

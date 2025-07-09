@@ -2,8 +2,6 @@ package com.rathon.manatee.database.mapper;
 
 import com.rathon.manatee.core.mapper.ObjectMapper;
 import com.rathon.manatee.database.dto.CompanyDto;
-import com.rathon.manatee.database.dto.EmployeeDto;
-import com.rathon.manatee.database.dto.UnitDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import com.rathon.manatee.database.model.Company;
@@ -27,8 +25,4 @@ public interface CompanyMapper extends ObjectMapper<Company, CompanyDto> {
             String industry,
             String registrationNumber
     );
-
-    UnitDto getRootUnitDto(Long id);
-    List<UnitDto> getUnitsDto(Long id, Boolean root);
-    List<EmployeeDto> getEmployeesDto(Long id);
 }

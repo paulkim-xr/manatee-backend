@@ -12,4 +12,6 @@ public class UserPrivilegeService extends ObjectService<UserPrivilege, UserPrivi
     public UserPrivilegeService(UserPrivilegeMapper mapper, UserPrivilegeMapperService service) {
         super(mapper, service);
     }
+
+
 }

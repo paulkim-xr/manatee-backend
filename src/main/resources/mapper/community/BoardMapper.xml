@@ -12,6 +12,10 @@
         SELECT * FROM boards
     </select>
 
+    <select id="findBoardsByParentId" resultType="Board">
+        SELECT * FROM boards WHERE parent_id = #{id}
+    </select>
+
     <select id="getPostList" resultType="Post">
         SELECT * FROM posts WHERE board_id = #{id}
     </select>
