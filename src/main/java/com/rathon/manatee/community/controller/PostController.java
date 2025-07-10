@@ -29,9 +29,19 @@ public class PostController extends ObjectController<Post, PostDto, PostService>
         return service.getPagedObjects(page, size, sort);
     }
 
-    @GetMapping("/{id}/comments")
-    public ResponseEntity<List<CommentDto>> getComments(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getComments(id));
+    @GetMapping("/all")
+    public ResponseEntity<List<PostDto>> getAll(@RequestParam(required = false) Boolean root) {
+        return ResponseEntity.ok(service.getAll());
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCount() {
+        return ResponseEntity.ok(service.getCount());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<PostDto> getObject(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getObjectById(id));
     }
 
     @GetMapping("/search")
@@ -48,21 +58,27 @@ public class PostController extends ObjectController<Post, PostDto, PostService>
     @PreAuthorize("authentication.getName() == #dto.author.username")
     @Override
     @PostMapping
-    public ResponseEntity<Void> insert(PostDto dto) {
+    public ResponseEntity<?> insert(PostDto dto) {
         return super.insert(dto);
     }
 
     @PreAuthorize("authentication.getName() == #dto.author.username")
     @Override
     @PutMapping
-    public ResponseEntity<Void> update(PostDto dto) {
+    public ResponseEntity<?> update(PostDto dto) {
         return super.update(dto);
     }
 
     @PreAuthorize("hasRole('ADMIN') or @postSecurity.ownsEntity(#id, authentication)")
     @Override
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         return super.delete(id);
+    }
+//----------------------------------------------------------------------------------
+
+    @GetMapping("/{id}/comments")
+    public ResponseEntity<List<CommentDto>> getComments(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getComments(id));
     }
 }

@@ -2,7 +2,6 @@ package com.rathon.manatee.auth.service;
 
 import com.rathon.manatee.auth.dto.UserGroupDto;
 import com.rathon.manatee.auth.dto.UserRoleDto;
-import com.rathon.manatee.auth.mapper.UserGroupMapper;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
 import com.rathon.manatee.database.model.Employee;
 import org.springframework.security.core.userdetails.User;
@@ -38,8 +37,7 @@ public class MUserDetailsService implements UserDetailsService {
         return User.builder()
                 .username(username)
                 .password(e.getPasswordHash())
-                .roles(e.getRoleType().name())
-//                .roles(roles.stream().map(UserRoleDto::getName).toList().toArray(new String[0]))
+                .roles(roles.stream().map(UserRoleDto::getName).toList().toArray(new String[0]))
                 .build();
     }
 }

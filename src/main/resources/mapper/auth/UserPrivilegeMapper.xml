@@ -133,4 +133,14 @@
 <!--        <include refid="ObjectDtoJOIN" />-->
 <!--        <include refid="searchColsDto" />-->
 <!--    </select>-->
+
+
+    <select id="findPrivilegesByRoleId" resultType="UserPrivilege">
+        SELECT * FROM privileges WHERE id IN (
+            SELECT privilege_id FROM privilege_mapping
+            WHERE role_id = #{id}
+        )
+    </select>
+
+
 </mapper>

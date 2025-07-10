@@ -153,7 +153,7 @@
 
     <select id="findAllDto" resultMap="ObjectResultMap.UnitDtoMap">
         <include refid="ObjectResultMap.UnitDtoSelect" />
-        <if test="root != null and root">
+        <if test="root == null or root == false">
             WHERE NOT <include refid="tableName" />.type_id = 1
         </if>
         ORDER BY id

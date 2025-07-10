@@ -34,7 +34,10 @@ public class UserPrivilegeMapperService implements ObjectMapperService<UserPrivi
         UserPrivilegeDto dto = new UserPrivilegeDto();
         dto.setId(object.getId());
         dto.setName(object.getName());
-        dto.setParent(new IdNameDto(object.getParentId(), mapper.findById(object.getParentId()).getName()));
+        if (object.getParentId() != null) {
+            dto.setParent(new IdNameDto(object.getParentId(), mapper.findById(object.getParentId()).getName()));
+        }
+        dto.setComponents(this.collectComponents(object));
 
         return dto;
     }

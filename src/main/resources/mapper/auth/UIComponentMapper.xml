@@ -133,4 +133,13 @@
 <!--        <include refid="ObjectDtoJOIN" />-->
 <!--        <include refid="searchColsDto" />-->
 <!--    </select>-->
+    
+    
+    <select id="findByPrivilegeId" resultType="UIComponent">
+        SELECT * FROM ui_components
+        WHERE id IN (
+            SELECT component_id FROM ui_mapping
+            WHERE privilege_id = #{id}
+        )
+    </select>
 </mapper>

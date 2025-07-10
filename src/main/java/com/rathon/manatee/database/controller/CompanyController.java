@@ -38,24 +38,40 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
         return service.getPagedObjects(page, size, sort);
     }
 
-    @GetMapping("/{id}/root")
-    public ResponseEntity<UnitDto> getRoot(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getRoot(id));
+    @GetMapping("/all")
+    public ResponseEntity<List<CompanyDto>> getAll(@RequestParam(required = false) Boolean root) {
+        return ResponseEntity.ok(service.getAll());
     }
 
-    @GetMapping("/{id}/units")
-    public ResponseEntity<List<UnitDto>> getUnits(@PathVariable Long id, @RequestParam(required = false, defaultValue = "false") Boolean root) {
-        if (service.getObjectById(id) == null) return ResponseEntity.badRequest().build();
-
-        List<UnitDto> list =  service.getUnits(id, root);
-
-        if (list.isEmpty()) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(list);
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCount() {
+        return ResponseEntity.ok(service.getCount());
     }
 
-    @GetMapping("/{id}/employees")
-    public List<EmployeeDto> getEmployees(@PathVariable Long id) {
-        return service.getEmployees(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<CompanyDto> getObject(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getObjectById(id));
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<PagedList<CompanyDto>> search(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String address,
+            @RequestParam(required = false) String industry,
+            @RequestParam(required = false) String registrationNumber,
+            @RequestParam(defaultValue = "0") Integer page,
+            @RequestParam(defaultValue = "10") Integer size,
+            @RequestParam(required = false) String sort
+    ) {
+        PagedList<CompanyDto> pagedList;
+        if (query != null) {
+            pagedList = service.search(query, page, size, sort);
+        } else {
+            pagedList = service.search(name, address, industry, registrationNumber, page, size, sort);
+        }
+
+        return ResponseEntity.ok(pagedList);
     }
 
     @Secured("ROLE_ADMIN")
@@ -97,24 +113,25 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/search")
-    public ResponseEntity<PagedList<CompanyDto>> search(
-            @RequestParam(required = false) String query,
-            @RequestParam(required = false) String name,
-            @RequestParam(required = false) String address,
-            @RequestParam(required = false) String industry,
-            @RequestParam(required = false) String registrationNumber,
-            @RequestParam(defaultValue = "0") Integer page,
-            @RequestParam(defaultValue = "10") Integer size,
-            @RequestParam(required = false) String sort
-    ) {
-        PagedList<CompanyDto> pagedList;
-        if (query != null) {
-            pagedList = service.search(query, page, size, sort);
-        } else {
-            pagedList = service.search(name, address, industry, registrationNumber, page, size, sort);
-        }
+//    ---------------------------------------------------------
 
-        return ResponseEntity.ok(pagedList);
+    @GetMapping("/{id}/root")
+    public ResponseEntity<UnitDto> getRoot(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getRoot(id));
+    }
+
+    @GetMapping("/{id}/units")
+    public ResponseEntity<List<UnitDto>> getUnits(@PathVariable Long id, @RequestParam(required = false, defaultValue = "false") Boolean root) {
+        if (service.getObjectById(id) == null) return ResponseEntity.badRequest().build();
+
+        List<UnitDto> list =  service.getUnits(id, root);
+
+        if (list.isEmpty()) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(list);
+    }
+
+    @GetMapping("/{id}/employees")
+    public List<EmployeeDto> getEmployees(@PathVariable Long id) {
+        return service.getEmployees(id);
     }
 }

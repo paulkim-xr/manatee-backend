@@ -47,9 +47,13 @@ public class UserRoleMapperService implements ObjectMapperService<UserRole, User
             dto.setParent(new IdNameDto(object.getParentId(), mapper.findById(object.getParentId()).getName()));
         }
         UnitDto unitDto = unitMapper.findByIdDto(object.getManagingUnitId());
-        dto.setManagingUnit(new IdNameDto(unitDto.getId(), unitDto.getName()));
+        if (unitDto != null) {
+            dto.setManagingUnit(new IdNameDto(unitDto.getId(), unitDto.getName()));
+        }
         EmployeeDto employeeDto = employeeMapper.findByIdDto(object.getManagerId());
-        dto.setManager(new IdNameDto(object.getManagerId(), employeeDto.getName()));
+        if (employeeDto != null) {
+            dto.setManager(new IdNameDto(object.getManagerId(), employeeDto.getName()));
+        }
         dto.setPrivileges(collectPrivileges(object));
 
         return dto;

@@ -11,6 +11,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/employees")
 public class EmployeeController extends ObjectController<Employee, EmployeeDto, EmployeeService> {
@@ -30,37 +32,19 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
         return ResponseEntity.ok(service.getPagedEmployees(page, size, sort));
     }
 
-    @GetMapping("/validate/username")
-    public ResponseEntity<?> checkUniqueUsername(@RequestParam String username) {
-        if (service.checkUniqueUsername(username)) return ResponseEntity.ok().build();
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    @GetMapping("/all")
+    public ResponseEntity<List<EmployeeDto>> getAll(@RequestParam(required = false) Boolean root) {
+        return super.getAll(root);
     }
 
-    @Secured("ROLE_ADMIN")
-    @Override
-    @PostMapping
-    public ResponseEntity<Void> insert(@RequestBody EmployeeDto d) {
-        Employee e = mapper.toEntity(d);
-        // TODO - add logic to check required fields
-        service.insert(e);
-
-        return ResponseEntity.ok().build();
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCount() {
+        return super.getCount();
     }
 
-    @Secured("ROLE_ADMIN")
-    @Override
-    @PutMapping
-    public ResponseEntity<Void> update(@RequestBody EmployeeDto d) {
-        Employee c = mapper.toEntity(d);
-        service.update(c); // TODO
-        return ResponseEntity.ok().build();
-    }
-
-    @Secured("ROLE_ADMIN")
-    @Override
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        return super.delete(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeDto> getObject(@PathVariable Long id) {
+        return super.getObject(id);
     }
 
     @GetMapping("/search")
@@ -87,5 +71,38 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
         }
 
         return ResponseEntity.ok(pagedList);
+    }
+
+    @Secured("ROLE_ADMIN")
+    @Override
+    @PostMapping
+    public ResponseEntity<Void> insert(@RequestBody EmployeeDto d) {
+        Employee e = mapper.toEntity(d);
+        // TODO - add logic to check required fields
+        service.insert(e);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @Secured("ROLE_ADMIN")
+    @Override
+    @PutMapping
+    public ResponseEntity<Void> update(@RequestBody EmployeeDto d) {
+        Employee c = mapper.toEntity(d);
+        service.update(c); // TODO
+        return ResponseEntity.ok().build();
+    }
+
+    @Secured("ROLE_ADMIN")
+    @Override
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
+        return super.delete(id);
+    }
+
+    @GetMapping("/validate/username")
+    public ResponseEntity<?> checkUniqueUsername(@RequestParam String username) {
+        if (service.checkUniqueUsername(username)) return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.CONFLICT).build();
     }
 }

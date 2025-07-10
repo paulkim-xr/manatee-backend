@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/boards")
 public class BoardController extends ObjectController<Board, BoardDto, BoardService> {
@@ -17,14 +19,28 @@ public class BoardController extends ObjectController<Board, BoardDto, BoardServ
         super(service);
     }
 
-    @GetMapping("/{id}/posts")
-    public ResponseEntity<PagedList<PostSummaryDto>> getPosts(
-            @PathVariable Long id,
-            @RequestParam(required = false) String sort,
+    @GetMapping
+    public ResponseEntity<PagedList<BoardDto>> getPaged(
             @RequestParam(required = false, defaultValue = "0") Integer page,
-            @RequestParam(required = false, defaultValue = "10") Integer size
+            @RequestParam(required = false, defaultValue = "10") Integer size,
+            @RequestParam(required = false) String sort
     ) {
-        return ResponseEntity.ok(service.getBoardPosts(id, page, size, sort));
+        return ResponseEntity.ok(service.getPagedObjects(page, size, sort));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<BoardDto>> getAll(@RequestParam(required = false) Boolean root) {
+        return ResponseEntity.ok(service.getAll());
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Integer> getCount() {
+        return ResponseEntity.ok(service.getCount());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<BoardDto> getObject(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getObjectById(id));
     }
 
     @GetMapping("/{id}/posts/search")
@@ -41,19 +57,31 @@ public class BoardController extends ObjectController<Board, BoardDto, BoardServ
 
     @Secured("ROLE_ADMIN")
     @PostMapping
-    public ResponseEntity<Void> insert(@RequestBody BoardDto d) {
+    public ResponseEntity<?> insert(@RequestBody BoardDto d) {
         return super.insert(d);
     }
 
     @Secured("ROLE_ADMIN")
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody BoardDto d) {
+    public ResponseEntity<?> update(@RequestBody BoardDto d) {
         return super.update(d);
     }
 
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         return super.delete(id);
+    }
+    
+//    ----------------------------------------------------
+
+    @GetMapping("/{id}/posts")
+    public ResponseEntity<PagedList<PostSummaryDto>> getPosts(
+            @PathVariable Long id,
+            @RequestParam(required = false) String sort,
+            @RequestParam(required = false, defaultValue = "0") Integer page,
+            @RequestParam(required = false, defaultValue = "10") Integer size
+    ) {
+        return ResponseEntity.ok(service.getBoardPosts(id, page, size, sort));
     }
 }

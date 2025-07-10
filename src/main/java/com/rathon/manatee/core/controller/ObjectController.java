@@ -26,23 +26,23 @@ public class ObjectController<T, D extends Dto<T>, S extends ObjectService<T, D,
         return ResponseEntity.ok(service.getPagedObjects(page, size, sort));
     }
 
-    @GetMapping("/all")
+//    @GetMapping("/all")
     public ResponseEntity<List<D>> getAll(@RequestParam(required = false) Boolean root) {
         return ResponseEntity.ok(service.getAll());
     }
 
-    @GetMapping("/count")
+//    @GetMapping("/count")
     public ResponseEntity<Integer> getCount() {
         return ResponseEntity.ok(service.getCount());
     }
 
-    @GetMapping("/{id}")
+//    @GetMapping("/{id}")
     public ResponseEntity<D> getObject(@PathVariable Long id) {
         return ResponseEntity.ok(service.getObjectById(id));
     }
 
 //    @GetMapping("/search")
-    public ResponseEntity<PagedList<D>> searchTemplate(
+    public ResponseEntity<PagedList<D>> search(
             @RequestParam(required = false) String sort,
             // Columns...
             @RequestParam(required = false, defaultValue = "0") Integer page,
@@ -51,18 +51,22 @@ public class ObjectController<T, D extends Dto<T>, S extends ObjectService<T, D,
         return ResponseEntity.notFound().build();
     }
 
-    public ResponseEntity<Void> insert(@RequestBody D d) {
+//    @PostMapping
+    public ResponseEntity<?> insert(@RequestBody D d) {
         service.insert(d);
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<Void> update(@RequestBody D d) {
+//    @PutMapping
+    public ResponseEntity<?> update(@RequestBody D d) {
         service.update(d);
         return ResponseEntity.ok().build();
     }
 
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+//    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.ok().build();
     }
+//----------------------------------------------------------------------------------
 }

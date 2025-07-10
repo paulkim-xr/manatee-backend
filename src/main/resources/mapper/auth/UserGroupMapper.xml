@@ -133,4 +133,14 @@
 <!--        <include refid="ObjectDtoJOIN" />-->
 <!--        <include refid="searchColsDto" />-->
 <!--    </select>-->
+
+
+
+    <select id="findByUserId" resultType="UserGroup">
+        SELECT * FROM user_groups
+        WHERE id IN (
+            SELECT group_id FROM user_group_mapping
+            WHERE user_id = #{id}
+        )
+    </select>
 </mapper>
