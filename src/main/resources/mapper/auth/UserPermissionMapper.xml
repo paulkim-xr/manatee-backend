@@ -3,10 +3,10 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.rathon.manatee.auth.mapper.UserPrivilegeMapper">
+<mapper namespace="com.rathon.manatee.auth.mapper.UserPermissionMapper">
     <!-- CONFIG -->
     <sql id="tableName">
-        privileges
+        permissions
     </sql>
     <sql id="searchCols">
         <where>
@@ -46,18 +46,18 @@
 
 <!--  ObjectMapper  -->
 
-    <select id="findById" resultType="UserPrivilege">
+    <select id="findById" resultType="UserPermission">
         SELECT *
         FROM <include refid="tableName" />
         WHERE id = #{id}
     </select>
 
-    <select id="findAll" resultType="UserPrivilege">
+    <select id="findAll" resultType="UserPermission">
         SELECT *
         FROM <include refid="tableName" />
     </select>
 
-    <select id="getPagedObjects" resultType="UserPrivilege">
+    <select id="getPagedObjects" resultType="UserPermission">
         SELECT *
         FROM <include refid="tableName" />
         <include refid="sorting" />
@@ -69,7 +69,7 @@
     </select>
 
 
-    <select id="search" resultType="UserPrivilege">
+    <select id="search" resultType="UserPermission">
         SELECT *
         FROM <include refid="tableName" />
         <include refid="searchCols" />
@@ -84,7 +84,7 @@
     </select>
 
 
-    <insert id="insert" parameterType="UserPrivilege" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" parameterType="UserPermission" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="tableName" /> (
         <!-- TABLE COLUMNS -->
         ) VALUES (
@@ -92,7 +92,7 @@
         )
     </insert>
 
-    <update id="update" parameterType="UserPrivilege">
+    <update id="update" parameterType="UserPermission">
         UPDATE <include refid="tableName" /> SET
         <!-- TABLE COLUMNS = #{OBJECT FIELDS} -->
         WHERE id = #{id}
@@ -135,12 +135,24 @@
 <!--    </select>-->
 
 
-    <select id="findPrivilegesByRoleId" resultType="UserPrivilege">
-        SELECT * FROM privileges WHERE id IN (
-            SELECT privilege_id FROM privilege_mapping
+    <select id="findPermissionsByRoleId" resultType="UserPermission">
+        SELECT * FROM permissions WHERE id IN (
+            SELECT permission_id FROM permission_mapping
             WHERE role_id = #{id}
         )
     </select>
 
+    <select id="findRoots" resultType="UserRole">
+        SELECT * FROM roles WHERE parent_id IS NULL
+        ORDER BY id
+    </select>
 
+    <select id="findByParentId" resultType="UserRole">
+        SELECT * FROM roles WHERE parent_id = #{id}
+        ORDER BY id
+    </select>
+
+    <select id="countChildren" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM roles WHERE parent_id = #{id}
+    </select>
 </mapper>

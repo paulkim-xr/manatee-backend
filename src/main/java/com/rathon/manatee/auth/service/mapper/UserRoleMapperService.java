@@ -1,8 +1,8 @@
 package com.rathon.manatee.auth.service.mapper;
 
-import com.rathon.manatee.auth.dto.UserPrivilegeDto;
+import com.rathon.manatee.auth.dto.UserPermissionDto;
 import com.rathon.manatee.auth.dto.UserRoleDto;
-import com.rathon.manatee.auth.mapper.UserPrivilegeMapper;
+import com.rathon.manatee.auth.mapper.UserPermissionMapper;
 import com.rathon.manatee.auth.mapper.UserRoleMapper;
 import com.rathon.manatee.auth.model.UserRole;
 import com.rathon.manatee.core.dto.IdNameDto;
@@ -21,21 +21,21 @@ public class UserRoleMapperService implements ObjectMapperService<UserRole, User
     private final UserRoleMapper mapper;
     private final EmployeeMapper employeeMapper;
     private final UnitMapper unitMapper;
-    private final UserPrivilegeMapper privilegeMapper;
-    private final UserPrivilegeMapperService privilegeMapperService;
+    private final UserPermissionMapper permissionMapper;
+    private final UserPermissionMapperService permissionMapperService;
 
     public UserRoleMapperService(
             UserRoleMapper mapper,
             EmployeeMapper employeeMapper,
             UnitMapper unitMapper,
-            UserPrivilegeMapper privilegeMapper,
-            UserPrivilegeMapperService privilegeMapperService
+            UserPermissionMapper permissionMapper,
+            UserPermissionMapperService permissionMapperService
     ) {
         this.mapper = mapper;
         this.employeeMapper = employeeMapper;
         this.unitMapper = unitMapper;
-        this.privilegeMapper = privilegeMapper;
-        this.privilegeMapperService = privilegeMapperService;
+        this.permissionMapper = permissionMapper;
+        this.permissionMapperService = permissionMapperService;
     }
 
     @Override
@@ -54,23 +54,24 @@ public class UserRoleMapperService implements ObjectMapperService<UserRole, User
         if (employeeDto != null) {
             dto.setManager(new IdNameDto(object.getManagerId(), employeeDto.getName()));
         }
-        dto.setPrivileges(collectPrivileges(object));
+        dto.setPermissions(collectPermissions(object));
+        dto.setChildrenCount(mapper.countChildren(object.getId()));
 
         return dto;
     }
 
-    private List<UserPrivilegeDto> collectPrivileges(UserRole role) {
-        return collectPrivileges(role, new ArrayList<>());
+    private List<UserPermissionDto> collectPermissions(UserRole role) {
+        return collectPermissions(role, new ArrayList<>());
     }
 
-    private List<UserPrivilegeDto> collectPrivileges(UserRole role, List<UserPrivilegeDto> list) {
+    private List<UserPermissionDto> collectPermissions(UserRole role, List<UserPermissionDto> list) {
         if (list == null) {
-            return collectPrivileges(role, new ArrayList<>());
+            return collectPermissions(role, new ArrayList<>());
         }
-        // TODO - remove redundant privileges
-        list.addAll(privilegeMapper.findPrivilegesByRoleId(role.getId()).stream().map(privilegeMapperService::toDto).toList());
+        // TODO - remove redundant permissions
+        list.addAll(permissionMapper.findPermissionsByRoleId(role.getId()).stream().map(permissionMapperService::toDto).toList());
         if (role.getParentId() != null) {
-            return collectPrivileges(mapper.findById(role.getParentId()), list);
+            return collectPermissions(mapper.findById(role.getParentId()), list);
         }
 
         return list;

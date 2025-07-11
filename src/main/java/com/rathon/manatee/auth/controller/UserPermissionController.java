@@ -1,8 +1,9 @@
 package com.rathon.manatee.auth.controller;
 
+import com.rathon.manatee.auth.dto.UserPermissionDto;
 import com.rathon.manatee.auth.dto.UserRoleDto;
-import com.rathon.manatee.auth.model.UserRole;
-import com.rathon.manatee.auth.service.UserRoleService;
+import com.rathon.manatee.auth.model.UserPermission;
+import com.rathon.manatee.auth.service.UserPermissionService;
 import com.rathon.manatee.core.controller.ObjectController;
 import com.rathon.manatee.core.dto.PagedList;
 import org.springframework.http.ResponseEntity;
@@ -11,15 +12,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/auth/role")
-public class UserRoleController extends ObjectController<UserRole, UserRoleDto, UserRoleService> {
-    public UserRoleController(UserRoleService service) {
+@RequestMapping("/api/auth/permission")
+public class UserPermissionController extends ObjectController<UserPermission, UserPermissionDto, UserPermissionService> {
+    public UserPermissionController(UserPermissionService service) {
         super(service);
     }
 
-//    @PreAuthorize("authentication.getName() == #dto.author.username")
     @GetMapping
-    public ResponseEntity<PagedList<UserRoleDto>> getPaged(
+    public ResponseEntity<PagedList<UserPermissionDto>> getPaged(
             @RequestParam(required = false, defaultValue = "0") Integer page,
             @RequestParam(required = false, defaultValue = "10") Integer size,
             @RequestParam(required = false) String sort
@@ -28,7 +28,7 @@ public class UserRoleController extends ObjectController<UserRole, UserRoleDto, 
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<UserRoleDto>> getAll(@RequestParam(required = false) Boolean root) {
+    public ResponseEntity<List<UserPermissionDto>> getAll(@RequestParam(required = false) Boolean root) {
         return ResponseEntity.ok(service.getAll());
     }
 
@@ -38,13 +38,12 @@ public class UserRoleController extends ObjectController<UserRole, UserRoleDto, 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserRoleDto> getObject(@PathVariable Long id) {
+    public ResponseEntity<UserPermissionDto> getObject(@PathVariable Long id) {
         return ResponseEntity.ok(service.getObjectById(id));
     }
 
-    // TODO
     @GetMapping("/search")
-    public ResponseEntity<PagedList<UserRoleDto>> search(
+    public ResponseEntity<PagedList<UserPermissionDto>> search(
             @RequestParam(required = false) String sort,
             // Columns...
             @RequestParam(required = false, defaultValue = "0") Integer page,
@@ -54,30 +53,30 @@ public class UserRoleController extends ObjectController<UserRole, UserRoleDto, 
     }
 
     @PostMapping
-    public ResponseEntity<Void> insert(@RequestBody UserRoleDto d) {
+    public ResponseEntity<?> insert(@RequestBody UserPermissionDto d) {
         service.insert(d);
         return ResponseEntity.ok().build();
     }
 
     @PutMapping
-    public ResponseEntity<Void> update(@RequestBody UserRoleDto d) {
+    public ResponseEntity<?> update(@RequestBody UserPermissionDto d) {
         service.update(d);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/roots")
-    public ResponseEntity<List<UserRoleDto>> getRoots() {
+    public ResponseEntity<List<UserPermissionDto>> getRoots() {
         return ResponseEntity.ok(service.getRoots());
     }
 
     @GetMapping("/{id}/children")
-    public ResponseEntity<List<UserRoleDto>> getChildren(@PathVariable Long id) {
+    public ResponseEntity<List<UserPermissionDto>> getChildren(@PathVariable Long id) {
         return ResponseEntity.ok(service.getChildren(id));
     }
 }

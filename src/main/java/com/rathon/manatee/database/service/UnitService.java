@@ -84,4 +84,8 @@ public class UnitService extends ObjectService<Unit, UnitDto, UnitMapper, UnitMa
     public Boolean checkUniqueCode(String code) {
         return mapper.checkUniqueCode(code);
     }
+
+    public List<UnitDto> getRoots() {
+        return mapper.findRootUnitsDto();
+    }
 }

@@ -96,6 +96,11 @@ public class UnitController extends ObjectController<Unit, UnitDto, UnitService>
 
 //----------------------------------------------------------
 
+    @GetMapping("/roots")
+    public ResponseEntity<List<UnitDto>> getRoots() {
+        return ResponseEntity.ok(service.getRoots());
+    }
+
     @GetMapping("/{id}/employees")
     public ResponseEntity<List<EmployeeDto>> getEmployees(@PathVariable Long id) {
 //        if (uService.getEmployees(id).isEmpty()) return ResponseEntity.notFound().build();

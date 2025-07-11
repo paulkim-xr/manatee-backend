@@ -141,4 +141,18 @@
             WHERE usergroup_id = #{id}
         )
     </select>
+
+    <select id="findRoots" resultType="UserRole">
+        SELECT * FROM roles WHERE parent_id IS NULL
+        ORDER BY id
+    </select>
+
+    <select id="findByParentId" resultType="UserRole">
+        SELECT * FROM roles WHERE parent_id = #{id}
+        ORDER BY id
+    </select>
+
+    <select id="countChildren" resultType="java.lang.Integer">
+        SELECT COUNT(*) FROM roles WHERE parent_id = #{id}
+    </select>
 </mapper>

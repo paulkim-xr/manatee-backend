@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class UserPrivilege {
+public class UserPermission {
     private Long id;
     private String name;
     private Long parentId;

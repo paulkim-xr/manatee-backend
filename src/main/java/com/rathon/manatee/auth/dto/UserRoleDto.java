@@ -15,5 +15,6 @@ public class UserRoleDto extends Dto<UserRole> {
     private IdNameDto parent;
     private IdNameDto managingUnit;
     private IdNameDto manager;
-    private List<UserPrivilegeDto> privileges;
+    private List<UserPermissionDto> permissions;
+    private Integer childrenCount;
 }

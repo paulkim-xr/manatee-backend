@@ -10,4 +10,9 @@ import java.util.List;
 @Mapper
 public interface UserRoleMapper extends ObjectMapper<UserRole, UserRoleDto> {
     List<UserRole> findRolesByGroupId(Long id);
+
+    List<UserRole> findRoots();
+
+    List<UserRole> findByParentId(Long id);
+    Integer countChildren(Long id);
 }

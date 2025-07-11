@@ -212,6 +212,12 @@
         WHERE child.id = #{id} OR child.parent_id IS NOT NULL
     </select>
 
+    <select id="findRootUnitsDto" resultMap="ObjectResultMap.UnitDtoMap">
+        <include refid="ObjectResultMap.UnitDtoSelect" />
+        WHERE units.type_id = 1
+        ORDER BY units.id
+    </select>
+
     <select id="findCompanyRootUnitDto" resultMap="ObjectResultMap.UnitDtoMap">
         <include refid="ObjectResultMap.UnitDtoSelect" />
         WHERE units.company_id = #{id} AND units.type_id = 1

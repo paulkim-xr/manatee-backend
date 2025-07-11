@@ -19,4 +19,12 @@ public class UserRoleService extends ObjectService<UserRole, UserRoleDto, UserRo
     public List<UserRoleDto> findGroupRoles(Long id) {
         return mapper.findRolesByGroupId(id).stream().map(service::toDto).toList();
     }
+
+    public List<UserRoleDto> getRoots() {
+        return mapper.findRoots().stream().map(service::toDto).toList();
+    }
+
+    public List<UserRoleDto> getChildren(Long id) {
+        return mapper.findByParentId(id).stream().map(service::toDto).toList();
+    }
 }

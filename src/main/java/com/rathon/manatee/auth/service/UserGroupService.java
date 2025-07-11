@@ -4,12 +4,12 @@ import com.rathon.manatee.auth.dto.UserGroupDto;
 import com.rathon.manatee.auth.dto.UserRoleDto;
 import com.rathon.manatee.auth.mapper.UIComponentMapper;
 import com.rathon.manatee.auth.mapper.UserGroupMapper;
-import com.rathon.manatee.auth.mapper.UserPrivilegeMapper;
+import com.rathon.manatee.auth.mapper.UserPermissionMapper;
 import com.rathon.manatee.auth.mapper.UserRoleMapper;
 import com.rathon.manatee.auth.model.UserGroup;
 import com.rathon.manatee.auth.service.mapper.UIComponentMapperService;
 import com.rathon.manatee.auth.service.mapper.UserGroupMapperService;
-import com.rathon.manatee.auth.service.mapper.UserPrivilegeMapperService;
+import com.rathon.manatee.auth.service.mapper.UserPermissionMapperService;
 import com.rathon.manatee.auth.service.mapper.UserRoleMapperService;
 import com.rathon.manatee.core.service.ObjectService;
 import org.springframework.stereotype.Service;
@@ -20,8 +20,8 @@ import java.util.List;
 public class UserGroupService extends ObjectService<UserGroup, UserGroupDto, UserGroupMapper, UserGroupMapperService> {
     private final UserRoleMapper roleMapper;
     private final UserRoleMapperService roleMapperService;
-    private final UserPrivilegeMapper privilegeMapper;
-    private final UserPrivilegeMapperService privilegeMapperService;
+    private final UserPermissionMapper permissionMapper;
+    private final UserPermissionMapperService permissionMapperService;
     private final UIComponentMapper componentMapper;
     private final UIComponentMapperService componentMapperService;
 
@@ -30,16 +30,16 @@ public class UserGroupService extends ObjectService<UserGroup, UserGroupDto, Use
             UserGroupMapperService service,
             UserRoleMapper roleMapper,
             UserRoleMapperService roleMapperService,
-            UserPrivilegeMapper privilegeMapper,
-            UserPrivilegeMapperService privilegeMapperService,
+            UserPermissionMapper permissionMapper,
+            UserPermissionMapperService permissionMapperService,
             UIComponentMapper componentMapper,
             UIComponentMapperService componentMapperService
     ) {
         super(mapper, service);
         this.roleMapper = roleMapper;
         this.roleMapperService = roleMapperService;
-        this.privilegeMapper = privilegeMapper;
-        this.privilegeMapperService = privilegeMapperService;
+        this.permissionMapper = permissionMapper;
+        this.permissionMapperService = permissionMapperService;
         this.componentMapper = componentMapper;
         this.componentMapperService = componentMapperService;
     }
@@ -51,4 +51,12 @@ public class UserGroupService extends ObjectService<UserGroup, UserGroupDto, Use
     public List<UserRoleDto> getRoles(Long id) {
         return roleMapper.findRolesByGroupId(id).stream().map(roleMapperService::toDto).toList();
     }
+
+//    public List<UserGroupDto> getRoots() {
+//        return mapper.findRootGroups().stream().map(service::toDto).toList();
+//    }
+//
+//    public List<UserGroupDto> getChildren(Long id) {
+//        return mapper.findChildren(id).stream().map(service::toDto).toList();
+//    }
 }

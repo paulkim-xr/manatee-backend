@@ -135,11 +135,11 @@
 <!--    </select>-->
     
     
-    <select id="findByPrivilegeId" resultType="UIComponent">
+    <select id="findByPermissionId" resultType="UIComponent">
         SELECT * FROM ui_components
         WHERE id IN (
             SELECT component_id FROM ui_mapping
-            WHERE privilege_id = #{id}
+            WHERE permission_id = #{id}
         )
     </select>
 </mapper>

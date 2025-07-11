@@ -30,6 +30,7 @@ public interface UnitMapper extends ObjectMapper<Unit, UnitDto> {
 
     Boolean checkUniqueCode(String code);
 
+    List<UnitDto> findRootUnitsDto();
     UnitDto findCompanyRootUnitDto(Long id);
 
     List<UnitDto> findCompanyUnitsDto(Long id, Boolean root);
