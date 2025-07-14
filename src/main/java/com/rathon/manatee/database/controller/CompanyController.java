@@ -11,6 +11,7 @@ import com.rathon.manatee.database.model.UnitType;
 import com.rathon.manatee.database.service.CompanyService;
 import com.rathon.manatee.database.service.UnitService;
 import com.rathon.manatee.database.service.mapper.CompanyMapperService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -89,27 +90,22 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
         return ResponseEntity.ok().build();
     }
 
-    @Secured("ROLE_ADMIN")
+//    @Secured("ROLE_ADMIN")
     @Override
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody CompanyDto d) {
-        super.update(d);
+        service.update(d);
         return ResponseEntity.ok().build();
     }
 
     @Secured("ROLE_ADMIN")
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteA(@PathVariable Long id) {
-        List<UnitDto> units = service.getUnits(id, true);
-        if (units.size() > 1) {
-            return ResponseEntity.badRequest().body("Remove all units to delete");
+    public ResponseEntity<?> deleteA(@PathVariable Long id) {
+        try {
+            service.delete(id);
+        } catch (Error error) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
         }
-
-        if (units.size() == 1) {
-            uService.delete(units.getFirst().getId());
-        }
-
-        service.delete(id);
         return ResponseEntity.ok().build();
     }
 

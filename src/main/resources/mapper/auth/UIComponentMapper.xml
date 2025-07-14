@@ -142,4 +142,12 @@
             WHERE permission_id = #{id}
         )
     </select>
+
+    <select id="checkUniqueName" resultType="java.lang.Boolean">
+        SELECT EXISTS (
+        SELECT 1 FROM ui_components
+        WHERE ui_components.name = #{name}
+        LIMIT 1
+        )
+    </select>
 </mapper>

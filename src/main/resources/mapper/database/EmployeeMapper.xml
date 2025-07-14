@@ -69,8 +69,7 @@
             <when test="sortColumn == 'id'">employees.id</when>
             <when test="sortColumn == 'company'">companies.name</when>
             <when test="sortColumn == 'unit'">units.name</when>
-            <when test="sortColumn == 'firstName'">employees.first_name</when>
-            <when test="sortColumn == 'lastName'">employees.last_name</when>
+            <when test="sortColumn == 'name'">employees.name</when>
             <when test="sortColumn == 'position'">positions.name</when>
             <when test="sortColumn == 'email'">employees.email</when>
             <when test="sortColumn == 'phone'">employees.phone</when>

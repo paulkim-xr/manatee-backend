@@ -142,12 +142,12 @@
         )
     </select>
 
-    <select id="findRoots" resultType="UserRole">
+    <select id="findRoots" resultType="UserPermission">
         SELECT * FROM roles WHERE parent_id IS NULL
         ORDER BY id
     </select>
 
-    <select id="findByParentId" resultType="UserRole">
+    <select id="findByParentId" resultType="UserPermission">
         SELECT * FROM roles WHERE parent_id = #{id}
         ORDER BY id
     </select>

@@ -9,7 +9,10 @@ import com.rathon.manatee.database.mapper.CompanyMapper;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
 import com.rathon.manatee.database.mapper.UnitMapper;
 import com.rathon.manatee.database.model.Company;
+import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.mapper.CompanyMapperService;
+import com.rathon.manatee.database.service.mapper.UnitMapperService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -64,13 +67,27 @@ public class CompanyService extends ObjectService<Company, CompanyDto, CompanyMa
         mapper.insert(c);
     }
 
-    public void update(Company c) {
-        mapper.update(c);
+    @Override
+    public void update(CompanyDto d) {
+        UnitDto root = this.getRoot(d.getId());
+        // TODO - BUG
+        System.out.printf("Unit ID: %d%nUnit Name: %s%nCompany Name : %s%n", root.getId(), root.getName(), root.getCompany().name());
+        root.setName(d.getName());
+        System.out.printf("Unit ID: %d%nUnit Name: %s%nCompany Name : %s%n", root.getId(), root.getName(), root.getCompany().name());
+        unitMapper.update(this.toUnit(root));
+        mapper.update(service.toEntity(d));
     }
 
     @Override
-    public void delete(Long id) {
-        // TODO - RECURSIVE DELETE OR THROW ERROR WHEN CHILDREN EXIST?
+    public void delete(Long id) throws Error {
+        List<UnitDto> units = this.getUnits(id, true);
+        if (units.size() > 1) {
+            throw new Error();
+        }
+
+        if (units.size() == 1) {
+            unitMapper.delete(units.getFirst().getId());
+        }
         mapper.delete(id);
     }
 
@@ -97,5 +114,18 @@ public class CompanyService extends ObjectService<Company, CompanyDto, CompanyMa
         List<CompanyDto> list = mapper.searchDto(name, address, industry, registrationNumber, sortInfo.column, sortInfo.direction, page * size, size);
 
         return PagedList.build(list, page, size, mapper.searchCountDto(name, address, industry, registrationNumber));
+    }
+
+    private Unit toUnit(UnitDto d) {
+        Unit u = new Unit();
+        u.setCompanyId(d.getCompany().id());
+        u.setName(d.getName());
+        u.setTypeId(d.getType().id());
+        u.setCode(d.getCode());
+        if (d.getParent() != null) {
+            u.setParentId(d.getParent().id());
+        }
+
+        return u;
     }
 }

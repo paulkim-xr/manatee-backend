@@ -124,7 +124,7 @@ public class UnitController extends ObjectController<Unit, UnitDto, UnitService>
         return ResponseEntity.ok(parents);
     }
 
-    @GetMapping("/validate/code")
+    @GetMapping("/validate")
     public ResponseEntity<?> checkUniqueCode(@RequestParam String code) {
         if (service.checkUniqueCode(code)) return ResponseEntity.ok().build();
         return ResponseEntity.status(HttpStatus.CONFLICT).build();

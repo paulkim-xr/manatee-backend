@@ -10,4 +10,6 @@ import java.util.List;
 @Mapper
 public interface UIComponentMapper extends ObjectMapper<UIComponent, UIComponentDto> {
     List<UIComponent> findByPermissionId(Long id);
+
+    Boolean checkUniqueName(String name);
 }

@@ -12,4 +12,8 @@ public class UIComponentService extends ObjectService<UIComponent, UIComponentDt
     public UIComponentService(UIComponentMapper mapper, UIComponentMapperService service) {
         super(mapper, service);
     }
+
+    public Boolean checkUnique(String name) {
+        return mapper.checkUniqueName(name);
+    }
 }

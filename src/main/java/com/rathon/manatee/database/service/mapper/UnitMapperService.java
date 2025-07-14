@@ -52,7 +52,9 @@ public class UnitMapperService implements ObjectMapperService<Unit, UnitDto> {
         u.setName(d.getName());
         u.setTypeId(d.getType().id());
         u.setCode(d.getCode());
-        u.setParentId(d.getParent().id());
+        if (d.getParent() != null) {
+            u.setParentId(d.getParent().id());
+        }
 
         return u;
     }
