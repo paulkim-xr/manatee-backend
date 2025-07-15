@@ -12,12 +12,15 @@ import com.rathon.manatee.auth.service.mapper.UserGroupMapperService;
 import com.rathon.manatee.auth.service.mapper.UserPermissionMapperService;
 import com.rathon.manatee.auth.service.mapper.UserRoleMapperService;
 import com.rathon.manatee.core.service.ObjectService;
+import com.rathon.manatee.database.dto.EmployeeDto;
+import com.rathon.manatee.database.mapper.EmployeeMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class UserGroupService extends ObjectService<UserGroup, UserGroupDto, UserGroupMapper, UserGroupMapperService> {
+    private final EmployeeMapper employeeMapper;
     private final UserRoleMapper roleMapper;
     private final UserRoleMapperService roleMapperService;
     private final UserPermissionMapper permissionMapper;
@@ -28,6 +31,7 @@ public class UserGroupService extends ObjectService<UserGroup, UserGroupDto, Use
     public UserGroupService(
             UserGroupMapper mapper,
             UserGroupMapperService service,
+            EmployeeMapper employeeMapper,
             UserRoleMapper roleMapper,
             UserRoleMapperService roleMapperService,
             UserPermissionMapper permissionMapper,
@@ -36,6 +40,7 @@ public class UserGroupService extends ObjectService<UserGroup, UserGroupDto, Use
             UIComponentMapperService componentMapperService
     ) {
         super(mapper, service);
+        this.employeeMapper = employeeMapper;
         this.roleMapper = roleMapper;
         this.roleMapperService = roleMapperService;
         this.permissionMapper = permissionMapper;
@@ -48,15 +53,12 @@ public class UserGroupService extends ObjectService<UserGroup, UserGroupDto, Use
         return mapper.findByUserId(id).stream().map(service::toDto).toList();
     }
 
+    public List<EmployeeDto> getEmployees(Long id) {
+        return employeeMapper.findByGroupIdDto(id);
+    }
+
     public List<UserRoleDto> getRoles(Long id) {
         return roleMapper.findRolesByGroupId(id).stream().map(roleMapperService::toDto).toList();
     }
 
-//    public List<UserGroupDto> getRoots() {
-//        return mapper.findRootGroups().stream().map(service::toDto).toList();
-//    }
-//
-//    public List<UserGroupDto> getChildren(Long id) {
-//        return mapper.findChildren(id).stream().map(service::toDto).toList();
-//    }
 }

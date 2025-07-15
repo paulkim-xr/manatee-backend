@@ -1,10 +1,12 @@
 package com.rathon.manatee.auth.controller;
 
 import com.rathon.manatee.auth.dto.UserGroupDto;
+import com.rathon.manatee.auth.dto.UserRoleDto;
 import com.rathon.manatee.auth.model.UserGroup;
 import com.rathon.manatee.auth.service.UserGroupService;
 import com.rathon.manatee.core.controller.ObjectController;
 import com.rathon.manatee.core.dto.PagedList;
+import com.rathon.manatee.database.dto.EmployeeDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,6 +15,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/auth/group")
 public class UserGroupController extends ObjectController<UserGroup, UserGroupDto, UserGroupService> {
+
     public UserGroupController(UserGroupService service) {
         super(service);
     }
@@ -70,13 +73,13 @@ public class UserGroupController extends ObjectController<UserGroup, UserGroupDt
     }
 //----------------------------------------------------------------------------------
 
-//    @GetMapping("/roots")
-//    public ResponseEntity<List<UserGroupDto>> getRoots() {
-//        return ResponseEntity.ok(service.getRoots());
-//    }
-//
-//    @GetMapping("/{id}/children")
-//    public ResponseEntity<List<UserGroupDto>> getChildren(@PathVariable Long id) {
-//        return ResponseEntity.ok(service.getChildren(id));
-//    }
+    @GetMapping("/{id}/employees")
+    public ResponseEntity<List<EmployeeDto>> getMembers(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getEmployees(id));
+    }
+
+    @GetMapping("/{id}/roles")
+    public ResponseEntity<List<UserRoleDto>> getRoles(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getRoles(id));
+    }
 }

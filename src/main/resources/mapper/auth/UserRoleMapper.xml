@@ -138,7 +138,7 @@
     <select id="findRolesByGroupId" resultType="UserRole">
         SELECT * FROM roles WHERE id IN (
             SELECT role_id FROM role_mapping
-            WHERE usergroup_id = #{id}
+            WHERE group_id = #{id}
         )
     </select>
 
@@ -154,5 +154,12 @@
 
     <select id="countChildren" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM roles WHERE parent_id = #{id}
+    </select>
+
+    <select id="findRolesByPermissionId" resultType="UserRole">
+        SELECT * FROM roles WHERE id IN (
+            SELECT role_id FROM permission_mapping
+            WHERE permission_id = #{id}
+        )
     </select>
 </mapper>

@@ -144,6 +144,14 @@
         )
     </select>
 
+    <select id="findByRoleId" resultType="UserGroup">
+        SELECT * FROM user_groups
+        WHERE id IN (
+        SELECT group_id FROM role_mapping
+        WHERE role_id = #{id}
+        )
+    </select>
+
 <!--    <select id="findRootGroups" resultType="UserGroup">-->
 <!--        SELECT * FROM user_groups-->
 <!--        WHERE parent_id IS NULL-->

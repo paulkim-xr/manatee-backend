@@ -95,4 +95,8 @@ public class EmployeeService extends ObjectService<Employee, EmployeeDto, Employ
     public Boolean checkUniqueUsername(String username) {
         return mapper.checkUniqueUsername(username);
     }
+
+    public List<EmployeeDto> findByGroupId(Long id) {
+        return mapper.findByGroupIdDto(id);
+    }
 }

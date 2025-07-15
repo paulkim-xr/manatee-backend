@@ -2,6 +2,7 @@ package com.rathon.manatee.auth.controller;
 
 import com.rathon.manatee.auth.dto.UIComponentDto;
 import com.rathon.manatee.auth.dto.UIComponentDto;
+import com.rathon.manatee.auth.dto.UserPermissionDto;
 import com.rathon.manatee.auth.model.UIComponent;
 import com.rathon.manatee.auth.service.UIComponentService;
 import com.rathon.manatee.core.controller.ObjectController;
@@ -75,5 +76,10 @@ public class UIComponentController extends ObjectController<UIComponent, UICompo
     public ResponseEntity<?> checkUnique(@RequestParam String name) {
         if (service.checkUnique(name)) return ResponseEntity.ok().build();
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
+    @GetMapping("/{id}/permissions")
+    public ResponseEntity<List<UserPermissionDto>> getPermissions(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getPermissions(id));
     }
 }

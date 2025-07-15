@@ -1,5 +1,7 @@
 package com.rathon.manatee.auth.controller;
 
+import com.rathon.manatee.auth.dto.UIComponentDto;
+import com.rathon.manatee.auth.dto.UserGroupDto;
 import com.rathon.manatee.auth.dto.UserPermissionDto;
 import com.rathon.manatee.auth.dto.UserRoleDto;
 import com.rathon.manatee.auth.model.UserPermission;
@@ -78,5 +80,21 @@ public class UserPermissionController extends ObjectController<UserPermission, U
     @GetMapping("/{id}/children")
     public ResponseEntity<List<UserPermissionDto>> getChildren(@PathVariable Long id) {
         return ResponseEntity.ok(service.getChildren(id));
+    }
+
+    @GetMapping("/{id}/roles")
+    public ResponseEntity<List<UserRoleDto>> getRoles(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findRoles(id));
+    }
+
+    @GetMapping("/{id}/components")
+    public ResponseEntity<List<UIComponentDto>> getComponents(@PathVariable Long id) {
+        return ResponseEntity.ok(service.findComponents(id));
+    }
+
+    @PutMapping("/{id}/components")
+    public ResponseEntity<?> setComponents(@PathVariable Long id, @RequestBody Long[] componentIds) {
+
+        return ResponseEntity.ok().build();
     }
 }

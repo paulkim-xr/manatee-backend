@@ -5,6 +5,7 @@ import com.rathon.manatee.auth.model.UserPermission;
 import com.rathon.manatee.core.mapper.ObjectMapper;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Mapper
@@ -16,4 +17,6 @@ public interface UserPermissionMapper extends ObjectMapper<UserPermission, UserP
     List<UserPermission> findByParentId(Long id);
 
     Integer countChildren(Long id);
+
+    List<UserPermission> findPermissionsByComponentId(Long id);
 }

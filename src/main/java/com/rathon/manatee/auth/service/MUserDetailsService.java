@@ -20,12 +20,10 @@ import java.util.Map;
 public class MUserDetailsService implements UserDetailsService {
     private final EmployeeMapper mapper;
     private final UserGroupService userGroupService;
-    private final UserRoleService userRoleService;
 
-    public MUserDetailsService(EmployeeMapper mapper, UserGroupService userGroupService, UserRoleService userRoleService) {
+    public MUserDetailsService(EmployeeMapper mapper, UserGroupService userGroupService) {
         this.mapper = mapper;
         this.userGroupService = userGroupService;
-        this.userRoleService = userRoleService;
     }
 
     @Override
@@ -35,7 +33,7 @@ public class MUserDetailsService implements UserDetailsService {
         List<UserGroupDto> list = userGroupService.findGroupsByUserId(e.getId());
         List<UserRoleDto> roles = new ArrayList<>();
         for (UserGroupDto group : list) {
-            roles.addAll(userRoleService.findGroupRoles(group.getId()));
+            roles.addAll(userGroupService.getRoles(group.getId()));
         }
         Map<String, String> buttons = new HashMap<>();
         for (UserRoleDto role : roles) {

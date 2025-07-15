@@ -1,5 +1,7 @@
 package com.rathon.manatee.database.controller;
 
+import com.rathon.manatee.auth.dto.UserGroupDto;
+import com.rathon.manatee.auth.service.UserGroupService;
 import com.rathon.manatee.core.controller.ObjectController;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.core.dto.PagedList;
@@ -17,10 +19,12 @@ import java.util.List;
 @RequestMapping("/api/employees")
 public class EmployeeController extends ObjectController<Employee, EmployeeDto, EmployeeService> {
     private final EmployeeMapperService mapper;
+    private final UserGroupService userGroupService;
 
-    public EmployeeController(EmployeeService service, EmployeeMapperService mapper) {
+    public EmployeeController(EmployeeService service, EmployeeMapperService mapper, UserGroupService userGroupService) {
         super(service);
         this.mapper = mapper;
+        this.userGroupService = userGroupService;
     }
 
     @GetMapping
@@ -104,5 +108,10 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
     public ResponseEntity<?> checkUniqueUsername(@RequestParam String username) {
         if (service.checkUniqueUsername(username)) return ResponseEntity.ok().build();
         return ResponseEntity.status(HttpStatus.CONFLICT).build();
+    }
+
+    @GetMapping("/{id}/groups")
+    public ResponseEntity<List<UserGroupDto>> getGroups(@PathVariable Long id) {
+        return ResponseEntity.ok(userGroupService.findGroupsByUserId(id));
     }
 }

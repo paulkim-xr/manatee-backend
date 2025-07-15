@@ -42,4 +42,6 @@ public interface EmployeeMapper extends ObjectMapper<Employee, EmployeeDto> {
     List<EmployeeDto> findCompanyEmployeesDto(Long id);
 
     List<EmployeeDto> findUnitEmployeesDto(Long id);
+
+    List<EmployeeDto> findByGroupIdDto(Long id);
 }

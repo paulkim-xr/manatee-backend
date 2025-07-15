@@ -155,4 +155,12 @@
     <select id="countChildren" resultType="java.lang.Integer">
         SELECT COUNT(*) FROM roles WHERE parent_id = #{id}
     </select>
+
+    <select id="findPermissionsByComponentId" resultType="UserPermission">
+        SELECT * FROM permissions WHERE id IN (
+            SELECT permission_id FROM ui_mapping
+            WHERE component_id = #{id}
+        )
+    </select>
+
 </mapper>

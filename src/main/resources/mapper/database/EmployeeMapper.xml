@@ -206,4 +206,10 @@
             LIMIT 1
         )
     </select>
+
+    <select id="findByGroupIdDto" resultMap="ObjectResultMap.EmployeeDtoMap">
+        <include refid="ObjectResultMap.EmployeeDtoSelect"/>
+        JOIN user_group_mapping ON employees.id = user_group_mapping.user_id
+        WHERE user_group_mapping.group_id = #{id}
+    </select>
 </mapper>

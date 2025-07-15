@@ -12,6 +12,8 @@ import java.util.List;
 public interface UserGroupMapper extends ObjectMapper<UserGroup, UserGroupDto> {
     List<UserGroup> findByUserId(Long id);
 
+    List<UserGroup> findByRoleId(Long id);
+
 //    List<UserGroup> findRootGroups();
 //
 //    List<UserGroup> findChildren(Long id);
