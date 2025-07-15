@@ -78,8 +78,20 @@ public class UserGroupController extends ObjectController<UserGroup, UserGroupDt
         return ResponseEntity.ok(service.getEmployees(id));
     }
 
+    @PutMapping("/{id}/employees")
+    public ResponseEntity<?> setEmployees(@PathVariable Long id, @RequestBody Long[] ids) {
+        service.setEmployees(id, ids);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}/roles")
     public ResponseEntity<List<UserRoleDto>> getRoles(@PathVariable Long id) {
         return ResponseEntity.ok(service.getRoles(id));
+    }
+
+    @PutMapping("/{id}/roles")
+    public ResponseEntity<?> setRoles(@PathVariable Long id, @RequestBody Long[] ids) {
+        service.setRoles(id, ids);
+        return ResponseEntity.ok().build();
     }
 }

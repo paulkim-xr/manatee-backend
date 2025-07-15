@@ -14,6 +14,10 @@ public interface UserGroupMapper extends ObjectMapper<UserGroup, UserGroupDto> {
 
     List<UserGroup> findByRoleId(Long id);
 
+    void mapEmployees(Long id, Long[] ids);
+
+    void mapRoles(Long id, Long[] ids);
+
 //    List<UserGroup> findRootGroups();
 //
 //    List<UserGroup> findChildren(Long id);

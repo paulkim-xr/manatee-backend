@@ -35,4 +35,8 @@ public class UIComponentService extends ObjectService<UIComponent, UIComponentDt
     public List<UserPermissionDto> getPermissions(Long id) {
         return permissionMapper.findPermissionsByComponentId(id).stream().map(permissionMapperService::toDto).toList();
     }
+
+    public void setPermissions(Long id, Long[] ids) {
+        mapper.mapPermissions(id, ids);
+    }
 }

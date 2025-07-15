@@ -19,4 +19,8 @@ public interface UserPermissionMapper extends ObjectMapper<UserPermission, UserP
     Integer countChildren(Long id);
 
     List<UserPermission> findPermissionsByComponentId(Long id);
+
+    void mapRoles(Long id, Long[] ids);
+
+    void mapComponents(Long id, Long[] ids);
 }

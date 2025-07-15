@@ -152,6 +152,26 @@
         )
     </select>
 
+    <insert id="mapEmployees">
+        INSERT INTO user_group_mapping (group_id, user_id)
+        SELECT #{id}, unnest(ARRAY
+        <foreach collection="ids" item="item" separator=",">
+            #{item}
+        </foreach>
+        )::bigint[]
+        ON CONFLICT (role_id, group_id) DO NOTHING
+    </insert>
+
+    <insert id="mapRoles">
+        INSERT INTO role_mapping (group_id, role_id)
+        SELECT #{id}, unnest(ARRAY
+        <foreach collection="ids" item="item" separator=",">
+            #{item}
+        </foreach>
+        )::bigint[]
+        ON CONFLICT (role_id, group_id) DO NOTHING
+    </insert>
+
 <!--    <select id="findRootGroups" resultType="UserGroup">-->
 <!--        SELECT * FROM user_groups-->
 <!--        WHERE parent_id IS NULL-->

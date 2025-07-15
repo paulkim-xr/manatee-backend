@@ -54,4 +54,12 @@ public class UserPermissionService extends ObjectService<UserPermission, UserPer
     public List<UIComponentDto> findComponents(Long id) {
         return componentMapper.findByPermissionId(id).stream().map(componentMapperService::toDto).toList();
     }
+
+    public void setRoles(Long id, Long[] ids) {
+        mapper.mapRoles(id, ids);
+    }
+
+    public void setComponents(Long id, Long[] ids) {
+        mapper.mapComponents(id, ids);
+    }
 }

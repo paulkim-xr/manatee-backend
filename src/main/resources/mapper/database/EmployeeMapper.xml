@@ -212,4 +212,14 @@
         JOIN user_group_mapping ON employees.id = user_group_mapping.user_id
         WHERE user_group_mapping.group_id = #{id}
     </select>
+
+    <insert id="mapGroups">
+        INSERT INTO user_group_mapping (user_id, group_id)
+        SELECT #{id}, unnest(ARRAY
+        <foreach collection="ids" item="item" separator=",">
+            #{item}
+        </foreach>
+        )::bigint[]
+        ON CONFLICT (role_id, group_id) DO NOTHING
+    </insert>
 </mapper>

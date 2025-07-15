@@ -56,4 +56,12 @@ public class UserRoleService extends ObjectService<UserRole, UserRoleDto, UserRo
     public List<UserPermissionDto> findPermissions(Long id) {
         return userPermissionMapper.findPermissionsByRoleId(id).stream().map(userPermissionMapperService::toDto).toList();
     }
+
+    public void setGroups(Long id, Long[] ids) {
+        mapper.mapGroups(id, ids);
+    }
+
+    public void setPermissions(Long id, Long[] ids) {
+        mapper.mapPermissions(id, ids);
+    }
 }

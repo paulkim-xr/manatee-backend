@@ -162,4 +162,24 @@
             WHERE permission_id = #{id}
         )
     </select>
+
+    <insert id="mapGroups">
+        INSERT INTO role_mapping (role_id, group_id)
+        SELECT #{id}, unnest(ARRAY
+        <foreach collection="ids" item="item" separator=",">
+            #{item}
+        </foreach>
+        )::bigint[]
+        ON CONFLICT (role_id, group_id) DO NOTHING
+    </insert>
+
+    <insert id="mapPermissions">
+        INSERT INTO permission_mapping (role_id, permission_id)
+        SELECT #{id}, unnest(ARRAY
+        <foreach collection="ids" item="item" separator=",">
+            #{item}
+        </foreach>
+        )::bigint[]
+        ON CONFLICT (role_id, group_id) DO NOTHING
+    </insert>
 </mapper>

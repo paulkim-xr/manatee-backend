@@ -163,4 +163,23 @@
         )
     </select>
 
+    <insert id="mapRoles">
+        INSERT INTO permission_mapping (permission_id, role_id)
+        SELECT #{id}, unnest(ARRAY
+        <foreach collection="ids" item="item" separator=",">
+            #{item}
+        </foreach>
+        )::bigint[]
+        ON CONFLICT (role_id, group_id) DO NOTHING
+    </insert>
+
+    <insert id="mapComponents">
+        INSERT INTO ui_mapping (permission_id, component_id)
+        SELECT #{id}, unnest(ARRAY
+        <foreach collection="ids" item="item" separator=",">
+            #{item}
+        </foreach>
+        )::bigint[]
+        ON CONFLICT (role_id, group_id) DO NOTHING
+    </insert>
 </mapper>

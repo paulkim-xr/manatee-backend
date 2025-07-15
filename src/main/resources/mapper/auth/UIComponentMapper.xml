@@ -143,6 +143,16 @@
         )
     </select>
 
+    <insert id="mapPermissions">
+        INSERT INTO ui_mapping (component_id, permission_id)
+        SELECT #{id}, unnest(ARRAY
+        <foreach collection="ids" item="item" separator=",">
+            #{item}
+        </foreach>
+        )::bigint[]
+        ON CONFLICT (role_id, group_id) DO NOTHING
+    </insert>
+
     <select id="checkUniqueName" resultType="java.lang.Boolean">
         SELECT EXISTS (
         SELECT 1 FROM ui_components

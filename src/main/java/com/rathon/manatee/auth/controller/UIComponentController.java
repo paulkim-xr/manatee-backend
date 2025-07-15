@@ -82,4 +82,10 @@ public class UIComponentController extends ObjectController<UIComponent, UICompo
     public ResponseEntity<List<UserPermissionDto>> getPermissions(@PathVariable Long id) {
         return ResponseEntity.ok(service.getPermissions(id));
     }
+
+    @PutMapping("/{id}/permissions")
+    public ResponseEntity<?> setPermissions(@PathVariable Long id, @RequestBody Long[] ids) {
+        service.setPermissions(id, ids);
+        return ResponseEntity.ok().build();
+    }
 }

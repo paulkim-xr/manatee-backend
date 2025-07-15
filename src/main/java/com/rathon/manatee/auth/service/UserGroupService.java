@@ -61,4 +61,11 @@ public class UserGroupService extends ObjectService<UserGroup, UserGroupDto, Use
         return roleMapper.findRolesByGroupId(id).stream().map(roleMapperService::toDto).toList();
     }
 
+    public void setEmployees(Long id, Long[] ids) {
+        mapper.mapEmployees(id, ids);
+    }
+
+    public void setRoles(Long id, Long[] ids) {
+        mapper.mapRoles(id, ids);
+    }
 }

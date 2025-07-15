@@ -12,4 +12,6 @@ public interface UIComponentMapper extends ObjectMapper<UIComponent, UIComponent
     List<UIComponent> findByPermissionId(Long id);
 
     Boolean checkUniqueName(String name);
+
+    void mapPermissions(Long id, Long[] ids);
 }

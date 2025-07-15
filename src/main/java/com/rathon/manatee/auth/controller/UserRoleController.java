@@ -19,7 +19,7 @@ public class UserRoleController extends ObjectController<UserRole, UserRoleDto, 
         super(service);
     }
 
-//    @PreAuthorize("authentication.getName() == #dto.author.username")
+    //    @PreAuthorize("authentication.getName() == #dto.author.username")
     @GetMapping
     public ResponseEntity<PagedList<UserRoleDto>> getPaged(
             @RequestParam(required = false, defaultValue = "0") Integer page,
@@ -89,8 +89,20 @@ public class UserRoleController extends ObjectController<UserRole, UserRoleDto, 
         return ResponseEntity.ok(service.findGroups(id));
     }
 
+    @PutMapping("/{id}/groups")
+    public ResponseEntity<?> setGroups(@PathVariable Long id, @RequestBody Long[] ids) {
+        service.setGroups(id, ids);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}/permissions")
     public ResponseEntity<List<UserPermissionDto>> getPermissions(@PathVariable Long id) {
         return ResponseEntity.ok(service.findPermissions(id));
+    }
+
+    @PutMapping("/{id}/permissions")
+    public ResponseEntity<?> setPermissions(@PathVariable Long id, @RequestBody Long[] ids) {
+        service.setPermissions(id, ids);
+        return ResponseEntity.ok().build();
     }
 }

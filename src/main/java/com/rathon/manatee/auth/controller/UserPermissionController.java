@@ -87,14 +87,20 @@ public class UserPermissionController extends ObjectController<UserPermission, U
         return ResponseEntity.ok(service.findRoles(id));
     }
 
+    @PutMapping("/{id}/roles")
+    public ResponseEntity<?> setRoles(@PathVariable Long id, @RequestBody Long[] ids) {
+        service.setRoles(id, ids);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{id}/components")
     public ResponseEntity<List<UIComponentDto>> getComponents(@PathVariable Long id) {
         return ResponseEntity.ok(service.findComponents(id));
     }
 
     @PutMapping("/{id}/components")
-    public ResponseEntity<?> setComponents(@PathVariable Long id, @RequestBody Long[] componentIds) {
-
+    public ResponseEntity<?> setComponents(@PathVariable Long id, @RequestBody Long[] ids) {
+        service.setComponents(id, ids);
         return ResponseEntity.ok().build();
     }
 }

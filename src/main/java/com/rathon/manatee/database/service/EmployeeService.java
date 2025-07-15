@@ -99,4 +99,8 @@ public class EmployeeService extends ObjectService<Employee, EmployeeDto, Employ
     public List<EmployeeDto> findByGroupId(Long id) {
         return mapper.findByGroupIdDto(id);
     }
+
+    public void setGroups(Long id, Long[] ids) {
+        mapper.mapGroups(id, ids);
+    }
 }

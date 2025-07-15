@@ -114,4 +114,10 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
     public ResponseEntity<List<UserGroupDto>> getGroups(@PathVariable Long id) {
         return ResponseEntity.ok(userGroupService.findGroupsByUserId(id));
     }
+
+    @PutMapping("/{id}/groups")
+    public ResponseEntity<List<UserGroupDto>> setGroups(@PathVariable Long id, @RequestBody Long[] ids) {
+        service.setGroups(id, ids);
+        return ResponseEntity.ok().build();
+    }
 }

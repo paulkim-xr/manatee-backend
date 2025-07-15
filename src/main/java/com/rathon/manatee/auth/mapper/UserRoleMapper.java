@@ -18,4 +18,8 @@ public interface UserRoleMapper extends ObjectMapper<UserRole, UserRoleDto> {
     Integer countChildren(Long id);
 
     List<UserRole> findRolesByPermissionId(Long id);
+
+    void mapGroups(Long id, Long[] ids);
+
+    void mapPermissions(Long id, Long[] ids);
 }
