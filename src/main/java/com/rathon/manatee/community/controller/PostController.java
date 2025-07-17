@@ -41,7 +41,7 @@ public class PostController extends ObjectController<Post, PostDto, PostService>
 
     @GetMapping("/{id}")
     public ResponseEntity<PostDto> getObject(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getObjectById(id));
+        return super.getObject(id);
     }
 
     @GetMapping("/search")

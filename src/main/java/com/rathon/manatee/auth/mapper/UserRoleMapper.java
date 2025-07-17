@@ -22,4 +22,6 @@ public interface UserRoleMapper extends ObjectMapper<UserRole, UserRoleDto> {
     void mapGroups(Long id, Long[] ids);
 
     void mapPermissions(Long id, Long[] ids);
+
+    Long[] getAncestry(Long id);
 }

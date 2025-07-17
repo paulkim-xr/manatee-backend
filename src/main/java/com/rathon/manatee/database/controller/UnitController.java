@@ -8,7 +8,7 @@ import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.UnitService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -67,21 +67,21 @@ public class UnitController extends ObjectController<Unit, UnitDto, UnitService>
         return ResponseEntity.ok(pagedList);
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('unit_add')")
     @Override
     @PostMapping
     public ResponseEntity<?> insert(@RequestBody UnitDto d) {
         return super.insert(d);
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('unit_edit')")
     @Override
     @PutMapping
     public ResponseEntity<?> update(@RequestBody UnitDto d) {
         return super.update(d);
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('unit_delete')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
         List<EmployeeDto> list = service.getEmployees(id);
@@ -126,7 +126,15 @@ public class UnitController extends ObjectController<Unit, UnitDto, UnitService>
 
     @GetMapping("/validate")
     public ResponseEntity<?> checkUniqueCode(@RequestParam String code) {
-        if (service.checkUniqueCode(code)) return ResponseEntity.ok().build();
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        try {
+            return ResponseEntity.ok(service.checkUnique(code));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/{id}/ancestry")
+    public ResponseEntity<Long[]> getAncestry(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getAncestry(id));
     }
 }

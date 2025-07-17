@@ -23,4 +23,6 @@ public interface UserPermissionMapper extends ObjectMapper<UserPermission, UserP
     void mapRoles(Long id, Long[] ids);
 
     void mapComponents(Long id, Long[] ids);
+
+    Long[] getAncestry(Long id);
 }

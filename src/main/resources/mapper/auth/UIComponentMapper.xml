@@ -143,18 +143,30 @@
         )
     </select>
 
-    <insert id="mapPermissions">
-        INSERT INTO ui_mapping (component_id, permission_id)
-        SELECT #{id}, unnest(ARRAY
+    <insert id="mapPermissions" parameterType="map">
+        WITH desired AS (
+        SELECT #{id}::bigint AS component_id,
+        unnest(ARRAY[
         <foreach collection="ids" item="item" separator=",">
             #{item}
         </foreach>
-        )::bigint[]
-        ON CONFLICT (role_id, group_id) DO NOTHING
+        ]::bigint[]) AS permission_id
+        ),
+        deleted AS (
+        DELETE FROM ui_mapping um
+        WHERE um.component_id = #{id}
+        AND um.permission_id NOT IN (SELECT permission_id FROM desired)
+        )
+        INSERT INTO ui_mapping (component_id, permission_id)
+        SELECT d.component_id, d.permission_id
+        FROM desired d
+        LEFT JOIN ui_mapping um
+        ON um.component_id = d.component_id AND um.permission_id = d.permission_id
+        WHERE um.component_id IS NULL
     </insert>
 
     <select id="checkUniqueName" resultType="java.lang.Boolean">
-        SELECT EXISTS (
+        SELECT NOT EXISTS (
         SELECT 1 FROM ui_components
         WHERE ui_components.name = #{name}
         LIMIT 1

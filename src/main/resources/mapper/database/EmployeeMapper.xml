@@ -200,7 +200,7 @@
     </select>
 
     <select id="checkUniqueUsername" resultType="java.lang.Boolean">
-        SELECT EXISTS (
+        SELECT NOT EXISTS (
             SELECT 1 FROM employees
             WHERE employees.username = #{username}
             LIMIT 1
@@ -213,13 +213,25 @@
         WHERE user_group_mapping.group_id = #{id}
     </select>
 
-    <insert id="mapGroups">
-        INSERT INTO user_group_mapping (user_id, group_id)
-        SELECT #{id}, unnest(ARRAY
+    <insert id="mapGroups" parameterType="map">
+        WITH desired AS (
+        SELECT #{id}::bigint AS user_id,
+        unnest(ARRAY[
         <foreach collection="ids" item="item" separator=",">
             #{item}
         </foreach>
-        )::bigint[]
-        ON CONFLICT (role_id, group_id) DO NOTHING
+        ]::bigint[]) AS group_id
+        ),
+        deleted AS (
+        DELETE FROM user_group_mapping gm
+        WHERE gm.user_id = #{id}
+        AND gm.group_id NOT IN (SELECT group_id FROM desired)
+        )
+        INSERT INTO user_group_mapping (user_id, group_id)
+        SELECT d.user_id, d.group_id
+        FROM desired d
+        LEFT JOIN user_group_mapping gm
+        ON gm.user_id = d.user_id AND gm.group_id = d.group_id
+        WHERE gm.user_id IS NULL
     </insert>
 </mapper>

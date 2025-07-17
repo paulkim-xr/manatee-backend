@@ -29,7 +29,7 @@ public class SessionController {
     public ResponseEntity<?> check(Authentication authentication) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            return ResponseEntity.ok(Map.of("username", auth.getName(),"roles", auth.getAuthorities()));
+            return ResponseEntity.ok(Map.of("username", auth.getName(),"permissions", auth.getAuthorities()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
     }
@@ -50,7 +50,7 @@ public class SessionController {
             request.getSession(true);
             request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
             return ResponseEntity.ok(Map.of("username", authRequest.username(),
-                    "roles", SecurityContextHolder.getContext().getAuthentication().getAuthorities())
+                    "permissions", SecurityContextHolder.getContext().getAuthentication().getAuthorities())
             );
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());

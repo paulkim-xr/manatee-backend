@@ -16,6 +16,7 @@ import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -67,5 +68,9 @@ public class UserGroupService extends ObjectService<UserGroup, UserGroupDto, Use
 
     public void setRoles(Long id, Long[] ids) {
         mapper.mapRoles(id, ids);
+    }
+
+    public Long[] getAncestry(Long id) {
+        return mapper.getAncestry(id);
     }
 }

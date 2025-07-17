@@ -152,35 +152,49 @@
         )
     </select>
 
-    <insert id="mapEmployees">
+    <insert id="mapEmployees" parameterType="map">
+        WITH desired AS (
+        SELECT #{id}::bigint AS group_id,
+        unnest(ARRAY[
+        <foreach collection="ids" item="item" separator=",">
+            #{item}
+        </foreach>
+        ]::bigint[]) AS user_id
+        ),
+        deleted AS (
+        DELETE FROM user_group_mapping gm
+        WHERE gm.group_id = #{id}
+        AND gm.user_id NOT IN (SELECT user_id FROM desired)
+        )
         INSERT INTO user_group_mapping (group_id, user_id)
-        SELECT #{id}, unnest(ARRAY
+        SELECT d.group_id, d.user_id
+        FROM desired d
+        LEFT JOIN user_group_mapping gm
+        ON gm.group_id = d.group_id AND gm.user_id = d.user_id
+        WHERE gm.group_id IS NULL
+    </insert>
+
+    <insert id="mapRoles" parameterType="map" >
+        WITH desired AS (
+        SELECT #{id}::bigint AS group_id,
+        unnest(ARRAY[
         <foreach collection="ids" item="item" separator=",">
             #{item}
         </foreach>
-        )::bigint[]
-        ON CONFLICT (role_id, group_id) DO NOTHING
-    </insert>
-
-    <insert id="mapRoles">
+        ]::bigint[]) AS role_id
+        ),
+        deleted AS (
+        DELETE FROM role_mapping rm
+        WHERE rm.group_id = #{id}
+        AND rm.role_id NOT IN (SELECT role_id FROM desired)
+        )
         INSERT INTO role_mapping (group_id, role_id)
-        SELECT #{id}, unnest(ARRAY
-        <foreach collection="ids" item="item" separator=",">
-            #{item}
-        </foreach>
-        )::bigint[]
-        ON CONFLICT (role_id, group_id) DO NOTHING
+        SELECT d.group_id, d.role_id
+        FROM desired d
+        LEFT JOIN role_mapping rm
+        ON rm.group_id = d.group_id AND rm.role_id = d.role_id
+        WHERE rm.group_id IS NULL
     </insert>
 
-<!--    <select id="findRootGroups" resultType="UserGroup">-->
-<!--        SELECT * FROM user_groups-->
-<!--        WHERE parent_id IS NULL-->
-<!--        ORDER BY id-->
-<!--    </select>-->
-<!--    -->
-<!--    <select id="findChildren" resultType="UserGroup">-->
-<!--        SELECT * FROM user_groups-->
-<!--        WHERE parent_id = #{id}-->
-<!--        ORDER BY id-->
-<!--    </select>-->
+
 </mapper>

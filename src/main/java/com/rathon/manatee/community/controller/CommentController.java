@@ -39,7 +39,7 @@ public class CommentController extends ObjectController<Comment, CommentDto, Com
 
     @GetMapping("/{id}")
     public ResponseEntity<CommentDto> getObject(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getObjectById(id));
+        return super.getObject(id);
     }
 
     @GetMapping("/search")

@@ -163,23 +163,47 @@
         )
     </select>
 
-    <insert id="mapRoles">
-        INSERT INTO permission_mapping (permission_id, role_id)
-        SELECT #{id}, unnest(ARRAY
+    <insert id="mapRoles" parameterType="map">
+        WITH desired AS (
+        SELECT #{id}::bigint AS permission_id,
+        unnest(ARRAY[
         <foreach collection="ids" item="item" separator=",">
             #{item}
         </foreach>
-        )::bigint[]
-        ON CONFLICT (role_id, group_id) DO NOTHING
+        ]::bigint[]) AS role_id
+        ),
+        deleted AS (
+        DELETE FROM permission_mapping pm
+        WHERE pm.permission_id = #{id}
+        AND pm.role_id NOT IN (SELECT role_id FROM desired)
+        )
+        INSERT INTO permission_mapping (permission_id, role_id)
+        SELECT d.permission_id, d.role_id
+        FROM desired d
+        LEFT JOIN permission_mapping pm
+        ON pm.permission_id = d.permission_id AND pm.role_id = d.role_id
+        WHERE pm.permission_id IS NULL
     </insert>
 
-    <insert id="mapComponents">
-        INSERT INTO ui_mapping (permission_id, component_id)
-        SELECT #{id}, unnest(ARRAY
+    <insert id="mapComponents" parameterType="map">
+        WITH desired AS (
+        SELECT #{id}::bigint AS permission_id,
+        unnest(ARRAY[
         <foreach collection="ids" item="item" separator=",">
             #{item}
         </foreach>
-        )::bigint[]
-        ON CONFLICT (role_id, group_id) DO NOTHING
+        ]::bigint[]) AS component_id
+        ),
+        deleted AS (
+        DELETE FROM ui_mapping um
+        WHERE um.permission_id = #{id}
+        AND um.component_id NOT IN (SELECT component_id FROM desired)
+        )
+        INSERT INTO ui_mapping (permission_id, component_id)
+        SELECT d.permission_id, d.component_id
+        FROM desired d
+        LEFT JOIN ui_mapping um
+        ON um.permission_id = d.permission_id AND um.component_id = d.component_id
+        WHERE um.permission_id IS NULL
     </insert>
 </mapper>

@@ -92,7 +92,7 @@ public class EmployeeService extends ObjectService<Employee, EmployeeDto, Employ
         ));
     }
 
-    public Boolean checkUniqueUsername(String username) {
+    public Boolean checkUnique(String username) {
         return mapper.checkUniqueUsername(username);
     }
 
@@ -102,5 +102,9 @@ public class EmployeeService extends ObjectService<Employee, EmployeeDto, Employ
 
     public void setGroups(Long id, Long[] ids) {
         mapper.mapGroups(id, ids);
+    }
+
+    public Long[] getAncestry(Long id) {
+        return mapper.getAncestry(id);
     }
 }

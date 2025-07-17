@@ -8,10 +8,12 @@ import com.rathon.manatee.auth.service.UserRoleService;
 import com.rathon.manatee.core.controller.ObjectController;
 import com.rathon.manatee.core.dto.PagedList;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasAuthority('rbac_view')")
 @RestController
 @RequestMapping("/api/auth/role")
 public class UserRoleController extends ObjectController<UserRole, UserRoleDto, UserRoleService> {
@@ -55,18 +57,21 @@ public class UserRoleController extends ObjectController<UserRole, UserRoleDto, 
         return ResponseEntity.notFound().build();
     }
 
+    @PreAuthorize("hasAuthority('role_add')")
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody UserRoleDto d) {
         service.insert(d);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('role_edit')")
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody UserRoleDto d) {
         service.update(d);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('role_delete')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         service.delete(id);
@@ -104,5 +109,10 @@ public class UserRoleController extends ObjectController<UserRole, UserRoleDto, 
     public ResponseEntity<?> setPermissions(@PathVariable Long id, @RequestBody Long[] ids) {
         service.setPermissions(id, ids);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/ancestry")
+    public ResponseEntity<Long[]> getAncestry(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getAncestry(id));
     }
 }

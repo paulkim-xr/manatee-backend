@@ -86,9 +86,9 @@
 
     <insert id="insert" parameterType="UserRole" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="tableName" /> (
-        <!-- TABLE COLUMNS -->
+            name, parent_id, managing_unit_id, manager_id
         ) VALUES (
-        <!-- #{OBJECT FIELDS} -->
+            #{name}, #{parentId}, #{managingUnitId}, #{managerId}
         )
     </insert>
 
@@ -163,23 +163,47 @@
         )
     </select>
 
-    <insert id="mapGroups">
-        INSERT INTO role_mapping (role_id, group_id)
-        SELECT #{id}, unnest(ARRAY
+    <insert id="mapGroups" parameterType="map">
+        WITH desired AS (
+        SELECT #{id}::bigint AS role_id,
+        unnest(ARRAY[
         <foreach collection="ids" item="item" separator=",">
             #{item}
         </foreach>
-        )::bigint[]
-        ON CONFLICT (role_id, group_id) DO NOTHING
+        ]::bigint[]) AS group_id
+        ),
+        deleted AS (
+        DELETE FROM role_mapping rm
+        WHERE rm.role_id = #{id}
+        AND rm.group_id NOT IN (SELECT group_id FROM desired)
+        )
+        INSERT INTO role_mapping (role_id, group_id)
+        SELECT d.role_id, d.group_id
+        FROM desired d
+        LEFT JOIN role_mapping rm
+        ON rm.role_id = d.role_id AND rm.group_id = d.group_id
+        WHERE rm.role_id IS NULL
     </insert>
 
-    <insert id="mapPermissions">
-        INSERT INTO permission_mapping (role_id, permission_id)
-        SELECT #{id}, unnest(ARRAY
+    <insert id="mapPermissions" parameterType="map">
+        WITH desired AS (
+        SELECT #{id}::bigint AS role_id,
+        unnest(ARRAY[
         <foreach collection="ids" item="item" separator=",">
             #{item}
         </foreach>
-        )::bigint[]
-        ON CONFLICT (role_id, group_id) DO NOTHING
+        ]::bigint[]) AS permission_id
+        ),
+        deleted AS (
+        DELETE FROM permission_mapping pm
+        WHERE pm.role_id = #{id}
+        AND pm.permission_id NOT IN (SELECT permission_id FROM desired)
+        )
+        INSERT INTO permission_mapping (role_id, permission_id)
+        SELECT d.role_id, d.permission_id
+        FROM desired d
+        LEFT JOIN permission_mapping pm
+        ON pm.role_id = d.role_id AND pm.permission_id = d.permission_id
+        WHERE pm.role_id IS NULL
     </insert>
 </mapper>

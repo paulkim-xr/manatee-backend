@@ -40,7 +40,7 @@ public class BoardController extends ObjectController<Board, BoardDto, BoardServ
 
     @GetMapping("/{id}")
     public ResponseEntity<BoardDto> getObject(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getObjectById(id));
+        return super.getObject(id);
     }
 
     @GetMapping("/{id}/posts/search")

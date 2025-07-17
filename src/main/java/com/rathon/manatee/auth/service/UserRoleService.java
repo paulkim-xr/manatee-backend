@@ -58,10 +58,16 @@ public class UserRoleService extends ObjectService<UserRole, UserRoleDto, UserRo
     }
 
     public void setGroups(Long id, Long[] ids) {
+        System.out.println(ids);
         mapper.mapGroups(id, ids);
     }
 
     public void setPermissions(Long id, Long[] ids) {
+        // TODO - check dependencies between objects with the ids, mapping both parent and child is redundant
         mapper.mapPermissions(id, ids);
+    }
+
+    public Long[] getAncestry(Long id) {
+        return mapper.getAncestry(id);
     }
 }

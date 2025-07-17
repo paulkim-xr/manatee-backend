@@ -240,7 +240,7 @@
     </select>
 
     <select id="checkUniqueCode" resultType="java.lang.Boolean">
-        SELECT EXISTS (
+        SELECT NOT EXISTS (
             SELECT 1 FROM units
             WHERE units.code = #{code}
             LIMIT 1

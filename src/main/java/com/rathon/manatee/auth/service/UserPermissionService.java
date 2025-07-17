@@ -60,6 +60,11 @@ public class UserPermissionService extends ObjectService<UserPermission, UserPer
     }
 
     public void setComponents(Long id, Long[] ids) {
+        // TODO - check dependencies between objects with the ids, mapping both parent and child is redundant
         mapper.mapComponents(id, ids);
+    }
+
+    public Long[] getAncestry(Long id) {
+        return mapper.getAncestry(id);
     }
 }

@@ -10,7 +10,7 @@ import com.rathon.manatee.database.service.EmployeeService;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -77,7 +77,7 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
         return ResponseEntity.ok(pagedList);
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('employee_add')")
     @Override
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody EmployeeDto d) {
@@ -88,7 +88,7 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
         return ResponseEntity.ok().build();
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('employee_edit')")
     @Override
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody EmployeeDto d) {
@@ -97,17 +97,20 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
         return ResponseEntity.ok().build();
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('employee_delete')")
     @Override
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         return super.delete(id);
     }
 
-    @GetMapping("/validate/username")
+    @GetMapping("/validate")
     public ResponseEntity<?> checkUniqueUsername(@RequestParam String username) {
-        if (service.checkUniqueUsername(username)) return ResponseEntity.ok().build();
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        try {
+            return ResponseEntity.ok(service.checkUnique(username));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/{id}/groups")
@@ -119,5 +122,10 @@ public class EmployeeController extends ObjectController<Employee, EmployeeDto, 
     public ResponseEntity<List<UserGroupDto>> setGroups(@PathVariable Long id, @RequestBody Long[] ids) {
         service.setGroups(id, ids);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{id}/ancestry")
+    public ResponseEntity<Long[]> getAncestry(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getAncestry(id));
     }
 }

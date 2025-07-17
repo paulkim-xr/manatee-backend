@@ -54,8 +54,11 @@ public class UserPermissionMapperService implements ObjectMapperService<UserPerm
 
         // TODO - remove redundant components
         list.addAll(componentMapper.findByPermissionId(permission.getId()).stream().map(componentMapperService::toDto).toList());
-        if (permission.getParentId() != null) {
-            return collectComponents(mapper.findById(permission.getParentId()), list);
+        List<UserPermission> children = mapper.findByParentId(permission.getId());
+        if (!children.isEmpty()) {
+            for (UserPermission child : children) {
+                return collectComponents(child, list);
+            }
         }
 
         return list;

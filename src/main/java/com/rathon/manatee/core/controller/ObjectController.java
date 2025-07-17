@@ -38,7 +38,9 @@ public class ObjectController<T, D extends Dto<T>, S extends ObjectService<T, D,
 
 //    @GetMapping("/{id}")
     public ResponseEntity<D> getObject(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getObjectById(id));
+        D d = service.getObjectById(id);
+        if (d == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(d);
     }
 
 //    @GetMapping("/search")

@@ -14,8 +14,8 @@ import java.util.List;
 
 @Service
 public class UIComponentService extends ObjectService<UIComponent, UIComponentDto, UIComponentMapper, UIComponentMapperService> {
-    private UserPermissionMapper permissionMapper;
-    private UserPermissionMapperService permissionMapperService;
+    private final UserPermissionMapper permissionMapper;
+    private final UserPermissionMapperService permissionMapperService;
 
     public UIComponentService(
             UIComponentMapper mapper,

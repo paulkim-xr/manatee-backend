@@ -14,6 +14,7 @@ import com.rathon.manatee.database.service.mapper.CompanyMapperService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -51,7 +52,7 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
 
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDto> getObject(@PathVariable Long id) {
-        return ResponseEntity.ok(service.getObjectById(id));
+        return super.getObject(id);
     }
 
     @GetMapping("/search")
@@ -75,7 +76,7 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
         return ResponseEntity.ok(pagedList);
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('company_add')")
     @Override
     @PostMapping
     public ResponseEntity<Void> insert(@RequestBody CompanyDto d) {
@@ -90,7 +91,7 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
         return ResponseEntity.ok().build();
     }
 
-//    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('company_edit')")
     @Override
     @PutMapping
     public ResponseEntity<Void> update(@RequestBody CompanyDto d) {
@@ -98,7 +99,7 @@ public class CompanyController extends ObjectController<Company, CompanyDto, Com
         return ResponseEntity.ok().build();
     }
 
-    @Secured("ROLE_ADMIN")
+    @PreAuthorize("hasAuthority('company_delete')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteA(@PathVariable Long id) {
         try {

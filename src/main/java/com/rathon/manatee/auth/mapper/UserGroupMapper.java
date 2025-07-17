@@ -18,6 +18,8 @@ public interface UserGroupMapper extends ObjectMapper<UserGroup, UserGroupDto> {
 
     void mapRoles(Long id, Long[] ids);
 
+    Long[] getAncestry(Long id);
+
 //    List<UserGroup> findRootGroups();
 //
 //    List<UserGroup> findChildren(Long id);

@@ -46,4 +46,6 @@ public interface EmployeeMapper extends ObjectMapper<Employee, EmployeeDto> {
     List<EmployeeDto> findByGroupIdDto(Long id);
 
     void mapGroups(Long id, Long[] ids);
+
+    Long[] getAncestry(Long id);
 }

@@ -34,4 +34,6 @@ public interface UnitMapper extends ObjectMapper<Unit, UnitDto> {
     UnitDto findCompanyRootUnitDto(Long id);
 
     List<UnitDto> findCompanyUnitsDto(Long id, Boolean root);
+
+    Long[] getAncestry(Long id);
 }

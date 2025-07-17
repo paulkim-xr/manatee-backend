@@ -4,6 +4,7 @@ import com.rathon.manatee.auth.dto.UserPermissionDto;
 import com.rathon.manatee.auth.dto.UserRoleDto;
 import com.rathon.manatee.auth.mapper.UserPermissionMapper;
 import com.rathon.manatee.auth.mapper.UserRoleMapper;
+import com.rathon.manatee.auth.model.UserPermission;
 import com.rathon.manatee.auth.model.UserRole;
 import com.rathon.manatee.core.dto.IdNameDto;
 import com.rathon.manatee.core.service.mapper.ObjectMapperService;
@@ -70,8 +71,11 @@ public class UserRoleMapperService implements ObjectMapperService<UserRole, User
         }
         // TODO - remove redundant permissions
         list.addAll(permissionMapper.findPermissionsByRoleId(role.getId()).stream().map(permissionMapperService::toDto).toList());
-        if (role.getParentId() != null) {
-            return collectPermissions(mapper.findById(role.getParentId()), list);
+        List<UserRole> children = mapper.findByParentId(role.getId());
+        if (!children.isEmpty()) {
+            for (UserRole child : children) {
+                return collectPermissions(child, list);
+            }
         }
 
         return list;
@@ -83,8 +87,12 @@ public class UserRoleMapperService implements ObjectMapperService<UserRole, User
         object.setId(dto.getId());
         object.setName(dto.getName());
         object.setParentId(dto.getParent().id());
-        object.setManagingUnitId(dto.getManagingUnit().id());
-        object.setManagerId(dto.getManager().id());
+        if (dto.getManagingUnit() != null) {
+            object.setManagingUnitId(dto.getManagingUnit().id());
+        }
+        if (dto.getManager() != null) {
+            object.setManagerId(dto.getManager().id());
+        }
 
         return object;
     }

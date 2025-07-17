@@ -9,10 +9,12 @@ import com.rathon.manatee.core.controller.ObjectController;
 import com.rathon.manatee.core.dto.PagedList;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@PreAuthorize("hasAuthority('rbac_view')")
 @RestController
 @RequestMapping("/api/auth/component")
 public class UIComponentController extends ObjectController<UIComponent, UIComponentDto, UIComponentService> {
@@ -54,18 +56,21 @@ public class UIComponentController extends ObjectController<UIComponent, UICompo
         return ResponseEntity.notFound().build();
     }
 
+    @PreAuthorize("hasAuthority('component_add')")
     @PostMapping
     public ResponseEntity<?> insert(@RequestBody UIComponentDto d) {
         service.insert(d);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('component_edit')")
     @PutMapping
     public ResponseEntity<?> update(@RequestBody UIComponentDto d) {
         service.update(d);
         return ResponseEntity.ok().build();
     }
 
+    @PreAuthorize("hasAuthority('component_delete')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
         service.delete(id);
@@ -74,8 +79,11 @@ public class UIComponentController extends ObjectController<UIComponent, UICompo
 
     @GetMapping("/validate")
     public ResponseEntity<?> checkUnique(@RequestParam String name) {
-        if (service.checkUnique(name)) return ResponseEntity.ok().build();
-        return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        try {
+            return ResponseEntity.ok(service.checkUnique(name));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/{id}/permissions")
