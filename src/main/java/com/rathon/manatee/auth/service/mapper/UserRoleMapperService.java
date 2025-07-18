@@ -15,7 +15,9 @@ import com.rathon.manatee.database.mapper.UnitMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserRoleMapperService implements ObjectMapperService<UserRole, UserRoleDto> {
@@ -62,19 +64,22 @@ public class UserRoleMapperService implements ObjectMapperService<UserRole, User
     }
 
     private List<UserPermissionDto> collectPermissions(UserRole role) {
-        return collectPermissions(role, new ArrayList<>());
+        return collectPermissions(role, null).values().stream().toList();
     }
 
-    private List<UserPermissionDto> collectPermissions(UserRole role, List<UserPermissionDto> list) {
+    private Map<Long, UserPermissionDto> collectPermissions(UserRole role, Map<Long, UserPermissionDto> list) {
         if (list == null) {
-            return collectPermissions(role, new ArrayList<>());
+            return collectPermissions(role, new HashMap<>());
         }
-        // TODO - remove redundant permissions
-        list.addAll(permissionMapper.findPermissionsByRoleId(role.getId()).stream().map(permissionMapperService::toDto).toList());
+
+        List<UserPermissionDto> permissions = permissionMapper.findPermissionsByRoleId(role.getId()).stream().map(permissionMapperService::toDto).toList();
+        for (UserPermissionDto permission : permissions) {
+            list.putIfAbsent(permission.getId(), permission);
+        }
         List<UserRole> children = mapper.findByParentId(role.getId());
         if (!children.isEmpty()) {
             for (UserRole child : children) {
-                return collectPermissions(child, list);
+                collectPermissions(child, list);
             }
         }
 

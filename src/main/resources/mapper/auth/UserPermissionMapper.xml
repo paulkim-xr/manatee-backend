@@ -86,15 +86,15 @@
 
     <insert id="insert" parameterType="UserPermission" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="tableName" /> (
-        <!-- TABLE COLUMNS -->
+        name, parent_id
         ) VALUES (
-        <!-- #{OBJECT FIELDS} -->
+        #{name}, #{parent_id}
         )
     </insert>
 
     <update id="update" parameterType="UserPermission">
         UPDATE <include refid="tableName" /> SET
-        <!-- TABLE COLUMNS = #{OBJECT FIELDS} -->
+        name = #{name}, parent_id = #{parentId}
         WHERE id = #{id}
     </update>
 
@@ -143,17 +143,17 @@
     </select>
 
     <select id="findRoots" resultType="UserPermission">
-        SELECT * FROM roles WHERE parent_id IS NULL
+        SELECT * FROM permissions WHERE parent_id IS NULL
         ORDER BY id
     </select>
 
     <select id="findByParentId" resultType="UserPermission">
-        SELECT * FROM roles WHERE parent_id = #{id}
+        SELECT * FROM permissions WHERE parent_id = #{id}
         ORDER BY id
     </select>
 
     <select id="countChildren" resultType="java.lang.Integer">
-        SELECT COUNT(*) FROM roles WHERE parent_id = #{id}
+        SELECT COUNT(*) FROM permissions WHERE parent_id = #{id}
     </select>
 
     <select id="findPermissionsByComponentId" resultType="UserPermission">

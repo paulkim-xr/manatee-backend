@@ -94,7 +94,7 @@
 
     <update id="update" parameterType="UserRole">
         UPDATE <include refid="tableName" /> SET
-        <!-- TABLE COLUMNS = #{OBJECT FIELDS} -->
+        name = #{name}, parent_id = #{parentId}, managing_unit_id = #{managingUnitId}, manager_id = #{managerId}
         WHERE id = #{id}
     </update>
 

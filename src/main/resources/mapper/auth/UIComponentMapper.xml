@@ -86,15 +86,15 @@
 
     <insert id="insert" parameterType="UIComponent" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="tableName" /> (
-        <!-- TABLE COLUMNS -->
+        name, description
         ) VALUES (
-        <!-- #{OBJECT FIELDS} -->
+        #{name}, #{description}
         )
     </insert>
 
     <update id="update" parameterType="UIComponent">
         UPDATE <include refid="tableName" /> SET
-        <!-- TABLE COLUMNS = #{OBJECT FIELDS} -->
+        name = #{name}, description = #{description}
         WHERE id = #{id}
     </update>
 

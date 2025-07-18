@@ -10,7 +10,9 @@ import com.rathon.manatee.core.service.mapper.ObjectMapperService;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class UserPermissionMapperService implements ObjectMapperService<UserPermission, UserPermissionDto> {
@@ -44,20 +46,22 @@ public class UserPermissionMapperService implements ObjectMapperService<UserPerm
     }
 
     private List<UIComponentDto> collectComponents(UserPermission permission) {
-        return collectComponents(permission, new ArrayList<>());
+        return collectComponents(permission, null).values().stream().toList();
     }
 
-    private List<UIComponentDto> collectComponents(UserPermission permission, List<UIComponentDto> list) {
+    private Map<Long, UIComponentDto> collectComponents(UserPermission permission, Map<Long, UIComponentDto> list) {
         if (list == null) {
-            return collectComponents(permission, new ArrayList<>());
+            return collectComponents(permission, new HashMap<>());
         }
 
-        // TODO - remove redundant components
-        list.addAll(componentMapper.findByPermissionId(permission.getId()).stream().map(componentMapperService::toDto).toList());
+        List<UIComponentDto> components = componentMapper.findByPermissionId(permission.getId()).stream().map(componentMapperService::toDto).toList();
+        for (UIComponentDto component : components) {
+            list.putIfAbsent(component.getId(), component);
+        }
         List<UserPermission> children = mapper.findByParentId(permission.getId());
         if (!children.isEmpty()) {
             for (UserPermission child : children) {
-                return collectComponents(child, list);
+                collectComponents(child, list);
             }
         }
 
@@ -69,7 +73,9 @@ public class UserPermissionMapperService implements ObjectMapperService<UserPerm
         UserPermission object = new UserPermission();
         object.setId(dto.getId());
         object.setName(dto.getName());
-        object.setParentId(dto.getParent().id());
+        if (dto.getParent() != null) {
+            object.setParentId(dto.getParent().id());
+        }
 
         return object;
     }

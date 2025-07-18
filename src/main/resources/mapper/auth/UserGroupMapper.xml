@@ -86,15 +86,15 @@
 
     <insert id="insert" parameterType="UserGroup" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="tableName" /> (
-        <!-- TABLE COLUMNS -->
+        name
         ) VALUES (
-        <!-- #{OBJECT FIELDS} -->
+        #{name}
         )
     </insert>
 
     <update id="update" parameterType="UserGroup">
         UPDATE <include refid="tableName" /> SET
-        <!-- TABLE COLUMNS = #{OBJECT FIELDS} -->
+        name = #{name}
         WHERE id = #{id}
     </update>
 

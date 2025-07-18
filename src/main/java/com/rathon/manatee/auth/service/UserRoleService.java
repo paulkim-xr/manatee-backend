@@ -58,7 +58,6 @@ public class UserRoleService extends ObjectService<UserRole, UserRoleDto, UserRo
     }
 
     public void setGroups(Long id, Long[] ids) {
-        System.out.println(ids);
         mapper.mapGroups(id, ids);
     }
 
