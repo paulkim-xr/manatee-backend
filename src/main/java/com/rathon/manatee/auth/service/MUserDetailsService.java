@@ -30,26 +30,26 @@ public class MUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         Employee e = mapper.findByUsername(username);
         if (e == null) return User.builder().build();
-        List<UserGroupDto> list = userGroupService.findGroupsByUserId(e.getId());
-        List<UserRoleDto> roles = new ArrayList<>();
-        for (UserGroupDto group : list) {
-            roles.addAll(userGroupService.getRoles(group.getId()));
-        }
-        Map<String, String> buttons = new HashMap<>();
-        for (UserRoleDto role : roles) {
-            for (UserPermissionDto permissionDto : role.getPermissions()) {
-                for (UIComponentDto button : permissionDto.getComponents()) {
-                    buttons.put(button.getName(), button.getDescription());
-                }
-            }
-
-        }
+//        List<UserGroupDto> list = userGroupService.findGroupsByUserId(e.getId());
+//        List<UserRoleDto> roles = new ArrayList<>();
+//        for (UserGroupDto group : list) {
+//            roles.addAll(userGroupService.getRoles(group.getId()));
+//        }
+//        Map<String, String> buttons = new HashMap<>();
+//        for (UserRoleDto role : roles) {
+//            for (UserPermissionDto permissionDto : role.getPermissions()) {
+//                for (UIComponentDto button : permissionDto.getComponents()) {
+//                    buttons.put(button.getName(), button.getDescription());
+//                }
+//            }
+//
+//        }
 
         return User.builder()
                 .username(username)
                 .password(e.getPasswordHash())
-                .roles(roles.stream().map(UserRoleDto::getName).toList().toArray(new String[0]))
-                .authorities(buttons.keySet().toArray(new String[0]))
+//                .roles(roles.stream().map(UserRoleDto::getName).toList().toArray(new String[0]))
+//                .authorities(buttons.keySet().toArray(new String[0]))
                 .build();
     }
 }

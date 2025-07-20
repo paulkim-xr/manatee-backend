@@ -1,6 +1,7 @@
 package com.rathon.manatee.auth.controller;
 
 import com.rathon.manatee.auth.dto.LoginDto;
+import com.rathon.manatee.database.service.EmployeeService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -20,16 +21,18 @@ import java.util.Map;
 @RequestMapping("/api/auth")
 public class SessionController {
     private final AuthenticationManager authManager;
+    private final EmployeeService employeeService;
 
-    public SessionController(AuthenticationManager authManager){
+    public SessionController(AuthenticationManager authManager, EmployeeService employeeService){
         this.authManager = authManager;
+        this.employeeService = employeeService;
     }
 
     @GetMapping("/me")
     public ResponseEntity<?> check(Authentication authentication) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
-            return ResponseEntity.ok(Map.of("username", auth.getName(),"permissions", auth.getAuthorities()));
+            return ResponseEntity.ok(Map.of("username", auth.getName(),"name", employeeService.findByUsername(auth.getName()).getName(),"permissions", auth.getAuthorities()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
     }
@@ -37,6 +40,9 @@ public class SessionController {
     @PostMapping("/login")
     public ResponseEntity<?> login(HttpServletRequest request,
                                    @RequestBody LoginDto authRequest) {
+        System.out.println("Login attempt from " + request.getHeader("Access-Control-Allow-Origin"));
+        System.out.println("Username: " + authRequest.username());
+        System.out.println("Password: " + authRequest.password());
         try {
             UsernamePasswordAuthenticationToken token =
                     new UsernamePasswordAuthenticationToken(authRequest.username(), authRequest.password());
@@ -49,7 +55,9 @@ public class SessionController {
 
             request.getSession(true);
             request.getSession().setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
-            return ResponseEntity.ok(Map.of("username", authRequest.username(),
+            return ResponseEntity.ok(Map.of(
+                    "username", authRequest.username(),
+                    "name", employeeService.findByUsername(authRequest.username()).getName(),
                     "permissions", SecurityContextHolder.getContext().getAuthentication().getAuthorities())
             );
         } catch (AuthenticationException e) {
