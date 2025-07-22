@@ -10,6 +10,7 @@ import com.rathon.manatee.database.model.Unit;
 import com.rathon.manatee.database.service.mapper.UnitMapperService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -89,7 +90,16 @@ public class UnitService extends ObjectService<Unit, UnitDto, UnitMapper, UnitMa
         return mapper.findRootUnitsDto();
     }
 
-    public Long[] getAncestry(Long id) {
-        return mapper.getAncestry(id);
+    public List<UnitDto> getAncestry(Long id) {
+        List<UnitDto> parents = new ArrayList<>();
+        parents.add(getObjectById(id));
+        UnitDto unit = getParent(id);
+        while (unit != null) {
+            parents.add(unit);
+            unit = getParent(unit.getId());
+        }
+
+        return parents;
+//        return mapper.getAncestry(id);
     }
 }

@@ -193,7 +193,7 @@
             parent.id AS parent_id,
             parent.name AS parent_name,
             COALESCE(ch.children_count, 0) AS children_count,
-            COALESCE(ecompanies.employee_count, 0) AS employee_count
+            COALESCE(ec.employee_count, 0) AS employee_count
         FROM units child
         LEFT JOIN units ON units.id = child.parent_id
         LEFT JOIN companies ON units.company_id = companies.id
@@ -208,8 +208,8 @@
             SELECT e.unit_id, COUNT(*) AS employee_count
             FROM employees e
             GROUP BY e.unit_id
-        ) ec ON ecompanies.unit_id = units.id
-        WHERE child.id = #{id} OR child.parent_id IS NOT NULL
+        ) ec ON ec.unit_id = units.id
+        WHERE child.id = #{id} AND child.parent_id IS NOT NULL
     </select>
 
     <select id="findRootUnitsDto" resultMap="ObjectResultMap.UnitDtoMap">

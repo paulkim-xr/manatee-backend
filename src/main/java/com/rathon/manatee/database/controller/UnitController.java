@@ -134,7 +134,7 @@ public class UnitController extends ObjectController<Unit, UnitDto, UnitService>
     }
 
     @GetMapping("/{id}/ancestry")
-    public ResponseEntity<Long[]> getAncestry(@PathVariable Long id) {
+    public ResponseEntity<List<UnitDto>> getAncestry(@PathVariable Long id) {
         return ResponseEntity.ok(service.getAncestry(id));
     }
 }
