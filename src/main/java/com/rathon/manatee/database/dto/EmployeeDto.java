@@ -23,6 +23,8 @@ public class EmployeeDto extends Dto<Employee> {
     private String email;
     private String phone;
     private Date dob;
+    private Boolean otpEnabled;
+    private Boolean bioEnabled;
 //    private List<UserGroup> groups;
 
     public static List<SearchField> searchFields = List.of(

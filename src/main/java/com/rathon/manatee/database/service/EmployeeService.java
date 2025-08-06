@@ -4,6 +4,7 @@ import com.rathon.manatee.core.service.ObjectService;
 import com.rathon.manatee.database.dto.EmployeeDto;
 import com.rathon.manatee.core.dto.PagedList;
 import com.rathon.manatee.database.mapper.EmployeeMapper;
+import com.rathon.manatee.database.model.Company;
 import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
 import org.springframework.stereotype.Service;

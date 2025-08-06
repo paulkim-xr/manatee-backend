@@ -21,4 +21,7 @@ public class Employee {
 
     private String username;
     private String passwordHash;
+
+    private Boolean otpEnabled;
+    private Boolean bioEnabled;
 }

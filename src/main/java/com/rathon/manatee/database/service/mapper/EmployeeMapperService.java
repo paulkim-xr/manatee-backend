@@ -8,20 +8,22 @@ import com.rathon.manatee.database.model.Employee;
 import com.rathon.manatee.database.service.CompanyService;
 import com.rathon.manatee.database.service.PositionService;
 import com.rathon.manatee.database.service.UnitService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
 public class EmployeeMapperService implements ObjectMapperService<Employee, EmployeeDto> {
 
-    @Autowired
-    private CompanyService companyService;
+    private final CompanyService companyService;
 
-    @Autowired
-    private UnitService unitService;
+    private final UnitService unitService;
 
-    @Autowired
-    private PositionService positionService;
+    private final PositionService positionService;
+
+    public EmployeeMapperService(CompanyService companyService, UnitService unitService, PositionService positionService) {
+        this.companyService = companyService;
+        this.unitService = unitService;
+        this.positionService = positionService;
+    }
 
     @Override
     public EmployeeDto toDto(Employee e) {
@@ -36,6 +38,8 @@ public class EmployeeMapperService implements ObjectMapperService<Employee, Empl
         d.setUsername(e.getUsername());
         d.setUnit(new IdNameDto(u.getId(), u.getName()));
         d.setPosition(positionService.getPositionById(e.getPositionId()));
+        d.setOtpEnabled(e.getOtpEnabled());
+        d.setBioEnabled(e.getBioEnabled());
 
         return d;
     }
@@ -50,6 +54,8 @@ public class EmployeeMapperService implements ObjectMapperService<Employee, Empl
         e.setEmail(d.getEmail());
         e.setPhone(d.getPhone());
         e.setDob(d.getDob());
+        e.setOtpEnabled(d.getOtpEnabled());
+        e.setBioEnabled(d.getBioEnabled());
 
         return e;
     }
