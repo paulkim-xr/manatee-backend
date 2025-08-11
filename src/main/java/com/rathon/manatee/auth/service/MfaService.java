@@ -21,6 +21,7 @@ public class MfaService {
     private final String enroll;
     private final String delete;
     private final String notify;
+    private final String bioDelete;
 
     public MfaService(
             RestTemplate restTemplate,
@@ -28,7 +29,8 @@ public class MfaService {
             @Value("${mfa.otp.api.verify}") String verify,
             @Value("${mfa.otp.api.enroll}") String enroll,
             @Value("${mfa.otp.api.delete}") String delete,
-            @Value("${mfa.otp.api.notify}") String notify
+            @Value("${mfa.otp.api.notify}") String notify,
+            @Value("${mfa.bio.api.delete}") String bioDelete
     ) {
         this.restTemplate = restTemplate;
         this.base = base;
@@ -36,6 +38,7 @@ public class MfaService {
         this.enroll = enroll;
         this.delete = delete;
         this.notify = notify;
+        this.bioDelete = bioDelete;
     }
 
     public boolean verifyOtp(String username, Long companyId, String otp) {
@@ -98,6 +101,10 @@ public class MfaService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void disableBio(String companyCd, String userId) {
+        restTemplate.delete(base + bioDelete, companyCd, userId);
     }
 
     @Getter

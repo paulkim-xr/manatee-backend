@@ -32,8 +32,11 @@ public class MfaAuthStageFilter extends OncePerRequestFilter {
             if (AuthStage.PASSWORD_VERIFIED.equals(session.getAttribute(SessionController.AUTH_STAGE)) &&
                     request.getRequestURI().startsWith("/api") &&
                     !request.getRequestURI().contentEquals("/api/auth/otp") &&
+                    !request.getRequestURI().contentEquals("/api/auth/bio/status") &&
                     !request.getRequestURI().contentEquals("/api/auth/mfa/callback") &&
-                    !request.getRequestURI().contentEquals("/api/auth/mfa/polling")
+                    !request.getRequestURI().contentEquals("/api/auth/mfa/polling") &&
+                    !request.getRequestURI().contentEquals("/api/auth/username") &&
+                    !request.getRequestURI().contentEquals("/api/auth/password")
             ) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("MFA required");

@@ -25,6 +25,7 @@ public class EmployeeDto extends Dto<Employee> {
     private Date dob;
     private Boolean otpEnabled;
     private Boolean bioEnabled;
+    private Boolean passwordless;
 //    private List<UserGroup> groups;
 
     public static List<SearchField> searchFields = List.of(

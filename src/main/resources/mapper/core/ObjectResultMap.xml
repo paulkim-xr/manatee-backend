@@ -54,7 +54,8 @@
             employees.email,
             employees.phone,
             employees.dob,
-            employees.otp_enabled
+            employees.otp_enabled,
+            employees.bio_enabled
         <include refid="ObjectResultMap.EmployeeDtoJOIN" />
     </sql>
 

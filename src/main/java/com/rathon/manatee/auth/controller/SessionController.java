@@ -1,5 +1,6 @@
 package com.rathon.manatee.auth.controller;
 
+import com.rathon.manatee.auth.config.passwordless.UsernameOnlyAuthenticationToken;
 import com.rathon.manatee.auth.dto.LoginDto;
 import com.rathon.manatee.auth.model.AuthStage;
 import com.rathon.manatee.auth.model.MfaSessionRegistry;
@@ -31,13 +32,17 @@ import java.util.Map;
 public class SessionController {
     public static final String AUTH_STAGE = "authentication stage";
     public static final String MFA_AUTH_STATUS = "mfa auth status";
+    public static final String USERNAME = "username";
+    public static final String OTP_INIT_TIME = "otpInitTime";
+    public static final String OTP_ATTEMPTS = "otpAttempts";
+    
 
     private final AuthenticationManager authManager;
     private final EmployeeService employeeService;
     private final MfaService mfaService;
     private final EmployeeMapperService employeeMapperService;
 
-    public SessionController(AuthenticationManager authManager, EmployeeService employeeService, MfaService mfaService, EmployeeMapperService employeeMapperService, MfaSessionRegistry mfaSessionRegistry) {
+    public SessionController(AuthenticationManager authManager, EmployeeService employeeService, MfaService mfaService, EmployeeMapperService employeeMapperService) {
         this.authManager = authManager;
         this.employeeService = employeeService;
         this.mfaService = mfaService;
@@ -51,6 +56,60 @@ public class SessionController {
             return ResponseEntity.ok(Map.of("username", auth.getName(),"name", employeeService.findByUsername(auth.getName()).getName(),"permissions", auth.getAuthorities()));
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+    }
+
+    @PostMapping("/username")
+    public ResponseEntity<?> username(HttpServletRequest request, @RequestParam String username) {
+        if (request.getSession() != null && AuthStage.FULLY_AUTHENTICATED.equals(request.getSession().getAttribute(AUTH_STAGE))) {
+            return ResponseEntity.badRequest().body("Already logged in");
+        }
+
+        Employee employee = employeeService.findByUsername(username);
+        if (employee == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        HttpSession session = request.getSession(true);
+        session.setAttribute(USERNAME, employee.getUsername());
+
+        if (employee.getPasswordless() && (employee.getOtpEnabled() || employee.getBioEnabled())) {
+            Authentication auth = authManager.authenticate(new UsernameOnlyAuthenticationToken(username));
+            SecurityContext context = SecurityContextHolder.createEmptyContext();
+            context.setAuthentication(auth);
+            SecurityContextHolder.setContext(context);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+
+            session.setAttribute(AUTH_STAGE, AuthStage.PASSWORD_VERIFIED);
+            session.setAttribute(OTP_INIT_TIME, Instant.now());
+            session.setAttribute(OTP_ATTEMPTS, 0);
+
+            Long companyId = employeeMapperService.toDto(employee).getCompany().id();
+            if (employee.getBioEnabled()) {
+                session.setAttribute(MFA_AUTH_STATUS, MfaStatus.PENDING);
+                MfaSessionRegistry.registerSession(employee.getUsername(), session);
+                mfaService.notifyDevice(String.valueOf(companyId), employee.getUsername(), "Manatee", "지문인식으로 로그인", "biometric/authenticate");
+                return ResponseEntity.ok(Map.of("mfaRequired", true));
+            } else if (employee.getOtpEnabled()) {
+                mfaService.notifyDevice(String.valueOf(companyId), employee.getUsername(), "Manatee", "OTP 확인 후 입력", null);
+                return ResponseEntity.ok(Map.of("mfaRequired", true));
+            }
+        } else if(employee.getPasswordless()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
+        return ResponseEntity.status(HttpStatus.ACCEPTED).body("Enter password");
+    }
+
+    @PostMapping("/password")
+    public ResponseEntity<?> password(HttpServletRequest request, @RequestParam String password) {
+        if (request.getSession() != null && AuthStage.FULLY_AUTHENTICATED.equals(request.getSession().getAttribute(AUTH_STAGE))) {
+            return ResponseEntity.badRequest().body("Already logged in");
+        }
+
+        if (request.getSession().getAttribute(USERNAME) == null) {
+            return ResponseEntity.badRequest().body("Enter username first");
+        }
+        
+        return login(request, new LoginDto((String) request.getSession().getAttribute(USERNAME), password));
     }
 
     @PostMapping("/login")
@@ -75,18 +134,18 @@ public class SessionController {
 
             Employee employee = employeeService.findByUsername(authRequest.username());
 
-            if (Boolean.TRUE.equals(employee.getOtpEnabled())) {
+            if (employee.getOtpEnabled() || employee.getBioEnabled()) {
                 session.setAttribute(AUTH_STAGE, AuthStage.PASSWORD_VERIFIED);
-                session.setAttribute("otpInitTime", Instant.now());
-                session.setAttribute("otpAttempts", 0);
+                session.setAttribute(OTP_INIT_TIME, Instant.now());
+                session.setAttribute(OTP_ATTEMPTS, 0);
 
                 Long companyId = employeeMapperService.toDto(employee).getCompany().id();
                 if (Boolean.TRUE.equals(employee.getBioEnabled())) {
                     session.setAttribute(MFA_AUTH_STATUS, MfaStatus.PENDING);
                     MfaSessionRegistry.registerSession(employee.getUsername(), session);
-                    mfaService.notifyDevice(String.valueOf(companyId), employee.getUsername(), "Manatee", "Login with fingerprint", "biometric/authenticate");
+                    mfaService.notifyDevice(String.valueOf(companyId), employee.getUsername(), "Manatee", "지문인식으로 로그인", "biometric/authenticate");
                 } else {
-                    mfaService.notifyDevice(String.valueOf(companyId), employee.getUsername());
+                    mfaService.notifyDevice(String.valueOf(companyId), employee.getUsername(), "Manatee", "OTP 확인 후 입력", null);
                 }
                 return ResponseEntity.ok(Map.of("mfaRequired", true));
             } else {
@@ -118,7 +177,7 @@ public class SessionController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("MFA not applicable");
         }
 
-        Instant otpStart = (Instant) session.getAttribute("otpInitTime");
+        Instant otpStart = (Instant) session.getAttribute(OTP_INIT_TIME);
         if (otpStart != null && Duration.between(otpStart, Instant.now()).toMinutes() > 5) {
             session.invalidate();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("MFA session expired");
@@ -132,13 +191,13 @@ public class SessionController {
         String username = auth.getName();
         Employee employee = employeeService.findByUsername(username);
 
-        Object attemptsObj = session.getAttribute("otpAttempts");
+        Object attemptsObj = session.getAttribute(OTP_ATTEMPTS);
         int attempts = (attemptsObj instanceof Integer) ? (Integer) attemptsObj : 0;
         if (++attempts > 5) {
             session.invalidate();
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Too many OTP attempts");
         }
-        session.setAttribute("otpAttempts", attempts);
+        session.setAttribute(OTP_ATTEMPTS, attempts);
 
         Long companyId = employeeMapperService.toDto(employee).getCompany().id();
         if (!mfaService.verifyOtp(username, companyId, otp)) {
@@ -179,8 +238,6 @@ public class SessionController {
         String username = auth.getName();
         Employee employee = employeeService.findByUsername(username);
         employee.setOtpEnabled(true);
-        employee.setBioEnabled(true);
-
         employeeService.update(employee);
         EmployeeDto dto = employeeMapperService.toDto(employee);
 
@@ -203,11 +260,69 @@ public class SessionController {
         String username = auth.getName();
         Employee employee = employeeService.findByUsername(username);
         employee.setOtpEnabled(false);
+        disableBio();
         employee.setBioEnabled(false);
+        disablePasswordless();
+        employee.setPasswordless(false);
         employeeService.update(employee);
         EmployeeDto dto = employeeMapperService.toDto(employee);
 
         mfaService.disableOtp(String.valueOf(dto.getCompany().id()), dto.getUsername());
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/bio/status")
+    public ResponseEntity<?> bioStatus() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication missing");
+        }
+
+        String username = auth.getName();
+        Employee employee = employeeService.findByUsername(username);
+
+        return ResponseEntity.ok(employee.getBioEnabled());
+    }
+
+    @PostMapping("/bio/enroll")
+    public ResponseEntity<?> enrollBio() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication missing");
+        }
+
+        String username = auth.getName();
+        Employee employee = employeeService.findByUsername(username);
+
+        if (!employee.getOtpEnabled()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Must be enrolled in OTP first");
+        }
+
+        employee.setBioEnabled(true);
+        employeeService.update(employee);
+        EmployeeDto dto = employeeMapperService.toDto(employee);
+        mfaService.notifyDevice(String.valueOf(dto.getCompany().id()), dto.getUsername(), "Manatee", "지문 등록", "biometric/register");
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/bio/disable")
+    public ResponseEntity<?> disableBio() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication missing");
+        }
+
+        String username = auth.getName();
+        Employee employee = employeeService.findByUsername(username);
+        employee.setBioEnabled(false);
+        employeeService.update(employee);
+        EmployeeDto dto = employeeMapperService.toDto(employee);
+
+        System.out.println("User " + username + ": " + employeeService.findByUsername(username).getBioEnabled());
+
+        mfaService.disableBio(String.valueOf(dto.getCompany().id()), dto.getUsername());
 
         return ResponseEntity.ok().build();
     }
@@ -243,6 +358,47 @@ public class SessionController {
         }
 
         session.setAttribute(AUTH_STAGE, AuthStage.FULLY_AUTHENTICATED);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/passwordless/status")
+    public ResponseEntity<?> passwordlessStatus() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication missing");
+        }
+
+        String username = auth.getName();
+        Employee employee = employeeService.findByUsername(username);
+
+        return ResponseEntity.ok(employee.getPasswordless());
+    }
+
+    @PostMapping("/passwordless/enroll")
+    public ResponseEntity<?> enrollPasswordless() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication missing");
+        }
+
+        String username = auth.getName();
+        Employee employee = employeeService.findByUsername(username);
+        employee.setPasswordless(true);
+        employeeService.update(employee);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/passwordless/disable")
+    public ResponseEntity<?> disablePasswordless() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null || !auth.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication missing");
+        }
+
+        String username = auth.getName();
+        Employee employee = employeeService.findByUsername(username);
+        employee.setPasswordless(false);
+        employeeService.update(employee);
         return ResponseEntity.ok().build();
     }
 

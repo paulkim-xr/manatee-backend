@@ -24,4 +24,5 @@ public class Employee {
 
     private Boolean otpEnabled;
     private Boolean bioEnabled;
+    private Boolean passwordless;
 }

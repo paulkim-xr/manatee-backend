@@ -128,9 +128,9 @@
 
     <insert id="insert" parameterType="Employee" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO <include refid="tableName" /> (
-            name, unit_id, position_id, email, phone, username, dob, otp_enabled
+            name, unit_id, position_id, email, phone, username, dob, otp_enabled, bio_enabled, passwordless
         ) VALUES (
-            #{name}, #{unitId}, #{positionId}, #{email}, #{phone}, #{username}, #{dob}, #{otpEnabled}
+            #{name}, #{unitId}, #{positionId}, #{email}, #{phone}, #{username}, #{dob}, #{otpEnabled}, #{bioEnabled}, #{passwordless}
         )
     </insert>
 
@@ -142,7 +142,9 @@
             email = #{email},
             phone = #{phone},
             dob = #{dob},
-            otp_enabled = #{otpEnabled}
+            otp_enabled = #{otpEnabled},
+            bio_enabled = #{bioEnabled},
+            passwordless = #{passwordless}
         WHERE id = #{id}
     </update>
 
