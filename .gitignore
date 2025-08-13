@@ -36,3 +36,4 @@ out/
 ### VS Code ###
 .vscode/
 /post_gen.sql
+/cert.cer

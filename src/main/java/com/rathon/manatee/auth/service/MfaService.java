@@ -1,6 +1,7 @@
 package com.rathon.manatee.auth.service;
 
 import com.rathon.manatee.auth.dto.OtpVerifyResponseDto;
+import com.rathon.manatee.database.dto.EmployeeDto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -25,7 +26,7 @@ public class MfaService {
 
     public MfaService(
             RestTemplate restTemplate,
-            @Value("${mfa.otp.api.base}") String base,
+            @Value("${mfa.base}") String base,
             @Value("${mfa.otp.api.verify}") String verify,
             @Value("${mfa.otp.api.enroll}") String enroll,
             @Value("${mfa.otp.api.delete}") String delete,
@@ -105,6 +106,11 @@ public class MfaService {
 
     public void disableBio(String companyCd, String userId) {
         restTemplate.delete(base + bioDelete, companyCd, userId);
+    }
+
+    public boolean getBioStatus(String companyCd, String userId) {
+        Object result = restTemplate.getForEntity(base + "/api/v1/fido/" + companyCd + "/" + userId, String.class);
+        return false;
     }
 
     @Getter

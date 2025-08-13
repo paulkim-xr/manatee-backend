@@ -12,6 +12,7 @@ import com.rathon.manatee.database.service.EmployeeService;
 import com.rathon.manatee.database.service.mapper.EmployeeMapperService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,18 +36,20 @@ public class SessionController {
     public static final String USERNAME = "username";
     public static final String OTP_INIT_TIME = "otpInitTime";
     public static final String OTP_ATTEMPTS = "otpAttempts";
-    
+
+    private final String mfaServerUrl;
 
     private final AuthenticationManager authManager;
     private final EmployeeService employeeService;
     private final MfaService mfaService;
     private final EmployeeMapperService employeeMapperService;
 
-    public SessionController(AuthenticationManager authManager, EmployeeService employeeService, MfaService mfaService, EmployeeMapperService employeeMapperService) {
+    public SessionController(AuthenticationManager authManager, EmployeeService employeeService, MfaService mfaService, EmployeeMapperService employeeMapperService, @Value("${mfa.base}") String mfaServerUrl) {
         this.authManager = authManager;
         this.employeeService = employeeService;
         this.mfaService = mfaService;
         this.employeeMapperService = employeeMapperService;
+        this.mfaServerUrl = mfaServerUrl;
     }
 
     @GetMapping("/me")
@@ -244,8 +247,10 @@ public class SessionController {
         String secret = mfaService.enrollOtp(String.valueOf(dto.getCompany().id()), dto.getUsername());
 
         return ResponseEntity.ok(Map.of(
+                "server", mfaServerUrl,
                 "companyId", dto.getCompany().id(),
                 "username", dto.getUsername(),
+                "tel", dto.getPhone(),
                 "secret", secret
         ));
     }
@@ -281,6 +286,8 @@ public class SessionController {
 
         String username = auth.getName();
         Employee employee = employeeService.findByUsername(username);
+        EmployeeDto dto = employeeMapperService.toDto(employee);
+        boolean status = mfaService.getBioStatus(dto.getCompany().name(), dto.getUsername());
 
         return ResponseEntity.ok(employee.getBioEnabled());
     }
