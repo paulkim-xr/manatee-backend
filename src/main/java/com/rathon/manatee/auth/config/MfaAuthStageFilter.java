@@ -35,6 +35,7 @@ public class MfaAuthStageFilter extends OncePerRequestFilter {
                     !request.getRequestURI().contentEquals("/api/auth/bio/status") &&
                     !request.getRequestURI().contentEquals("/api/auth/mfa/callback") &&
                     !request.getRequestURI().contentEquals("/api/auth/mfa/polling") &&
+                    !request.getRequestURI().contentEquals("/api/auth/mfa/start") &&
                     !request.getRequestURI().contentEquals("/api/auth/username") &&
                     !request.getRequestURI().contentEquals("/api/auth/password")
             ) {

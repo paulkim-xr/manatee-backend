@@ -5,8 +5,16 @@ import org.springframework.security.crypto.password.Pbkdf2PasswordEncoder;
 
 import java.util.Base64;
 import java.util.Date;
+import org.apache.commons.codec.binary.Base32;
 
 class SecurityConfigTest {
+
+    @Test
+    void stringPads() {
+        byte[] bytes = Base64.getUrlDecoder().decode("82_pe-o4");
+        String s = new Base32().encodeToString(bytes);
+        System.out.println(s);
+    }
 
     @Test
     void passwordEncoder() {
