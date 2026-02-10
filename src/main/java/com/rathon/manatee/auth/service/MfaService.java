@@ -7,6 +7,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.Mac;
 import java.util.List;
@@ -21,6 +22,7 @@ public class MfaService {
     private final String delete;
     private final String notify;
     private final String bioDelete;
+    private final String mfaKey;
 
     public MfaService(
             RestTemplate restTemplate,
@@ -29,7 +31,8 @@ public class MfaService {
             @Value("${mfa.otp.api.enroll}") String enroll,
             @Value("${mfa.otp.api.delete}") String delete,
             @Value("${mfa.otp.api.notify}") String notify,
-            @Value("${mfa.bio.api.delete}") String bioDelete
+            @Value("${mfa.bio.api.delete}") String bioDelete,
+            @Value("${mfa.key:}") String mfaKey
     ) {
         this.restTemplate = restTemplate;
         this.base = base;
@@ -38,12 +41,13 @@ public class MfaService {
         this.delete = delete;
         this.notify = notify;
         this.bioDelete = bioDelete;
+        this.mfaKey = mfaKey;
     }
     // -----------------------------------------------
 
     public String enrollV2(String userId, String displayName) {
         ApiResponse<String> response = registerAccountV2(ApiRequest.<SimpleId>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -56,7 +60,7 @@ public class MfaService {
 
     public String verifyV2(String userId) {
         ApiResponse<String> response = verifyAccountV2(ApiRequest.<String>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -69,7 +73,7 @@ public class MfaService {
 
     public void deleteV2(String userId) {
         deleteAccountV2(ApiRequest.<String>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -80,7 +84,7 @@ public class MfaService {
 
     public OtpRegistrationData enrollOtpV2(String companyCd, String username) {
         ApiResponse<OtpRegistrationData> response = otpRegisterV2(ApiRequest.<String>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -93,7 +97,7 @@ public class MfaService {
 
     public void alertOtpV2(String userId, String displayName) {
         otpAlertV2(ApiRequest.<SimpleId>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -104,7 +108,7 @@ public class MfaService {
 
     public boolean verifyOtpV2(String companyCd, String userId) {
         ApiResponse<Void> response = otpVerifyExistenceV2(ApiRequest.<String>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -117,7 +121,7 @@ public class MfaService {
 
     public boolean authOtpV2(String username, Long companyId, String otp) {
         ApiResponse<OtpAuthenticationData> response = otpAuthenticateV2(ApiRequest.<OtpAuthRequest>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -131,7 +135,10 @@ public class MfaService {
     public OtpPolicy getOtpPolicyV2(String username) {
         try {
             ResponseEntity<OtpPolicy> resp = restTemplate.exchange(
-                    base + "/api/v2/otp/policy?system=manatee-service&username=" + username, HttpMethod.GET, null, new ParameterizedTypeReference<OtpPolicy>() {});
+                    base + "/api/v2/otp/policy?system=demo-system&username=" + username,
+                    HttpMethod.GET,
+                    new HttpEntity<>(jsonHeaders()),
+                    new ParameterizedTypeReference<OtpPolicy>() {});
             return resp.getBody();
         } catch (Exception e) {
             return new OtpPolicy();
@@ -140,7 +147,7 @@ public class MfaService {
 
     public void disableOtpV2(String companyCd, String userId) {
         otpDeleteV2(ApiRequest.<String>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -151,7 +158,7 @@ public class MfaService {
 
     public void enrollFidoV2(String userId, String displayName) {
         fido2RegisterV2(ApiRequest.<SimpleId>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -162,7 +169,7 @@ public class MfaService {
 
     public boolean verifyFido2V2(String companyCd, String userId) {
         ApiResponse<Void> response = fido2VerifyExistenceV2(ApiRequest.<String>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -175,7 +182,7 @@ public class MfaService {
 
     public Long authFidoV2(String userId, String displayName) {
         return Long.parseLong(fido2AuthenticateV2(ApiRequest.<SimpleId>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -186,7 +193,7 @@ public class MfaService {
 
     public void disableFido2V2(String companyCd, String userId) {
         fido2DeleteV2(ApiRequest.<String>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -197,7 +204,7 @@ public class MfaService {
 
     public String enrollPasskey(String username) {
         ApiResponse<String> response = passkeyEnroll(ApiRequest.<String>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -223,7 +230,7 @@ public class MfaService {
 
     public boolean checkPasskey(String username, String tx) {
         ApiResponse<Void> response = passkeyCheck(ApiRequest.<UsernameTx>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -236,7 +243,7 @@ public class MfaService {
 
     public boolean disablePasskey(String username) {
         ApiResponse<Void> response = passkeyDelete(ApiRequest.<UsernameTx>builder()
-                .systemName("manatee-service")
+                .systemName("demo-system")
                 .description("test")
                 .os("Windows")
                 .app("Chrome")
@@ -296,7 +303,7 @@ public class MfaService {
     @AllArgsConstructor
     @Builder
     public static class ApiRequest<T> {
-        String systemName = "manatee-service";
+        String systemName = "demo-system";
         String description = "test";
         String os = "Windows";
         String app = "Chrome";
@@ -489,6 +496,9 @@ public class MfaService {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(List.of(MediaType.APPLICATION_JSON));
+        if (StringUtils.hasText(mfaKey)) {
+            headers.set("X-RATHON-MFA", mfaKey);
+        }
         return headers;
     }
 

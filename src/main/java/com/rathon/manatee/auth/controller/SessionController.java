@@ -500,7 +500,6 @@ public class SessionController {
 
     @GetMapping("/mfa/polling")
     public ResponseEntity<?> polling(HttpServletRequest request) {
-        System.out.println(request.getSession(false).getId());
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute(AUTH_STAGE) == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Not logged in");
@@ -536,17 +535,17 @@ public class SessionController {
 
         String username = auth.getName();
         String origin = request.getHeader("Origin");
-        String token = mfaService.createAuthSession(username, "manatee-service", origin);
+        String token = mfaService.createAuthSession(username, "demo-system", origin);
         if (token == null || token.isBlank()) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Token creation failed");
         }
 
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(Map.of("token", token, "url", mfaServerUrl));
     }
 
     private String buildMfaRedirectUrl(HttpServletRequest request, String username) {
         String origin = request.getHeader("Origin");
-        String token = mfaService.createAuthSession(username, "manatee-service", origin);
+        String token = mfaService.createAuthSession(username, "demo-system", origin);
         return token != null ? String.format("%s/index.html?token=%s", mfaServerUrl, token) : null;
     }
 
@@ -612,7 +611,7 @@ public class SessionController {
         String username = auth.getName();
 
         String tx = mfaService.enrollPasskey(username);
-        String sessionToken = mfaService.createAuthSession(username, "manatee-service", null);
+        String sessionToken = mfaService.createAuthSession(username, "demo-system", null);
 
         return ResponseEntity.ok(Map.of(
                 "txId", tx,
